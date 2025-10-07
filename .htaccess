@@ -1,0 +1,17 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Serve assets from /public when project root is the docroot
+    RewriteCond %{REQUEST_URI} ^/assets/
+    RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+
+    # If the request is for an existing file/dir, let it pass
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Otherwise, route everything to the public front controller
+    RewriteRule ^ public/index.php [L]
+</IfModule>
+
+
