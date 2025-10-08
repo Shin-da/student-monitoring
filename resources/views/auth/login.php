@@ -18,7 +18,7 @@
         </div>
       <?php endif; ?>
       
-      <form method="post" action="/login" class="auth-form">
+      <form method="post" action="<?= \Helpers\Url::to('/login') ?>" class="auth-form">
         <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
         <div class="form-floating mb-3">
           <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
@@ -37,7 +37,7 @@
       
       <div class="text-center">
         <p class="text-muted small mb-0">Don't have an account? 
-          <a href="/register" class="text-decoration-none fw-semibold">Create one</a>
+          <a href="<?= \Helpers\Url::to('/register') ?>" class="text-decoration-none fw-semibold">Create one</a>
         </p>
       </div>
     </div>

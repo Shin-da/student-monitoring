@@ -70,7 +70,8 @@ class AuthController extends Controller
             'parent' => '/parent',
         ];
         $dest = $redirects[$user['role']] ?? '/';
-        header('Location: ' . $dest);
+        $location = \Helpers\Url::to($dest);
+        header('Location: ' . $location);
     }
 
     public function showRegister(): void
@@ -142,12 +143,12 @@ class AuthController extends Controller
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if (!Csrf::check($_POST['csrf_token'] ?? null)) {
                 http_response_code(419);
-                header('Location: /');
+                header('Location: ' . \Helpers\Url::to('/'));
                 return;
             }
         }
         Session::destroy();
-        header('Location: /');
+        header('Location: ' . \Helpers\Url::to('/'));
     }
 }
 

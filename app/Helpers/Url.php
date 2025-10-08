@@ -1,0 +1,39 @@
+<?php
+declare(strict_types=1);
+
+namespace Helpers;
+
+class Url
+{
+    public static function basePath(): string
+    {
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $dir = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+        if ($dir !== '' && str_ends_with($dir, '/public')) {
+            $dir = rtrim(substr($dir, 0, -strlen('/public')), '/');
+        }
+        return $dir === '/' ? '' : $dir; // return empty for root
+    }
+
+    public static function to(string $path = '/'): string
+    {
+        $normalized = '/' . ltrim($path, '/');
+        return self::basePath() . ($normalized === '//' ? '/' : $normalized);
+    }
+
+    public static function asset(string $relativePath): string
+    {
+        $rel = ltrim($relativePath, '/');
+        $scriptFilename = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME'] ?? '');
+        $servedFromPublic = str_ends_with($scriptFilename, '/public/index.php');
+        if ($servedFromPublic) {
+            // Docroot is public/, assets are at /assets
+            return self::basePath() . '/assets/' . $rel;
+        }
+        // Docroot is project root, assets are at /public/assets
+        return self::basePath() . '/public/assets/' . $rel;
+    }
+}
+
+
+

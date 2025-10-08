@@ -6,8 +6,8 @@
         <h1 class="display-5 fw-bold mb-3">Smarter student monitoring for modern schools</h1>
         <p class="fs-5 text-muted mb-4">Track attendance, performance, and engagement in one place. Built for administrators, teachers, advisers, parents, and students.</p>
         <div class="d-flex flex-wrap gap-3 mt-1">
-          <a href="/register" class="btn btn-primary btn-lg px-4">Get started</a>
-          <a href="/login" class="btn btn-outline-primary btn-lg px-4">Sign in</a>
+          <a href="<?= \Helpers\Url::to('/register') ?>" class="btn btn-primary btn-lg px-4">Get started</a>
+          <a href="<?= \Helpers\Url::to('/login') ?>" class="btn btn-outline-primary btn-lg px-4">Sign in</a>
         </div>
         <div class="d-flex flex-wrap gap-4 mt-4 align-items-center hero-kpis">
           <div>
@@ -87,28 +87,28 @@
   <div class="container-fluid container-narrow">
     <div class="row g-3 g-md-4">
       <div class="col-12 col-md-6 col-lg-3">
-        <a class="role-card d-block p-3 p-md-4 surface h-100 text-decoration-none" href="/login?role=admin">
+        <a class="role-card d-block p-3 p-md-4 surface h-100 text-decoration-none" href="<?= \Helpers\Url::to('/login?role=admin') ?>">
           <div class="role-icon">🛠️</div>
           <div class="h6 mb-1">Administrator</div>
           <div class="text-muted small">Configure system and view school-wide metrics.</div>
         </a>
       </div>
       <div class="col-12 col-md-6 col-lg-3">
-        <a class="role-card d-block p-3 p-md-4 surface h-100 text-decoration-none" href="/login?role=teacher">
+        <a class="role-card d-block p-3 p-md-4 surface h-100 text-decoration-none" href="<?= \Helpers\Url::to('/login?role=teacher') ?>">
           <div class="role-icon">👩‍🏫</div>
           <div class="h6 mb-1">Teacher</div>
           <div class="text-muted small">Manage classes, grades, and attendance.</div>
         </a>
       </div>
       <div class="col-12 col-md-6 col-lg-3">
-        <a class="role-card d-block p-3 p-md-4 surface h-100 text-decoration-none" href="/login?role=adviser">
+        <a class="role-card d-block p-3 p-md-4 surface h-100 text-decoration-none" href="<?= \Helpers\Url::to('/login?role=adviser') ?>">
           <div class="role-icon">🧭</div>
           <div class="h6 mb-1">Adviser</div>
           <div class="text-muted small">Track student progress and advise effectively.</div>
         </a>
       </div>
       <div class="col-12 col-md-6 col-lg-3">
-        <a class="role-card d-block p-3 p-md-4 surface h-100 text-decoration-none" href="/login?role=parent">
+        <a class="role-card d-block p-3 p-md-4 surface h-100 text-decoration-none" href="<?= \Helpers\Url::to('/login?role=parent') ?>">
           <div class="role-icon">👨‍👩‍👧‍👦</div>
           <div class="h6 mb-1">Parent / Student</div>
           <div class="text-muted small">See attendance and performance in real-time.</div>
@@ -124,8 +124,8 @@
       <h2 class="h4 fw-bold mb-2">Ready to modernize your monitoring?</h2>
       <p class="text-muted mb-4">Create an account in minutes and bring clarity to your school operations.</p>
       <div class="d-flex justify-content-center gap-3">
-        <a href="/register" class="btn btn-primary btn-lg px-4">Create account</a>
-        <a href="/login" class="btn btn-outline-primary btn-lg px-4">I already have one</a>
+        <a href="<?= \Helpers\Url::to('/register') ?>" class="btn btn-primary btn-lg px-4">Create account</a>
+        <a href="<?= \Helpers\Url::to('/login') ?>" class="btn btn-outline-primary btn-lg px-4">I already have one</a>
       </div>
     </div>
   </div>

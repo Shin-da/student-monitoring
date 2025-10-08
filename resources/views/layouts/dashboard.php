@@ -4,15 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= htmlspecialchars($title ?? 'Dashboard') ?></title>
-    <?php
-    // Resolve assets to /assets when public is the docroot; otherwise /public/assets
-    $assetBase = (isset($_SERVER['SCRIPT_FILENAME']) && str_ends_with(str_replace('\\','/', $_SERVER['SCRIPT_FILENAME']), '/public/index.php'))
-        ? '/assets'
-        : '/public/assets';
-    ?>
-    <link rel="icon" type="image/svg+xml" href="<?= $assetBase ?>/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="<?= \Helpers\Url::asset('favicon.svg') ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= $assetBase ?>/app.css" rel="stylesheet">
+    <link href="<?= \Helpers\Url::asset('app.css') ?>" rel="stylesheet">
     <script>
       (function(){
         try{var p=localStorage.getItem('theme-preference')||'auto';var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var r=p==='auto'?(m?'dark':'light'):p;document.documentElement.setAttribute('data-theme',r==='dark'?'dark':'light');}catch(e){}
@@ -111,15 +105,15 @@
 </head>
 <body class="app-container">
 <div class="dashboard d-flex">
-  <?php $role = $user['role'] ?? ''; ?>
+  <?php $role = $user['role'] ?? ''; $base = \Helpers\Url::basePath(); ?>
   <?php
     $dashboardUrl = match($role) {
-      'admin' => '/admin',
-      'teacher' => '/teacher',
-      'adviser' => '/adviser',
-      'student' => '/student',
-      'parent' => '/parent',
-      default => '/',
+      'admin' => \Helpers\Url::to('/admin'),
+      'teacher' => \Helpers\Url::to('/teacher'),
+      'adviser' => \Helpers\Url::to('/adviser'),
+      'student' => \Helpers\Url::to('/student'),
+      'parent' => \Helpers\Url::to('/parent'),
+      default => \Helpers\Url::to('/'),
     };
   ?>
   <aside class="sidebar p-3">
@@ -174,32 +168,32 @@
           </svg>
           <span>Student Performance</span>
         </a>
-        <a class="nav-link <?= ($activeNav ?? '')==='alerts' ? 'active' : '' ?>" href="/teacher/alerts">
+        <a class="nav-link <?= ($activeNav ?? '')==='alerts' ? 'active' : '' ?>" href="<?= \Helpers\Url::to('/teacher/alerts') ?>">
           <svg class="nav-icon" width="20" height="20" fill="currentColor">
             <use href="#icon-alerts"></use>
           </svg>
           <span>Alerts</span>
         </a>
       <?php elseif ($role === 'admin'): ?>
-        <a class="nav-link <?= ($activeNav ?? '')==='dashboard' ? 'active' : '' ?>" href="/admin">
+        <a class="nav-link <?= ($activeNav ?? '')==='dashboard' ? 'active' : '' ?>" href="<?= \Helpers\Url::to('/admin') ?>">
           <svg class="nav-icon" width="20" height="20" fill="currentColor">
             <use href="#icon-dashboard"></use>
           </svg>
           <span>Overview</span>
         </a>
-        <a class="nav-link <?= ($activeNav ?? '')==='users' ? 'active' : '' ?>" href="/admin/users">
+        <a class="nav-link <?= ($activeNav ?? '')==='users' ? 'active' : '' ?>" href="<?= \Helpers\Url::to('/admin/users') ?>">
           <svg class="nav-icon" width="20" height="20" fill="currentColor">
             <use href="#icon-user"></use>
           </svg>
           <span>User Management</span>
         </a>
-        <a class="nav-link" href="/admin/create-user">
+        <a class="nav-link" href="<?= \Helpers\Url::to('/admin/create-user') ?>">
           <svg class="nav-icon" width="20" height="20" fill="currentColor">
             <use href="#icon-plus"></use>
           </svg>
           <span>Create User</span>
         </a>
-        <a class="nav-link" href="/admin/create-parent">
+        <a class="nav-link" href="<?= \Helpers\Url::to('/admin/create-parent') ?>">
           <svg class="nav-icon" width="20" height="20" fill="currentColor">
             <use href="#icon-parent"></use>
           </svg>
@@ -222,7 +216,7 @@
     </nav>
     
     <div class="mt-auto pt-3">
-      <form method="post" action="/logout">
+      <form method="post" action="<?= \Helpers\Url::to('/logout') ?>">
         <button class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2" type="submit">
           <svg width="16" height="16" fill="currentColor">
             <use href="#icon-logout"></use>
@@ -250,12 +244,7 @@
     </main>
   </section>
 </div>
-<?php
-$assetBase = (isset($_SERVER['SCRIPT_FILENAME']) && str_ends_with(str_replace('\\','/', $_SERVER['SCRIPT_FILENAME']), '/public/index.php'))
-    ? '/assets'
-    : '/public/assets';
-?>
-<script src="<?= $assetBase ?>/app.js"></script>
+<script src="<?= \Helpers\Url::asset('app.js') ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

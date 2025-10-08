@@ -6,14 +6,10 @@
     <meta name="description" content="Smart Student Monitoring - enterprise-grade web system for schools.">
     <meta name="theme-color" content="#0d6efd">
     <title><?= htmlspecialchars($title ?? 'Smart Student Monitoring') ?></title>
-    <?php
-    $assetBase = (isset($_SERVER['SCRIPT_FILENAME']) && str_ends_with(str_replace('\\','/', $_SERVER['SCRIPT_FILENAME']), '/public/index.php'))
-        ? '/assets'
-        : '/public/assets';
-    ?>
-    <link rel="icon" type="image/svg+xml" href="<?= $assetBase ?>/favicon.svg">
+    <?php $base = \Helpers\Url::basePath(); ?>
+    <link rel="icon" type="image/svg+xml" href="<?= \Helpers\Url::asset('favicon.svg') ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= $assetBase ?>/app.css" rel="stylesheet">
+    <link href="<?= \Helpers\Url::asset('app.css') ?>" rel="stylesheet">
     <script>
       (function(){
         try{var p=localStorage.getItem('theme-preference')||'auto';var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var r=p==='auto'?(m?'dark':'light'):p;document.documentElement.setAttribute('data-theme',r==='dark'?'dark':'light');}catch(e){}
@@ -101,15 +97,15 @@
 <body class="app-container">
 <nav class="navbar navbar-expand-lg navbar-dark navbar-glass sticky-top" data-nav>
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="/">SSM</a>
+        <a class="navbar-brand fw-bold" href="<?= $base ?>/">SSM</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample" aria-controls="navbarsExample" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarsExample">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <?php $path = $_SERVER['REQUEST_URI'] ?? '/'; ?>
-                <li class="nav-item"><a class="nav-link <?= $path==='/' ? 'active' : '' ?>" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link <?= str_starts_with($path, '/admin') ? 'active' : '' ?>" href="/admin">Admin</a></li>
+                <li class="nav-item"><a class="nav-link <?= $path===$base.'/' ? 'active' : '' ?>" href="<?= $base ?>/">Home</a></li>
+                <li class="nav-item"><a class="nav-link <?= str_starts_with($path, $base.'/admin') ? 'active' : '' ?>" href="<?= \Helpers\Url::to('/admin') ?>">Admin</a></li>
             </ul>
             <div class="d-flex align-items-center gap-2">
                 <button class="btn btn-outline-light theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme" title="Theme: Light / Dark / Auto">
@@ -140,11 +136,11 @@
                         <li><h6 class="dropdown-header"><?= htmlspecialchars($userName) ?></h6></li>
                         <li><span class="dropdown-item-text text-muted small"><?= ucfirst($userRole) ?></span></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/<?= $userRole ?>">Dashboard</a></li>
-                        <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                        <li><a class="dropdown-item" href="<?= \Helpers\Url::to('/'.$userRole) ?>">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="<?= \Helpers\Url::to('/profile') ?>">Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <form method="post" action="/logout" class="d-inline">
+                            <form method="post" action="<?= \Helpers\Url::to('/logout') ?>" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
                                 <button class="dropdown-item text-danger" type="submit">Logout</button>
                             </form>
@@ -152,8 +148,8 @@
                     </ul>
                 </div>
                 <?php else: ?>
-                <a class="btn btn-outline-light d-none d-lg-inline-flex" href="/login">Login</a>
-                <a class="btn btn-primary d-none d-lg-inline-flex" href="/register">Register</a>
+                <a class="btn btn-outline-light d-none d-lg-inline-flex" href="<?= \Helpers\Url::to('/login') ?>">Login</a>
+                <a class="btn btn-primary d-none d-lg-inline-flex" href="<?= \Helpers\Url::to('/register') ?>">Register</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -166,17 +162,12 @@
     <div class="container-fluid container-narrow d-flex flex-wrap justify-content-between align-items-center gap-2">
         <span class="text-muted small">© <?= date('Y') ?> Smart Student Monitoring</span>
         <div class="d-flex gap-3 small">
-            <a class="text-muted text-decoration-none" href="/login">Login</a>
-            <a class="text-muted text-decoration-none" href="/register">Register</a>
+            <a class="text-muted text-decoration-none" href="<?= \Helpers\Url::to('/login') ?>">Login</a>
+            <a class="text-muted text-decoration-none" href="<?= \Helpers\Url::to('/register') ?>">Register</a>
         </div>
     </div>
 </footer>
- <?php
- $assetBase = (isset($_SERVER['SCRIPT_FILENAME']) && str_ends_with(str_replace('\\','/', $_SERVER['SCRIPT_FILENAME']), '/public/index.php'))
-     ? '/assets'
-     : '/public/assets';
- ?>
- <script src="<?= $assetBase ?>/app.js"></script>
+ <script src="<?= \Helpers\Url::asset('app.js') ?>"></script>
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

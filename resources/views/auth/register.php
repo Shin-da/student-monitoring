@@ -24,7 +24,7 @@
       <?php endif; ?>
       
       <?php if (!isset($success)): ?>
-      <form method="post" action="/register" class="auth-form">
+      <form method="post" action="<?= \Helpers\Url::to('/register') ?>" class="auth-form">
         <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
         <input type="hidden" name="role" value="student">
         
@@ -52,7 +52,7 @@
       
       <div class="text-center">
         <p class="text-muted small mb-0">Already have an account? 
-          <a href="/login" class="text-decoration-none fw-semibold">Sign in</a>
+          <a href="<?= \Helpers\Url::to('/login') ?>" class="text-decoration-none fw-semibold">Sign in</a>
         </p>
       </div>
     </div>
