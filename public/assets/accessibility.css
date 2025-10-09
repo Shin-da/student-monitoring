@@ -1,0 +1,192 @@
+/* Accessibility and UX improvements */
+
+/* Skip to content link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--bs-primary);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 9999;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Enhanced focus states */
+.btn:focus,
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Better color contrast for badges */
+.badge.bg-primary-subtle {
+    background-color: var(--bs-primary-bg-subtle) !important;
+    color: var(--bs-primary-text-emphasis) !important;
+    border: 1px solid var(--bs-primary-border-subtle);
+}
+
+.badge.bg-success-subtle {
+    background-color: var(--bs-success-bg-subtle) !important;
+    color: var(--bs-success-text-emphasis) !important;
+    border: 1px solid var(--bs-success-border-subtle);
+}
+
+.badge.bg-warning-subtle {
+    background-color: var(--bs-warning-bg-subtle) !important;
+    color: var(--bs-warning-text-emphasis) !important;
+    border: 1px solid var(--bs-warning-border-subtle);
+}
+
+.badge.bg-info-subtle {
+    background-color: var(--bs-info-bg-subtle) !important;
+    color: var(--bs-info-text-emphasis) !important;
+    border: 1px solid var(--bs-info-border-subtle);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .text-muted {
+        color: var(--bs-body-color) !important;
+    }
+    
+    .badge {
+        border: 2px solid currentColor !important;
+        font-weight: bold;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Enhanced keyboard navigation */
+.sidebar-nav .nav-link:focus {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: -2px;
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+/* Loading states */
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top-color: var(--bs-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error states */
+.has-error .form-control {
+    border-color: var(--bs-danger);
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.error-message {
+    color: var(--bs-danger);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Success states */
+.has-success .form-control {
+    border-color: var(--bs-success);
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.success-message {
+    color: var(--bs-success);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Tooltip improvements */
+.tooltip {
+    font-size: 0.875rem;
+    z-index: 1070;
+}
+
+/* Modal improvements */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.modal:focus {
+    outline: none;
+}
+
+.modal-header .btn-close:focus {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+}
+
+/* Table improvements */
+.table-responsive {
+    border-radius: 0.375rem;
+    border: 1px solid var(--bs-border-color);
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    background-color: var(--bs-light);
+}
+
+/* Card improvements */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .card {
+    background-color: var(--bs-dark);
+    border-color: var(--bs-gray-700);
+}
+
+[data-theme="dark"] .table th {
+    background-color: var(--bs-gray-800);
+    color: var(--bs-light);
+}
+
+[data-theme="dark"] .badge {
+    color: var(--bs-light);
+}

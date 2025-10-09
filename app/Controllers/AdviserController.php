@@ -22,6 +22,48 @@ class AdviserController extends Controller
             'showBack' => false,
         ], 'layouts/dashboard');
     }
+
+    public function students(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'adviser') {
+            \Helpers\Response::forbidden();
+            return;
+        }
+        $this->view->render('adviser/students', [
+            'title' => 'Student Management',
+            'user' => $user,
+            'activeNav' => 'students',
+        ], 'layouts/dashboard');
+    }
+
+    public function performance(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'adviser') {
+            \Helpers\Response::forbidden();
+            return;
+        }
+        $this->view->render('adviser/performance', [
+            'title' => 'Student Performance',
+            'user' => $user,
+            'activeNav' => 'performance',
+        ], 'layouts/dashboard');
+    }
+
+    public function communication(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'adviser') {
+            \Helpers\Response::forbidden();
+            return;
+        }
+        $this->view->render('adviser/communication', [
+            'title' => 'Communication Center',
+            'user' => $user,
+            'activeNav' => 'communication',
+        ], 'layouts/dashboard');
+    }
 }
 
 

@@ -94,15 +94,21 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('School chart not found or already initialized');
             return;
         }
+        
+        // Destroy any existing chart instance first
+        if (window.schoolAnalyticsChartInstance) {
+            try {
+                window.schoolAnalyticsChartInstance.destroy();
+            } catch (e) {
+                console.log('Error destroying existing school chart:', e);
+            }
+            window.schoolAnalyticsChartInstance = null;
+        }
+        
         window.schoolChartInitialized = true;
         console.log('Initializing school analytics chart...');
         
         try {
-            // Destroy existing chart instance if it exists
-            if (window.schoolAnalyticsChartInstance) {
-                window.schoolAnalyticsChartInstance.destroy();
-                window.schoolAnalyticsChartInstance = null;
-            }
             
             // Set fixed container height to prevent infinite growth
             const container = ctx.parentElement;
@@ -116,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.style.maxHeight = '300px';
             ctx.style.height = '300px';
             
-            window.schoolAnalyticsChartInstance = new Chart(ctx.getContext('2d'), {
+            window.schoolAnalyticsChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -210,6 +216,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
+            
+            // Force chart height after initialization
+            setTimeout(() => {
+                if (window.schoolAnalyticsChartInstance) {
+                    const canvas = window.schoolAnalyticsChartInstance.canvas;
+                    if (canvas) {
+                        canvas.style.maxHeight = '300px';
+                        canvas.style.height = '300px';
+                        canvas.style.minHeight = '300px';
+                        canvas.style.width = '100%';
+                        canvas.style.maxWidth = '100%';
+                    }
+                    
+                    // Force resize
+                    window.schoolAnalyticsChartInstance.resize();
+                }
+            }, 100);
+            
         } catch (error) {
             console.error('School chart initialization error:', error);
         }
@@ -222,29 +246,40 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Distribution chart not found or already initialized');
             return;
         }
+        
+        // Destroy any existing chart instance first
+        if (window.userDistributionChartInstance) {
+            try {
+                window.userDistributionChartInstance.destroy();
+            } catch (e) {
+                console.log('Error destroying existing distribution chart:', e);
+            }
+            window.userDistributionChartInstance = null;
+        }
+        
         window.distributionChartInitialized = true;
         console.log('Initializing user distribution chart...');
         
         try {
-            // Destroy existing chart instance if it exists
-            if (window.userDistributionChartInstance) {
-                window.userDistributionChartInstance.destroy();
-                window.userDistributionChartInstance = null;
-            }
             
             // Set fixed container height to prevent infinite growth
             const container = ctx.parentElement;
             if (container) {
                 container.style.height = '280px';
                 container.style.maxHeight = '280px';
+                container.style.minHeight = '280px';
                 container.style.overflow = 'hidden';
+                container.style.position = 'relative';
             }
             
-            // Set canvas dimensions
+            // Set canvas dimensions with strict constraints
             ctx.style.maxHeight = '280px';
             ctx.style.height = '280px';
+            ctx.style.minHeight = '280px';
+            ctx.style.width = '100%';
+            ctx.style.maxWidth = '100%';
             
-            window.userDistributionChartInstance = new Chart(ctx.getContext('2d'), {
+            window.userDistributionChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Students', 'Teachers', 'Parents', 'Admins'],
@@ -270,30 +305,53 @@ document.addEventListener('DOMContentLoaded', function() {
                     responsive: true,
                     maintainAspectRatio: false,
                     aspectRatio: 1,
+                    layout: {
+                        padding: {
+                            top: 5,
+                            bottom: 5,
+                            left: 5,
+                            right: 5
+                        }
+                    },
                     plugins: {
                         legend: {
                             position: 'bottom',
                             labels: {
                                 usePointStyle: true,
-                                padding: 15,
-                                boxWidth: 12
+                                padding: 10,
+                                boxWidth: 10,
+                                font: {
+                                    size: 11
+                                }
                             }
                         }
                     },
-                    cutout: '60%',
                     elements: {
                         arc: {
-                            borderWidth: 2
+                            borderWidth: 1
                         }
                     },
-                    layout: {
-                        padding: {
-                            top: 10,
-                            bottom: 10
-                        }
-                    }
+                    cutout: '60%'
                 }
             });
+            
+            // Force chart height after initialization
+            setTimeout(() => {
+                if (window.userDistributionChartInstance) {
+                    const canvas = window.userDistributionChartInstance.canvas;
+                    if (canvas) {
+                        canvas.style.maxHeight = '280px';
+                        canvas.style.height = '280px';
+                        canvas.style.minHeight = '280px';
+                        canvas.style.width = '100%';
+                        canvas.style.maxWidth = '100%';
+                    }
+                    
+                    // Force resize
+                    window.userDistributionChartInstance.resize();
+                }
+            }, 100);
+            
         } catch (error) {
             console.error('Distribution chart initialization error:', error);
         }
@@ -335,9 +393,64 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Monitor and fix chart heights
+    function monitorChartHeights() {
+        setInterval(() => {
+            // Check user distribution chart
+            const distributionCanvas = document.getElementById('userDistributionChart');
+            if (distributionCanvas && distributionCanvas.offsetHeight > 300) {
+                distributionCanvas.style.maxHeight = '280px';
+                distributionCanvas.style.height = '280px';
+                if (window.userDistributionChartInstance) {
+                    window.userDistributionChartInstance.resize();
+                }
+            }
+            
+            // Check school analytics chart
+            const analyticsCanvas = document.getElementById('schoolAnalyticsChart');
+            if (analyticsCanvas && analyticsCanvas.offsetHeight > 350) {
+                analyticsCanvas.style.maxHeight = '300px';
+                analyticsCanvas.style.height = '300px';
+                if (window.schoolAnalyticsChartInstance) {
+                    window.schoolAnalyticsChartInstance.resize();
+                }
+            }
+        }, 1000);
+    }
+
+    // Global cleanup function
+    function cleanupDashboard() {
+        // Reset chart initialization flags
+        window.schoolChartInitialized = false;
+        window.distributionChartInitialized = false;
+        
+        // Destroy existing chart instances
+        if (window.schoolAnalyticsChartInstance) {
+            try {
+                window.schoolAnalyticsChartInstance.destroy();
+            } catch (e) {
+                console.log('Error destroying school chart during cleanup:', e);
+            }
+            window.schoolAnalyticsChartInstance = null;
+        }
+        
+        if (window.userDistributionChartInstance) {
+            try {
+                window.userDistributionChartInstance.destroy();
+            } catch (e) {
+                console.log('Error destroying distribution chart during cleanup:', e);
+            }
+            window.userDistributionChartInstance = null;
+        }
+    }
+
     // Initialize all animations and charts (once only)
     try {
         console.log('Starting admin dashboard initialization...');
+        
+        // Clean up any existing instances first
+        cleanupDashboard();
+        
         setTimeout(() => {
             try {
                 animateCounters();
@@ -345,6 +458,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 initSchoolAnalyticsChart();
                 initUserDistributionChart();
                 addScrollAnimations();
+                monitorChartHeights();
                 console.log('Admin dashboard initialization completed successfully');
             } catch (error) {
                 console.error('Error during dashboard initialization:', error);

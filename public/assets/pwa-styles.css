@@ -1,0 +1,447 @@
+/**
+ * PWA Styles for Smart Student Monitoring System
+ * Provides styling for PWA-specific components and features
+ */
+
+/* PWA Install Button */
+#pwa-install-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+#pwa-install-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  color: white;
+}
+
+#pwa-install-btn:active {
+  transform: translateY(0);
+}
+
+/* PWA Offline Indicator */
+#pwa-offline-indicator {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  border: none;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* PWA Update Toast */
+#pwa-update-toast {
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#pwa-update-toast .toast-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  font-weight: 600;
+}
+
+#pwa-update-toast .toast-body {
+  padding: 1.5rem;
+  background: white;
+}
+
+/* PWA Connection Status */
+.pwa-connection-status {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  animation: slideInRight 0.3s ease-out;
+}
+
+.pwa-connection-status.online {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.pwa-connection-status.offline {
+  background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+  color: white;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* PWA Notification Styles */
+.pwa-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  min-width: 300px;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: slideInRight 0.3s ease-out;
+  overflow: hidden;
+}
+
+.pwa-notification.success {
+  border-left: 4px solid #28a745;
+}
+
+.pwa-notification.error {
+  border-left: 4px solid #dc3545;
+}
+
+.pwa-notification.warning {
+  border-left: 4px solid #ffc107;
+}
+
+.pwa-notification.info {
+  border-left: 4px solid #17a2b8;
+}
+
+.pwa-notification .notification-header {
+  padding: 1rem 1.5rem 0.5rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.pwa-notification .notification-body {
+  padding: 0 1.5rem 1rem;
+  color: #6c757d;
+}
+
+.pwa-notification .notification-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.pwa-notification .notification-close:hover {
+  background: #f8f9fa;
+  color: #495057;
+}
+
+/* PWA Loading States */
+.pwa-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.pwa-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* PWA Offline Content */
+.pwa-offline-content {
+  opacity: 0.7;
+  position: relative;
+}
+
+.pwa-offline-content::before {
+  content: 'Offline';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ffc107;
+  color: #212529;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 10;
+}
+
+/* PWA Sync Indicators */
+.pwa-sync-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #17a2b8;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  z-index: 9999;
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.pwa-sync-indicator.syncing {
+  background: #ffc107;
+  color: #212529;
+}
+
+.pwa-sync-indicator.success {
+  background: #28a745;
+}
+
+.pwa-sync-indicator.error {
+  background: #dc3545;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* PWA App Shell */
+.pwa-app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.pwa-app-shell .pwa-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pwa-app-shell .pwa-main {
+  flex: 1;
+  padding: 1rem;
+}
+
+.pwa-app-shell .pwa-footer {
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 1rem;
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* PWA Touch Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .pwa-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .pwa-touch-target button,
+  .pwa-touch-target a {
+    padding: 12px 16px;
+    font-size: 16px;
+  }
+  
+  .pwa-touch-target input,
+  .pwa-touch-target select,
+  .pwa-touch-target textarea {
+    font-size: 16px;
+    padding: 12px;
+  }
+}
+
+/* PWA Standalone Mode */
+@media (display-mode: standalone) {
+  .pwa-standalone-only {
+    display: block;
+  }
+  
+  .pwa-browser-only {
+    display: none;
+  }
+  
+  /* Hide browser UI elements */
+  .pwa-hide-browser-ui {
+    display: none;
+  }
+}
+
+@media not (display-mode: standalone) {
+  .pwa-standalone-only {
+    display: none;
+  }
+  
+  .pwa-browser-only {
+    display: block;
+  }
+}
+
+/* PWA Dark Mode Support */
+[data-theme="dark"] .pwa-notification {
+  background: #2d3748;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .pwa-notification .notification-header {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .pwa-notification .notification-body {
+  color: #a0aec0;
+}
+
+[data-theme="dark"] .pwa-app-shell .pwa-header {
+  background: #2d3748;
+  border-color: #4a5568;
+}
+
+[data-theme="dark"] .pwa-app-shell .pwa-footer {
+  background: #1a202c;
+  border-color: #4a5568;
+  color: #a0aec0;
+}
+
+/* PWA Animation Classes */
+.pwa-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.pwa-fade-out {
+  animation: fadeOut 0.3s ease-out;
+}
+
+.pwa-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.pwa-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+.pwa-slide-left {
+  animation: slideLeft 0.3s ease-out;
+}
+
+.pwa-slide-right {
+  animation: slideRight 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* PWA Responsive Design */
+@media (max-width: 768px) {
+  .pwa-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    min-width: auto;
+    max-width: none;
+  }
+  
+  .pwa-connection-status {
+    top: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  
+  .pwa-sync-indicator {
+    bottom: 10px;
+    left: 10px;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
+
+/* PWA Print Styles */
+@media print {
+  .pwa-notification,
+  .pwa-connection-status,
+  .pwa-sync-indicator,
+  #pwa-install-btn,
+  #pwa-offline-indicator {
+    display: none !important;
+  }
+}

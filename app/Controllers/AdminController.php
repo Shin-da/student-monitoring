@@ -414,6 +414,83 @@ class AdminController extends Controller
             ], 'layouts/dashboard');
         }
     }
+
+    public function settings(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'admin') {
+            \Helpers\Response::forbidden();
+            return;
+        }
+
+        $this->view->render('admin/settings', [
+            'title' => 'System Settings',
+            'user' => $user,
+            'activeNav' => 'settings',
+        ], 'layouts/dashboard');
+    }
+
+    public function reports(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'admin') {
+            \Helpers\Response::forbidden();
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        // Get user statistics for reports
+        $stmt = $pdo->prepare('SELECT role, COUNT(*) as count FROM users WHERE status = "active" GROUP BY role');
+        $stmt->execute();
+        $userStats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Calculate totals
+        $totalUsers = array_sum(array_column($userStats, 'count'));
+        $studentCount = 0;
+        $teacherCount = 0;
+        $parentCount = 0;
+
+        foreach ($userStats as $stat) {
+            switch ($stat['role']) {
+                case 'student':
+                    $studentCount = (int)$stat['count'];
+                    break;
+                case 'teacher':
+                    $teacherCount = (int)$stat['count'];
+                    break;
+                case 'parent':
+                    $parentCount = (int)$stat['count'];
+                    break;
+            }
+        }
+
+        $this->view->render('admin/reports', [
+            'title' => 'Reports & Analytics',
+            'user' => $user,
+            'activeNav' => 'reports',
+            'totalUsers' => $totalUsers,
+            'studentCount' => $studentCount,
+            'teacherCount' => $teacherCount,
+            'parentCount' => $parentCount,
+        ], 'layouts/dashboard');
+    }
+
+    public function logs(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'admin') {
+            \Helpers\Response::forbidden();
+            return;
+        }
+
+        $this->view->render('admin/logs', [
+            'title' => 'System Logs & Audit Trail',
+            'user' => $user,
+            'activeNav' => 'logs',
+        ], 'layouts/dashboard');
+    }
 }
 
 

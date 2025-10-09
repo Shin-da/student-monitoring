@@ -1,0 +1,119 @@
+/* Chart Height Fixes - Prevent Infinite Growth */
+
+/* User Distribution Chart Container */
+#userDistributionChart {
+  max-height: 280px !important;
+  height: 280px !important;
+  min-height: 280px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Chart container wrapper */
+.chart-container {
+  max-height: 280px !important;
+  height: 280px !important;
+  min-height: 280px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* School Analytics Chart */
+#schoolAnalyticsChart {
+  max-height: 300px !important;
+  height: 300px !important;
+  min-height: 300px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Chart.js canvas elements */
+canvas {
+  max-height: inherit !important;
+  height: inherit !important;
+  min-height: inherit !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+}
+
+/* Prevent chart from expanding parent containers */
+.card-body {
+  overflow: hidden !important;
+}
+
+/* Chart wrapper divs */
+.chart-wrapper {
+  max-height: 280px !important;
+  height: 280px !important;
+  min-height: 280px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Analytics chart wrapper */
+.analytics-chart-wrapper {
+  max-height: 300px !important;
+  height: 300px !important;
+  min-height: 300px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Force chart containers to respect height limits */
+[data-chart="distribution"] {
+  max-height: 280px !important;
+  height: 280px !important;
+  min-height: 280px !important;
+  overflow: hidden !important;
+}
+
+[data-chart="analytics"] {
+  max-height: 300px !important;
+  height: 300px !important;
+  min-height: 300px !important;
+  overflow: hidden !important;
+}
+
+/* Prevent any element from growing beyond chart containers */
+.chart-container * {
+  max-height: inherit !important;
+}
+
+/* Mobile responsive fixes */
+@media (max-width: 768px) {
+  #userDistributionChart,
+  #schoolAnalyticsChart {
+    max-height: 250px !important;
+    height: 250px !important;
+    min-height: 250px !important;
+  }
+  
+  .chart-container,
+  .chart-wrapper,
+  .analytics-chart-wrapper {
+    max-height: 250px !important;
+    height: 250px !important;
+    min-height: 250px !important;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  #userDistributionChart,
+  #schoolAnalyticsChart {
+    max-height: 200px !important;
+    height: 200px !important;
+    min-height: 200px !important;
+  }
+  
+  .chart-container,
+  .chart-wrapper,
+  .analytics-chart-wrapper {
+    max-height: 200px !important;
+    height: 200px !important;
+    min-height: 200px !important;
+  }
+}
