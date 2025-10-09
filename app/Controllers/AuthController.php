@@ -32,12 +32,18 @@ class AuthController extends Controller
             return;
         }
 
-        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
-        $pdo = Database::connection($config['database']);
+        try {
+            $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+            $pdo = Database::connection($config['database']);
 
-        $stmt = $pdo->prepare('SELECT id, name, role, password_hash, status FROM users WHERE email = :email LIMIT 1');
-        $stmt->execute(['email' => $email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $pdo->prepare('SELECT id, name, role, password_hash, status FROM users WHERE email = :email LIMIT 1');
+            $stmt->execute(['email' => $email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            $this->view->render('auth/login', ['title' => 'Login', 'error' => 'Login is temporarily unavailable. Please check database setup and try again.']);
+            return;
+        }
 
         if (!$user || !password_verify($password, $user['password_hash'] ?? '')) {
             $this->view->render('auth/login', ['title' => 'Login', 'error' => 'Invalid credentials']);

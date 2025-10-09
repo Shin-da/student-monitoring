@@ -30,9 +30,8 @@ class Database
         try {
             self::$pdo = new PDO($dsn, $config['username'], $config['password'], $options);
         } catch (PDOException $e) {
-            http_response_code(500);
-            echo 'Database connection failed.';
-            exit;
+            // Bubble up to caller so UI can render a proper error message
+            throw new PDOException('Database connection failed.', (int)$e->getCode(), $e);
         }
         return self::$pdo;
     }

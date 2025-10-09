@@ -5,7 +5,7 @@
       <p class="text-muted mb-0">Create a parent account linked to a specific student</p>
     </div>
     <div>
-  <a href="<?= \Helpers\Url::to('/admin/users') ?>" class="btn btn-outline-secondary btn-sm">
+      <a href="/admin/users" class="btn btn-outline-secondary btn-sm">
         <svg width="16" height="16" fill="currentColor">
           <use href="#icon-arrow-left"></use>
         </svg>
@@ -24,7 +24,7 @@
         </div>
       <?php endif; ?>
 
-  <form method="post" action="<?= \Helpers\Url::to('/admin/create-parent') ?>" id="createParentForm" novalidate>
+      <form method="post" action="/admin/create-parent">
         <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
         
         <div class="row g-3">

@@ -5,6 +5,7 @@
       <p class="text-muted mb-0">Manage user accounts, approvals, and permissions</p>
     </div>
     <div class="d-flex gap-2">
+<<<<<<< Updated upstream
       <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bulkActionsModal" id="bulkActionsBtn" disabled>
         <svg width="16" height="16" fill="currentColor">
           <use href="#icon-settings"></use>
@@ -13,6 +14,9 @@
         <span class="badge bg-primary ms-1" id="selectedCount">0</span>
       </button>
   <a href="<?= \Helpers\Url::to('/admin/create-user') ?>" class="btn btn-primary btn-sm">
+=======
+      <a href="<?= \Helpers\Url::to('/admin/create-user') ?>" class="btn btn-primary btn-sm">
+>>>>>>> Stashed changes
         <svg width="16" height="16" fill="currentColor">
           <use href="#icon-plus"></use>
         </svg>
@@ -206,6 +210,7 @@
             <?php endif; ?>
           </td>
           <td>
+<<<<<<< Updated upstream
             <div class="dropdown">
               <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
                 <svg width="14" height="14" fill="currentColor">
@@ -272,19 +277,66 @@
                   <button class="dropdown-item" onclick="viewUserDetails(<?= $userData['id'] ?>)">
                     <svg width="14" height="14" fill="currentColor" class="me-2">
                       <use href="#icon-eye"></use>
+=======
+            <div class="d-flex gap-1">
+              <?php if ($userData['status'] === 'pending'): ?>
+                <form method="post" action="<?= \Helpers\Url::to('/admin/approve-user') ?>" class="d-inline">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                  <input type="hidden" name="user_id" value="<?= $userData['id'] ?>">
+                  <button type="submit" class="btn btn-success btn-sm" title="Approve">
+                    <svg width="14" height="14" fill="currentColor">
+                      <use href="#icon-check"></use>
+>>>>>>> Stashed changes
                     </svg>
                     View Details
                   </button>
+<<<<<<< Updated upstream
                 </li>
                 <li>
                   <button class="dropdown-item" onclick="editUser(<?= $userData['id'] ?>)">
                     <svg width="14" height="14" fill="currentColor" class="me-2">
                       <use href="#icon-edit"></use>
+=======
+                </form>
+                <form method="post" action="<?= \Helpers\Url::to('/admin/reject-user') ?>" class="d-inline">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                  <input type="hidden" name="user_id" value="<?= $userData['id'] ?>">
+                  <button type="submit" class="btn btn-danger btn-sm" title="Reject" 
+                          onclick="return confirm('Are you sure you want to reject this user? This action cannot be undone.')">
+                    <svg width="14" height="14" fill="currentColor">
+                      <use href="#icon-x"></use>
+>>>>>>> Stashed changes
                     </svg>
                     Edit User
                   </button>
+<<<<<<< Updated upstream
                 </li>
               </ul>
+=======
+                </form>
+              <?php elseif ($userData['status'] === 'active' && $userData['id'] != $user['id']): ?>
+                <form method="post" action="<?= \Helpers\Url::to('/admin/suspend-user') ?>" class="d-inline">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                  <input type="hidden" name="user_id" value="<?= $userData['id'] ?>">
+                  <button type="submit" class="btn btn-warning btn-sm" title="Suspend"
+                          onclick="return confirm('Are you sure you want to suspend this user?')">
+                    <svg width="14" height="14" fill="currentColor">
+                      <use href="#icon-pause"></use>
+                    </svg>
+                  </button>
+                </form>
+              <?php elseif ($userData['status'] === 'suspended'): ?>
+                <form method="post" action="<?= \Helpers\Url::to('/admin/activate-user') ?>" class="d-inline">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                  <input type="hidden" name="user_id" value="<?= $userData['id'] ?>">
+                  <button type="submit" class="btn btn-success btn-sm" title="Activate">
+                    <svg width="14" height="14" fill="currentColor">
+                      <use href="#icon-play"></use>
+                    </svg>
+                  </button>
+                </form>
+              <?php endif; ?>
+>>>>>>> Stashed changes
             </div>
           </td>
         </tr>
@@ -300,7 +352,11 @@
     </svg>
     <h6 class="text-muted">No users found</h6>
     <p class="text-muted small">Create your first user account to get started.</p>
+<<<<<<< Updated upstream
   <a href="<?= \Helpers\Url::to('/admin/create-user') ?>" class="btn btn-primary btn-sm">Create User</a>
+=======
+    <a href="<?= \Helpers\Url::to('/admin/create-user') ?>" class="btn btn-primary btn-sm">Create User</a>
+>>>>>>> Stashed changes
   </div>
   <?php endif; ?>
 </div>

@@ -83,13 +83,13 @@ class AdminController extends Controller
 
         if (!Csrf::check($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
-            header('Location: /admin/users');
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
         $userId = (int)($_POST['user_id'] ?? 0);
         if (!$userId) {
-            header('Location: /admin/users');
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
@@ -109,7 +109,7 @@ class AdminController extends Controller
             'user_id' => $userId
         ]);
 
-        header('Location: /admin/users');
+        header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
     public function rejectUser(): void
@@ -122,13 +122,13 @@ class AdminController extends Controller
 
         if (!Csrf::check($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
-            header('Location: /admin/users');
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
         $userId = (int)($_POST['user_id'] ?? 0);
         if (!$userId) {
-            header('Location: /admin/users');
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
@@ -139,7 +139,7 @@ class AdminController extends Controller
         $stmt = $pdo->prepare('DELETE FROM users WHERE id = :user_id AND status = "pending"');
         $stmt->execute(['user_id' => $userId]);
 
-        header('Location: /admin/users');
+        header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
     public function suspendUser(): void
@@ -152,13 +152,13 @@ class AdminController extends Controller
 
         if (!Csrf::check($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
-            header('Location: /admin/users');
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
         $userId = (int)($_POST['user_id'] ?? 0);
         if (!$userId) {
-            header('Location: /admin/users');
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
@@ -172,7 +172,7 @@ class AdminController extends Controller
             'admin_id' => $user['id'] // Prevent admin from suspending themselves
         ]);
 
-        header('Location: /admin/users');
+        header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
     public function activateUser(): void
@@ -185,13 +185,13 @@ class AdminController extends Controller
 
         if (!Csrf::check($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
-            header('Location: /admin/users');
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
         $userId = (int)($_POST['user_id'] ?? 0);
         if (!$userId) {
-            header('Location: /admin/users');
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
@@ -202,7 +202,7 @@ class AdminController extends Controller
         $stmt = $pdo->prepare('UPDATE users SET status = "active" WHERE id = :user_id');
         $stmt->execute(['user_id' => $userId]);
 
-        header('Location: /admin/users');
+        header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
     public function createUser(): void
@@ -224,7 +224,7 @@ class AdminController extends Controller
 
         if (!Csrf::check($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
-            header('Location: /admin/create-user');
+            header('Location: ' . \Helpers\Url::to('/admin/create-user'));
             return;
         }
 
@@ -285,7 +285,7 @@ class AdminController extends Controller
             return;
         }
 
-        header('Location: /admin/users');
+        header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
     public function createParent(): void
@@ -322,7 +322,7 @@ class AdminController extends Controller
 
         if (!Csrf::check($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
-            header('Location: /admin/create-parent');
+            header('Location: ' . \Helpers\Url::to('/admin/create-parent'));
             return;
         }
 
@@ -402,7 +402,7 @@ class AdminController extends Controller
             ]);
 
             $pdo->commit();
-            header('Location: /admin/users');
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
 
         } catch (Exception $e) {
             $pdo->rollBack();
