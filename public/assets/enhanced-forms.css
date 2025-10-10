@@ -8,14 +8,14 @@
 /* Form Validation States */
 .form-control.is-invalid,
 .form-select.is-invalid {
-  border-color: var(--bs-danger);
-  box-shadow: 0 0 0 0.2rem rgba(var(--bs-danger-rgb), 0.25);
+  border-color: var(--color-danger-300);
+  box-shadow: 0 0 0 0.2rem var(--color-danger-100);
 }
 
 .form-control.is-valid,
 .form-select.is-valid {
-  border-color: var(--bs-success);
-  box-shadow: 0 0 0 0.2rem rgba(var(--bs-success-rgb), 0.25);
+  border-color: var(--color-success-300);
+  box-shadow: 0 0 0 0.2rem var(--color-success-100);
 }
 
 .invalid-feedback {
@@ -23,7 +23,7 @@
   width: 100%;
   margin-top: 0.25rem;
   font-size: 0.875rem;
-  color: var(--bs-danger);
+  color: var(--color-danger-300);
 }
 
 .valid-feedback {
@@ -31,7 +31,7 @@
   width: 100%;
   margin-top: 0.25rem;
   font-size: 0.875rem;
-  color: var(--bs-success);
+  color: var(--color-success-300);
 }
 
 /* Password Strength Indicator */
@@ -41,7 +41,7 @@
 
 .password-strength-bar {
   height: 4px;
-  background-color: var(--bs-gray-200);
+  background-color: var(--color-surface-400);
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 0.25rem;
@@ -54,11 +54,11 @@
 }
 
 .password-strength-fill.bg-danger {
-  background-color: var(--bs-danger) !important;
+  background-color: var(--color-danger-300) !important;
 }
 
 .password-strength-fill.bg-warning {
-  background-color: var(--bs-warning) !important;
+  background-color: var(--color-warning-300) !important;
 }
 
 .password-strength-fill.bg-success {

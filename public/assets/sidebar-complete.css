@@ -12,8 +12,10 @@
   --sidebar-toggle-z-index: 1060;
   
   /* Sidebar Colors */
-  --sidebar-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --sidebar-bg-dark: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  /* Unified glass palette for sidebar/nav */
+  --sidebar-bg: linear-gradient(140deg, rgba(15,23,42,0.55) 0%, rgba(148,163,184,0.12) 100%);
+  --sidebar-bg-dark: linear-gradient(140deg, rgba(2,6,23,0.55) 0%, rgba(148,163,184,0.12) 100%);
+  --sidebar-border: var(--color-border);
   --sidebar-text: rgba(255, 255, 255, 0.9);
   --sidebar-text-hover: rgba(255, 255, 255, 1);
   --sidebar-text-active: rgba(255, 255, 255, 1);
@@ -43,12 +45,15 @@
   width: var(--sidebar-width);
   height: 100vh;
   background: var(--sidebar-bg);
-  box-shadow: var(--sidebar-shadow);
+  box-shadow: 0 8px 32px rgba(2,6,23,0.18);
   z-index: var(--sidebar-z-index);
   transition: var(--sidebar-transition);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  backdrop-filter: saturate(160%) blur(8px);
+  -webkit-backdrop-filter: saturate(160%) blur(8px);
+  border-right: 1px solid var(--sidebar-border);
 }
 
 /* Dashboard container */
@@ -59,6 +64,7 @@
 }
 
 /* Main content area - needs margin to account for sidebar */
+
 .main-content {
   flex: 1;
   margin-left: var(--sidebar-width);
@@ -67,6 +73,16 @@
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg);
+  margin-top: 64px;
+}
+
+/* Sidebar collapsed state for main-content and dashboard-navbar */
+.sidebar.collapsed ~ .main-content {
+  margin-left: var(--sidebar-width-collapsed);
+}
+.sidebar.collapsed ~ .main-content .dashboard-navbar {
+  left: var(--sidebar-width-collapsed);
+  width: calc(100vw - var(--sidebar-width-collapsed));
 }
 
 /* Dashboard header */
@@ -81,12 +97,14 @@
 }
 
 /* Content area within main content */
+
 .content-area {
   flex: 1;
   padding: 2rem;
   background-color: var(--color-bg);
   color: var(--color-text);
   overflow-x: auto;
+  margin-top: 0;
 }
 
 /* Sidebar Scrollbar */
@@ -449,48 +467,62 @@
 
 .mobile-toggle {
   position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: var(--sidebar-toggle-z-index);
-  background: var(--color-primary);
+  top: 1.2rem;
+  left: 1.2rem;
+  z-index: 1100;
+  background: rgba(255,255,255,0.18);
   border: none;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: var(--sidebar-transition);
+  border-radius: 50%;
+  padding: 0.45rem 0.55rem;
+  color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(2,6,23,0.12);
+  transition: background var(--trans-fast), box-shadow var(--trans-fast), transform var(--trans-fast);
   cursor: pointer;
   display: none;
+  backdrop-filter: saturate(160%) blur(8px);
+  -webkit-backdrop-filter: saturate(160%) blur(8px);
+  outline: none;
 }
 
-.mobile-toggle:hover {
-  background: var(--color-primary);
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+
+.mobile-toggle:hover,
+.mobile-toggle:focus {
+  background: rgba(13,110,253,0.10);
+  box-shadow: 0 8px 32px rgba(2,6,23,0.18);
+  transform: scale(1.08);
 }
 
 .mobile-toggle:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
 }
 
-.mobile-toggle:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+.mobile-toggle-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 22px;
+  height: 22px;
+  position: relative;
 }
-
-.mobile-toggle svg {
-  width: 20px;
-  height: 20px;
-  transition: var(--sidebar-transition);
+.mobile-toggle-icon span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  margin: 3px 0;
+  background: var(--color-primary);
+  border-radius: 2px;
+  transition: background 0.2s, transform 0.3s;
+  box-shadow: 0 1px 4px rgba(2,6,23,0.08);
 }
-
-.mobile-toggle:hover svg {
-  transform: rotate(90deg);
+.mobile-toggle:active .mobile-toggle-icon span {
+  background: #0d6efd;
 }
 
 /* ========================================
    MOBILE OVERLAY
    ======================================== */
+
 
 .sidebar-overlay {
   position: fixed;
@@ -499,7 +531,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: var(--sidebar-overlay-z-index);
+  z-index: 900; /* Lower than sidebar (1000) */
   opacity: 0;
   visibility: hidden;
   transition: var(--sidebar-transition);

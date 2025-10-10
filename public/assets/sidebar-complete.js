@@ -101,12 +101,18 @@ class SidebarSystem {
     });
 
     // Section header clicks
+    // Section header clicks
+    // IMPORTANT: If using Bootstrap's data API (data-bs-toggle="collapse"),
+    // do NOT manually toggle here to avoid double-toggling which prevents closing.
     const sectionHeaders = this.elements.sidebar.querySelectorAll('.nav-section-header');
     sectionHeaders.forEach(header => {
-      this.addEventListener(header, 'click', (e) => {
-        e.preventDefault();
-        this.toggleSection(header);
-      });
+      // Only attach a manual toggle if no data API is present (fallback mode)
+      if (!header.hasAttribute('data-bs-toggle')) {
+        this.addEventListener(header, 'click', (e) => {
+          e.preventDefault();
+          this.toggleSection(header);
+        });
+      }
     });
 
     // Window resize
@@ -304,11 +310,16 @@ class SidebarSystem {
       const arrow = header.querySelector('.nav-section-arrow');
       
       if (collapse) {
-        // Check if Bootstrap is available
-        if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
-          const bsCollapse = new bootstrap.Collapse(collapse, {
-            toggle: true
-          });
+        // If Bootstrap data API is used on header, let it handle toggling; only update visuals shortly after
+        if (header.hasAttribute('data-bs-toggle') && typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+          // Visual sync after Bootstrap toggles
+          setTimeout(() => {
+            const isExpanded = collapse.classList.contains('show');
+            if (arrow) arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
+            header.setAttribute('aria-expanded', isExpanded);
+          }, 50);
+        } else if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+          const bsCollapse = new bootstrap.Collapse(collapse, { toggle: true });
         } else {
           // Fallback: Manual toggle
           collapse.classList.toggle('show');
@@ -555,6 +566,33 @@ class SidebarStateManager {
         arrow.style.transform = 'rotate(0deg)';
         header.setAttribute('aria-expanded', 'true');
       }
+
+      // Optional accordion behavior: close other open sections if sidebar opts in via data-accordion="true"
+      try {
+        const currentCollapse = e.target;
+        const currentSection = currentCollapse.closest('.nav-section');
+        const sidebar = currentCollapse.closest('.sidebar');
+        // Limit the scope within the sidebar to avoid unintended collapses elsewhere
+        if (sidebar && currentSection && sidebar.getAttribute('data-accordion') === 'true') {
+          const openCollapses = sidebar.querySelectorAll('.nav-section .collapse.show');
+          openCollapses.forEach(col => {
+            if (col !== currentCollapse) {
+              if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+                const inst = bootstrap.Collapse.getInstance(col) || new bootstrap.Collapse(col, { toggle: false });
+                inst.hide();
+              } else {
+                col.classList.remove('show');
+                const hdr = sidebar.querySelector(`[data-bs-target="#${col.id}"]`);
+                const arr = hdr?.querySelector('.nav-section-arrow');
+                if (hdr) hdr.setAttribute('aria-expanded', 'false');
+                if (arr) arr.style.transform = 'rotate(-90deg)';
+              }
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('Accordion auto-close failed:', err);
+      }
     });
 
     document.addEventListener('hidden.bs.collapse', (e) => {
@@ -709,8 +747,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.activeLinkManager = new ActiveLinkManager();
     
     console.log('✅ Complete sidebar system initialized successfully');
-    console.log('📱 Mobile toggle:', this.elements.toggle ? 'Available' : 'Not found');
-    console.log('🎨 Sidebar element:', this.elements.sidebar ? 'Found' : 'Not found');
+  const _dbgSidebar = document.querySelector('#sidebar');
+  const _dbgToggle = document.querySelector('#mobileToggle');
+  console.log('📱 Mobile toggle:', _dbgToggle ? 'Available' : 'Not found');
+  console.log('🎨 Sidebar element:', _dbgSidebar ? 'Found' : 'Not found');
     console.log('📊 State management:', 'Active');
     console.log('🔧 Bootstrap available:', typeof bootstrap !== 'undefined' ? 'Yes' : 'No');
     

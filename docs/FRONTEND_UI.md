@@ -20,6 +20,9 @@ Dark/Light theme support and responsive layout are included by default.
   - Keyboard navigation support
   - Smooth animations and transitions
   - Collapsible navigation sections
+  - Optional accordion behavior (one open section at a time) when the sidebar has `data-accordion="true"` (enabled by default in `resources/views/layouts/dashboard.php`)
+
+> Note: Legacy admin sidebar assets (`public/assets/admin-sidebar.js`, `public/assets/admin-sidebar.css`) were removed as unused to avoid conflicts with the complete sidebar system. Always include `sidebar-complete.js` in dashboard layouts.
 
 ### Chart System Fixes
 - **Files**: `public/assets/chart-fixes.css`, enhanced chart JS files

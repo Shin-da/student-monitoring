@@ -5,28 +5,28 @@
   border-radius: 0.5rem;
   margin-bottom: 0.5rem;
   transition: all 0.3s ease;
-  color: var(--bs-dark);
+  color: var(--color-text);
   background: transparent;
   border: 1px solid transparent;
 }
 
 .nav-pills .nav-link:hover {
-  background-color: var(--bs-primary-subtle);
-  color: var(--bs-primary);
-  border-color: var(--bs-primary-border-subtle);
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+  border-color: var(--color-primary-200);
 }
 
 .nav-pills .nav-link.active {
-  background-color: var(--bs-primary);
-  color: white;
-  border-color: var(--bs-primary);
+  background-color: var(--color-primary-600);
+  color: var(--color-text);
+  border-color: var(--color-primary-600);
 }
 
 /* Card styling */
 .card {
   border-radius: 0.75rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
   transition: all 0.3s ease;
 }
 
@@ -36,26 +36,26 @@
 
 .card-header {
   border-radius: 0.75rem 0.75rem 0 0 !important;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-  background: rgba(0,0,0,0.02);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-300);
   font-weight: 600;
 }
 
 /* Form controls */
 .form-control:focus,
 .form-select:focus {
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  border-color: var(--color-primary-600);
+  box-shadow: 0 0 0 0.25rem var(--color-primary-100);
 }
 
 .form-check-input:checked {
-  background-color: var(--bs-primary);
-  border-color: var(--bs-primary);
+  background-color: var(--color-primary-600);
+  border-color: var(--color-primary-600);
 }
 
 .form-check-input:focus {
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  border-color: var(--color-primary-600);
+  box-shadow: 0 0 0 0.25rem var(--color-primary-100);
 }
 
 /* Switch styling */
