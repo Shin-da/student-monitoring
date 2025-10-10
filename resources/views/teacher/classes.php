@@ -134,189 +134,32 @@ $title = 'Class Management';
     <!-- My Classes Tab -->
     <div class="tab-pane fade show active" id="classes" role="tabpanel">
       <div class="p-4">
-        <div class="row g-4">
-          <div class="col-lg-4">
-            <div class="class-card surface p-4">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <h5 class="fw-bold text-primary mb-1">Grade 10-A</h5>
-                  <p class="text-muted small mb-0">Mathematics</p>
-                </div>
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                    <svg class="icon" width="16" height="16" fill="currentColor">
-                      <use href="#icon-more"></use>
-                    </svg>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" onclick="editClass(1)">Edit Class</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="viewClassDetails(1)">View Details</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="archiveClass(1)">Archive Class</a></li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div class="row g-3 mb-3">
-                <div class="col-6">
-                  <div class="text-center">
-                    <div class="h4 fw-bold text-success mb-0">42</div>
-                    <div class="text-muted small">Students</div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="text-center">
-                    <div class="h4 fw-bold text-info mb-0">85%</div>
-                    <div class="text-muted small">Attendance</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span class="small fw-semibold">Schedule</span>
-                  <span class="small text-muted">Mon, Wed, Fri</span>
-                </div>
-                <div class="small text-muted">8:00 AM - 9:00 AM</div>
-              </div>
-              
-              <div class="d-grid gap-2">
-                <button class="btn btn-primary btn-sm" onclick="viewClassStudents(1)">
-                  <svg class="icon me-1" width="16" height="16" fill="currentColor">
-                    <use href="#icon-students"></use>
-                  </svg>
-                  View Students
-                </button>
-                <button class="btn btn-outline-secondary btn-sm" onclick="manageClassGrades(1)">
-                  <svg class="icon me-1" width="16" height="16" fill="currentColor">
-                    <use href="#icon-chart"></use>
-                  </svg>
-                  Manage Grades
-                </button>
-              </div>
-            </div>
+        <!-- Loading indicator -->
+        <div id="classes-loading" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading classes...</span>
           </div>
-          
-          <div class="col-lg-4">
-            <div class="class-card surface p-4">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <h5 class="fw-bold text-success mb-1">Grade 10-B</h5>
-                  <p class="text-muted small mb-0">Mathematics</p>
-                </div>
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                    <svg class="icon" width="16" height="16" fill="currentColor">
-                      <use href="#icon-more"></use>
-                    </svg>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" onclick="editClass(2)">Edit Class</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="viewClassDetails(2)">View Details</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="archiveClass(2)">Archive Class</a></li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div class="row g-3 mb-3">
-                <div class="col-6">
-                  <div class="text-center">
-                    <div class="h4 fw-bold text-success mb-0">38</div>
-                    <div class="text-muted small">Students</div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="text-center">
-                    <div class="h4 fw-bold text-info mb-0">92%</div>
-                    <div class="text-muted small">Attendance</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span class="small fw-semibold">Schedule</span>
-                  <span class="small text-muted">Tue, Thu</span>
-                </div>
-                <div class="small text-muted">9:00 AM - 10:00 AM</div>
-              </div>
-              
-              <div class="d-grid gap-2">
-                <button class="btn btn-primary btn-sm" onclick="viewClassStudents(2)">
-                  <svg class="icon me-1" width="16" height="16" fill="currentColor">
-                    <use href="#icon-students"></use>
-                  </svg>
-                  View Students
-                </button>
-                <button class="btn btn-outline-secondary btn-sm" onclick="manageClassGrades(2)">
-                  <svg class="icon me-1" width="16" height="16" fill="currentColor">
-                    <use href="#icon-chart"></use>
-                  </svg>
-                  Manage Grades
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div class="col-lg-4">
-            <div class="class-card surface p-4">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <h5 class="fw-bold text-warning mb-1">Grade 9-A</h5>
-                  <p class="text-muted small mb-0">Science</p>
-                </div>
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                    <svg class="icon" width="16" height="16" fill="currentColor">
-                      <use href="#icon-more"></use>
-                    </svg>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" onclick="editClass(3)">Edit Class</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="viewClassDetails(3)">View Details</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="archiveClass(3)">Archive Class</a></li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div class="row g-3 mb-3">
-                <div class="col-6">
-                  <div class="text-center">
-                    <div class="h4 fw-bold text-success mb-0">45</div>
-                    <div class="text-muted small">Students</div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="text-center">
-                    <div class="h4 fw-bold text-info mb-0">88%</div>
-                    <div class="text-muted small">Attendance</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span class="small fw-semibold">Schedule</span>
-                  <span class="small text-muted">Mon, Wed</span>
-                </div>
-                <div class="small text-muted">10:00 AM - 11:00 AM</div>
-              </div>
-              
-              <div class="d-grid gap-2">
-                <button class="btn btn-primary btn-sm" onclick="viewClassStudents(3)">
-                  <svg class="icon me-1" width="16" height="16" fill="currentColor">
-                    <use href="#icon-students"></use>
-                  </svg>
-                  View Students
-                </button>
-                <button class="btn btn-outline-secondary btn-sm" onclick="manageClassGrades(3)">
-                  <svg class="icon me-1" width="16" height="16" fill="currentColor">
-                    <use href="#icon-chart"></use>
-                  </svg>
-                  Manage Grades
-                </button>
-              </div>
-            </div>
-          </div>
+          <p class="text-muted mt-2">Loading your classes...</p>
+        </div>
+        
+        <!-- Empty state -->
+        <div id="classes-empty" class="text-center py-5" style="display: none;">
+          <svg class="icon text-muted mb-3" width="48" height="48" fill="currentColor">
+            <use href="#icon-sections"></use>
+          </svg>
+          <h5 class="text-muted">No classes yet</h5>
+          <p class="text-muted">Create your first class to get started!</p>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClassModal">
+            <svg class="icon me-2" width="16" height="16" fill="currentColor">
+              <use href="#icon-plus"></use>
+            </svg>
+            Create Class
+          </button>
+        </div>
+        
+        <!-- Dynamic classes container -->
+        <div id="classes-container" class="row g-4" style="display: none;">
+          <!-- Classes will be dynamically loaded here -->
         </div>
       </div>
     </div>
@@ -676,11 +519,11 @@ $title = 'Class Management';
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Class Name</label>
-              <input type="text" class="form-control" placeholder="e.g., Grade 10-A" required>
+              <input type="text" id="class_name" class="form-control" placeholder="e.g., Grade 10-A" required>
             </div>
             <div class="col-md-6">
               <label class="form-label">Subject</label>
-              <select class="form-select" required>
+              <select id="subject" class="form-select" required>
                 <option value="">Select Subject</option>
                 <option value="mathematics">Mathematics</option>
                 <option value="science">Science</option>
@@ -691,7 +534,7 @@ $title = 'Class Management';
             </div>
             <div class="col-md-6">
               <label class="form-label">Grade Level</label>
-              <select class="form-select" required>
+              <select id="grade_level" class="form-select" required>
                 <option value="">Select Grade</option>
                 <option value="7">Grade 7</option>
                 <option value="8">Grade 8</option>
@@ -703,19 +546,19 @@ $title = 'Class Management';
             </div>
             <div class="col-md-6">
               <label class="form-label">Section</label>
-              <input type="text" class="form-control" placeholder="e.g., A, B, C" required>
+              <input type="text" id="section" class="form-control" placeholder="e.g., A, B, C" required>
             </div>
             <div class="col-md-6">
               <label class="form-label">Room</label>
-              <input type="text" class="form-control" placeholder="e.g., Room 101">
+              <input type="text" id="room" class="form-control" placeholder="e.g., Room 101">
             </div>
             <div class="col-md-6">
               <label class="form-label">Max Students</label>
-              <input type="number" class="form-control" placeholder="50" min="1" max="100">
+              <input type="number" id="max_students" class="form-control" placeholder="50" min="1" max="200">
             </div>
             <div class="col-12">
               <label class="form-label">Description</label>
-              <textarea class="form-control" rows="3" placeholder="Class description..."></textarea>
+              <textarea id="description" class="form-control" rows="3" placeholder="Class description..."></textarea>
             </div>
           </div>
         </form>
@@ -927,6 +770,21 @@ function viewClassDetails(classId) {
   showNotification(`Viewing class details ${classId}...`, { type: 'info' });
 }
 
+// Notification shim to avoid ReferenceError if global helper is missing
+if (typeof window.showNotification !== 'function') {
+  window.showNotification = function(message, options) {
+    var type = (options && options.type) || 'info';
+    if (window.notificationSystem && typeof window.notificationSystem.show === 'function') {
+      if (typeof window.notificationSystem[type] === 'function') {
+        return window.notificationSystem[type](message);
+      }
+      return window.notificationSystem.show(message, { type: type });
+    }
+    try { console.log('[Notification]', type.toUpperCase() + ':', message); } catch(e) {}
+    if (typeof alert === 'function') alert(message);
+  };
+}
+
 function archiveClass(classId) {
   if (confirm('Are you sure you want to archive this class?')) {
     showNotification(`Class ${classId} archived successfully!`, { type: 'success' });
@@ -983,10 +841,236 @@ function exportSchedule() {
 }
 
 function createClass() {
-  showNotification('Class created successfully!', { type: 'success' });
-  const modal = bootstrap.Modal.getInstance(document.getElementById('createClassModal'));
-  modal.hide();
+  const className = document.getElementById('class_name').value.trim();
+  const subject = document.getElementById('subject').value.trim();
+  const gradeLevel = document.getElementById('grade_level').value.trim();
+  const section = document.getElementById('section').value.trim();
+  const room = document.getElementById('room').value.trim();
+  const maxStudentsVal = document.getElementById('max_students').value.trim();
+  const description = document.getElementById('description').value.trim();
+
+  if (!className || !subject || !gradeLevel || !section) {
+    showNotification('Please fill all required fields.', { type: 'error' });
+    return;
+  }
+  const maxStudents = maxStudentsVal ? parseInt(maxStudentsVal, 10) : null;
+  if (maxStudents !== null && (isNaN(maxStudents) || maxStudents < 1 || maxStudents > 200)) {
+    showNotification('Max students must be between 1 and 200.', { type: 'error' });
+    return;
+  }
+
+  const payload = {
+    class_name: className,
+    subject: subject,
+    grade_level: gradeLevel,
+    section: section,
+    room: room || null,
+    max_students: maxStudents,
+    description: description || null
+  };
+
+  const base = (window.__BASE_PATH__ || '/student-monitoring').replace(/\/$/, '');
+  console.log('Creating class with payload:', payload);
+  console.log('Base path:', base);
+  fetch(base + '/api/teacher/create_class.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload),
+    credentials: 'same-origin'
+  })
+  .then(r => {
+    console.log('Response status:', r.status);
+    console.log('Response headers:', r.headers);
+    return r.text();
+  })
+  .then(text => {
+    console.log('Raw response:', text);
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      throw new Error('Invalid JSON response: ' + text.substring(0, 200));
+    }
+    if (!json || !json.success) throw new Error((json && json.message) || 'Failed to create class');
+    showNotification('Class created successfully!', { type: 'success' });
+    const modal = bootstrap.Modal.getInstance(document.getElementById('createClassModal'));
+    if (modal) modal.hide();
+    document.getElementById('createClassForm').reset();
+    refreshClasses();
+    if (typeof refreshSections === 'function') refreshSections();
+  })
+  .catch(err => {
+    showNotification(err.message || 'Server error', { type: 'error' });
+  });
 }
+
+// Global variables for real-time updates
+let classesPollingInterval = null;
+let lastClassesCount = 0;
+
+function refreshClasses() {
+  const base = (window.__BASE_PATH__ || '/student-monitoring').replace(/\/$/, '');
+  
+  fetch(base + '/api/teacher/fetch_classes.php', { 
+    headers: { 'Accept': 'application/json' },
+    cache: 'no-cache'
+  })
+    .then(r => r.text())
+    .then(text => {
+      let json;
+      try {
+        json = JSON.parse(text);
+      } catch (e) {
+        console.error('Failed to parse classes response:', e);
+        return;
+      }
+      
+      if (!json || !json.success) {
+        console.error('Failed to fetch classes:', json?.message);
+        return;
+      }
+      
+      renderClasses(json.data || []);
+      
+      // Check for new classes
+      const currentCount = json.data?.length || 0;
+      if (currentCount > lastClassesCount && lastClassesCount > 0) {
+        showNotification(`New class created! Total: ${currentCount}`, { type: 'success' });
+      }
+      lastClassesCount = currentCount;
+    })
+    .catch(err => {
+      console.error('Error fetching classes:', err);
+    });
+}
+
+function renderClasses(classes) {
+  const container = document.getElementById('classes-container');
+  const loading = document.getElementById('classes-loading');
+  const empty = document.getElementById('classes-empty');
+  
+  // Hide loading
+  if (loading) loading.style.display = 'none';
+  
+  if (!classes || classes.length === 0) {
+    // Show empty state
+    if (empty) empty.style.display = 'block';
+    if (container) container.style.display = 'none';
+    return;
+  }
+  
+  // Hide empty state
+  if (empty) empty.style.display = 'none';
+  
+  // Show container and render classes
+  if (container) {
+    container.style.display = 'block';
+    container.innerHTML = classes.map(classData => `
+      <div class="col-lg-4">
+        <div class="class-card surface p-4">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h5 class="fw-bold text-primary mb-1">${escapeHtml(classData.class_name)}</h5>
+              <p class="text-muted small mb-0">${escapeHtml(classData.subject)}</p>
+            </div>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                <svg class="icon" width="16" height="16" fill="currentColor">
+                  <use href="#icon-more"></use>
+                </svg>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" onclick="editClass(${classData.id})">Edit Class</a></li>
+                <li><a class="dropdown-item" href="#" onclick="viewClassDetails(${classData.id})">View Details</a></li>
+                <li><a class="dropdown-item" href="#" onclick="archiveClass(${classData.id})">Archive Class</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="row g-3 mb-3">
+            <div class="col-6">
+              <div class="text-center">
+                <div class="h4 fw-bold text-success mb-0">${classData.student_count}</div>
+                <div class="text-muted small">Students</div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="text-center">
+                <div class="h4 fw-bold text-info mb-0">${classData.attendance_rate}%</div>
+                <div class="text-muted small">Attendance</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small fw-semibold">Room</span>
+              <span class="small text-muted">${escapeHtml(classData.room)}</span>
+            </div>
+            <div class="small text-muted">Grade ${escapeHtml(classData.grade_level)} - Section ${escapeHtml(classData.section)}</div>
+          </div>
+          
+          <div class="d-grid gap-2">
+            <button class="btn btn-primary btn-sm" onclick="viewClassStudents(${classData.id})">
+              <svg class="icon me-1" width="16" height="16" fill="currentColor">
+                <use href="#icon-students"></use>
+              </svg>
+              View Students
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="manageClassGrades(${classData.id})">
+              <svg class="icon me-1" width="16" height="16" fill="currentColor">
+                <use href="#icon-chart"></use>
+              </svg>
+              Manage Grades
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function startClassesPolling() {
+  // Stop existing polling
+  if (classesPollingInterval) {
+    clearInterval(classesPollingInterval);
+  }
+  
+  // Initial load
+  refreshClasses();
+  
+  // Start polling every 5 seconds
+  classesPollingInterval = setInterval(refreshClasses, 5000);
+}
+
+function stopClassesPolling() {
+  if (classesPollingInterval) {
+    clearInterval(classesPollingInterval);
+    classesPollingInterval = null;
+  }
+}
+
+// Start polling when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  startClassesPolling();
+});
+
+// Stop polling when page is hidden
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    stopClassesPolling();
+  } else {
+    startClassesPolling();
+  }
+});
 
 function addStudent() {
   showNotification('Student added to class successfully!', { type: 'success' });

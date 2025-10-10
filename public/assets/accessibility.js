@@ -187,14 +187,20 @@ function showFieldError(field, message) {
 }
 
 function clearFieldError(field) {
-    const fieldGroup = field.closest('.mb-3, .form-group, .col');
-    fieldGroup.classList.remove('has-error');
-    field.removeAttribute('aria-invalid');
-    field.removeAttribute('aria-describedby');
-    
-    const errorMessage = fieldGroup.querySelector('.error-message');
-    if (errorMessage) {
-        errorMessage.remove();
+    if (!field) return;
+    const fieldGroup = field.closest && field.closest('.mb-3, .form-group, .col');
+    if (fieldGroup && fieldGroup.classList) {
+        fieldGroup.classList.remove('has-error');
+    }
+    if (field && field.removeAttribute) {
+        field.removeAttribute('aria-invalid');
+        field.removeAttribute('aria-describedby');
+    }
+    if (fieldGroup) {
+        const errorMessage = fieldGroup.querySelector('.error-message');
+        if (errorMessage && errorMessage.remove) {
+            errorMessage.remove();
+        }
     }
 }
 

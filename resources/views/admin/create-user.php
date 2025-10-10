@@ -5,11 +5,11 @@
       <p class="text-muted mb-0">Add a new user account to the system</p>
     </div>
     <div>
-<<<<<<< Updated upstream
+ Updated upstream
   <a href="<?= \Helpers\Url::to('/admin/users') ?>" class="btn btn-outline-secondary btn-sm">
-=======
+
       <a href="<?= \Helpers\Url::to('/admin/users') ?>" class="btn btn-outline-secondary btn-sm">
->>>>>>> Stashed changes
+ Stashed changes
         <svg width="16" height="16" fill="currentColor">
           <use href="#icon-arrow-left"></use>
         </svg>
@@ -28,11 +28,11 @@
         </div>
       <?php endif; ?>
 
-<<<<<<< Updated upstream
+Updated upstream
   <form method="post" action="<?= \Helpers\Url::to('/admin/create-user') ?>" id="createUserForm" novalidate>
-=======
+
       <form method="post" action="<?= \Helpers\Url::to('/admin/create-user') ?>">
->>>>>>> Stashed changes
+Stashed changes
         <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
         
         <div class="row g-3">
@@ -560,9 +560,13 @@ class CreateUserForm {
 
   submitForm() {
     // Show loading state
-    this.submitBtn.disabled = true;
-    this.submitBtn.querySelector('.btn-text').style.display = 'none';
-    this.submitBtn.querySelector('.btn-loading').style.display = 'inline-flex';
+      if (this.submitBtn) {
+        this.submitBtn.disabled = true;
+        var textEl = this.submitBtn.querySelector('.btn-text');
+        var loadingEl = this.submitBtn.querySelector('.btn-loading');
+        if (textEl) textEl.style.display = 'none';
+        if (loadingEl) loadingEl.style.display = 'inline-flex';
+      }
 
     // Simulate form submission (replace with actual API call)
     setTimeout(() => {
@@ -574,9 +578,13 @@ class CreateUserForm {
       this.updateNotesCount();
       
       // Reset button state
-      this.submitBtn.disabled = false;
-      this.submitBtn.querySelector('.btn-text').style.display = 'inline-flex';
-      this.submitBtn.querySelector('.btn-loading').style.display = 'none';
+      if (this.submitBtn) {
+        this.submitBtn.disabled = false;
+        var textEl2 = this.submitBtn.querySelector('.btn-text');
+        var loadingEl2 = this.submitBtn.querySelector('.btn-loading');
+        if (textEl2) textEl2.style.display = 'inline-flex';
+        if (loadingEl2) loadingEl2.style.display = 'none';
+      }
       
       // Clear validation states
       this.form.querySelectorAll('.is-valid, .is-invalid').forEach(field => {
@@ -600,6 +608,15 @@ class CreateUserForm {
 document.addEventListener('DOMContentLoaded', () => {
   new CreateUserForm();
 });
+  
+  // Backend integration (API wiring)
+  (function(){
+    const script = document.createElement('script');
+    script.src = "<?= \Helpers\Url::asset('assets/backendIntegration.js') ?>";
+    script.defer = true;
+    document.head.appendChild(script);
+  })();
+  
 </script>
 
 <style>
@@ -653,3 +670,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 }
 </style>
+ <script src="../js/adminCreateUser.js"></script>

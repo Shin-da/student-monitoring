@@ -69,6 +69,20 @@ class TeacherController extends Controller
         ], 'layouts/dashboard');
     }
 
+    public function sections(): void
+    {
+        $user = Session::get('user');
+        if (!$user || !in_array(($user['role'] ?? ''), ['teacher', 'adviser'], true)) {
+            \Helpers\Response::forbidden();
+            return;
+        }
+        $this->view->render('teacher/sections', [
+            'title' => 'My Sections',
+            'user' => $user,
+            'activeNav' => 'classes',
+        ], 'layouts/dashboard');
+    }
+
     public function assignments(): void
     {
         $user = Session::get('user');

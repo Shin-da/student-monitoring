@@ -28,6 +28,7 @@ $router->post('/admin/approve-user', [AdminController::class, 'approveUser']);
 $router->post('/admin/reject-user', [AdminController::class, 'rejectUser']);
 $router->post('/admin/suspend-user', [AdminController::class, 'suspendUser']);
 $router->post('/admin/activate-user', [AdminController::class, 'activateUser']);
+$router->post('/admin/delete-user', [AdminController::class, 'deleteUser']);
 $router->get('/admin/create-parent', [AdminController::class, 'createParent']);
 $router->post('/admin/create-parent', [AdminController::class, 'createParent']);
 $router->get('/admin/settings', [AdminController::class, 'settings']);
@@ -53,6 +54,7 @@ $router->get('/student/resources', [StudentController::class, 'resources']);
 // Teacher pages
 $router->get('/teacher/grades', [TeacherController::class, 'grades']);
 $router->get('/teacher/classes', [TeacherController::class, 'classes']);
+$router->get('/teacher/sections', [TeacherController::class, 'sections']);
 $router->get('/teacher/assignments', [TeacherController::class, 'assignments']);
 $router->get('/teacher/attendance', [TeacherController::class, 'attendance']);
 $router->get('/teacher/student-progress', [TeacherController::class, 'studentProgress']);

@@ -15,6 +15,7 @@
     <link href="<?= \Helpers\Url::asset('assets/accessibility.css') ?>" rel="stylesheet">
     <link href="<?= \Helpers\Url::asset('assets/performance.css') ?>" rel="stylesheet">
     <script>
+      window.__BASE_PATH__ = <?= json_encode(\Helpers\Url::basePath()) ?>;
       (function(){
         try{var p=localStorage.getItem('theme-preference')||'auto';var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var r=p==='auto'?(m?'dark':'light'):p;document.documentElement.setAttribute('data-theme',r==='dark'?'dark':'light');}catch(e){}
       })();

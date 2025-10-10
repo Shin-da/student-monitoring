@@ -109,6 +109,11 @@ class AdminController extends Controller
             'user_id' => $userId
         ]);
 
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'status' => 'active']);
+            return;
+        }
         header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
@@ -139,6 +144,11 @@ class AdminController extends Controller
         $stmt = $pdo->prepare('DELETE FROM users WHERE id = :user_id AND status = "pending"');
         $stmt->execute(['user_id' => $userId]);
 
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'deleted' => true]);
+            return;
+        }
         header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
@@ -172,6 +182,11 @@ class AdminController extends Controller
             'admin_id' => $user['id'] // Prevent admin from suspending themselves
         ]);
 
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'status' => 'suspended']);
+            return;
+        }
         header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
@@ -202,6 +217,55 @@ class AdminController extends Controller
         $stmt = $pdo->prepare('UPDATE users SET status = "active" WHERE id = :user_id');
         $stmt->execute(['user_id' => $userId]);
 
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'status' => 'active']);
+            return;
+        }
+        header('Location: ' . \Helpers\Url::to('/admin/users'));
+    }
+
+    public function deleteUser(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'admin') {
+            \Helpers\Response::forbidden();
+            return;
+        }
+
+        if (!\Helpers\Csrf::check($_POST['csrf_token'] ?? null)) {
+            http_response_code(419);
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'CSRF failed']);
+                return;
+            }
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
+            return;
+        }
+
+        $userId = (int)($_POST['user_id'] ?? 0);
+        if (!$userId || $userId === (int)$user['id']) {
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Invalid user id']);
+                return;
+            }
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        $stmt = $pdo->prepare('DELETE FROM users WHERE id = :user_id');
+        $ok = $stmt->execute(['user_id' => $userId]);
+
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => (bool)$ok, 'deleted' => (bool)$ok]);
+            return;
+        }
         header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
@@ -300,13 +364,12 @@ class AdminController extends Controller
             $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
             $pdo = Database::connection($config['database']);
 
-            // Get all active students for parent linking
+            // Get all active student users for parent linking (centralized)
             $stmt = $pdo->prepare('
-                SELECT s.id, s.lrn, u.name, s.grade_level 
-                FROM students s 
-                JOIN users u ON s.user_id = u.id 
-                WHERE u.status = "active" 
-                ORDER BY u.name
+                SELECT id, name, lrn, grade_level 
+                FROM users 
+                WHERE role = "student" AND status = "active" 
+                ORDER BY name
             ');
             $stmt->execute();
             $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -359,9 +422,9 @@ class AdminController extends Controller
             return;
         }
 
-        // Verify student exists
-        $stmt = $pdo->prepare('SELECT id FROM students WHERE id = :student_id LIMIT 1');
-        $stmt->execute(['student_id' => $studentId]);
+        // Verify student user exists
+        $stmt = $pdo->prepare('SELECT id FROM users WHERE id = :id AND role = "student" LIMIT 1');
+        $stmt->execute(['id' => $studentId]);
         if (!$stmt->fetch()) {
             $this->view->render('admin/create-parent', [
                 'title' => 'Create Parent Account',
@@ -390,15 +453,17 @@ class AdminController extends Controller
 
             $parentUserId = $pdo->lastInsertId();
 
-            // Create parent record linked to student
-            $insertParent = $pdo->prepare('
-                INSERT INTO parents (user_id, student_id, relationship) 
-                VALUES (:user_id, :student_id, :relationship)
+            // Link parent to student in centralized users table
+            $update = $pdo->prepare('
+                UPDATE users 
+                SET linked_student_user_id = :student_user_id,
+                    parent_relationship = :relationship
+                WHERE id = :parent_user_id
             ');
-            $insertParent->execute([
-                'user_id' => $parentUserId,
-                'student_id' => $studentId,
-                'relationship' => $relationship
+            $update->execute([
+                'student_user_id' => $studentId,
+                'relationship' => $relationship,
+                'parent_user_id' => $parentUserId,
             ]);
 
             $pdo->commit();

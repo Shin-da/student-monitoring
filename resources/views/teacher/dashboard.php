@@ -134,85 +134,32 @@
         <h5 class="fw-bold mb-0">My Sections</h5>
         <span class="text-muted small">Manage your assigned classes</span>
       </div>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <div class="action-card d-block p-3 border rounded-3 position-relative overflow-hidden" style="transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0.02) 100%);"></div>
-            <div class="position-relative">
-              <div class="d-flex align-items-center gap-3">
-                <div class="stat-icon bg-primary-subtle text-primary" style="width: 40px; height: 40px; transition: all 0.3s ease;">
-                  <svg width="20" height="20" fill="currentColor">
-                    <use href="#icon-sections"></use>
-                  </svg>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="fw-semibold">Grade 10-A</div>
-                  <div class="text-muted small">Mathematics • 42 students</div>
-                  <div class="text-muted small">Schedule: Mon, Wed, Fri 8:00-9:00 AM</div>
-                  <div class="progress mt-2" style="height: 3px;">
-                    <div class="progress-bar bg-primary" style="width: 85%" data-progress-to="85"></div>
-                  </div>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                  <button class="btn btn-sm btn-outline-primary">View</button>
-                  <button class="btn btn-sm btn-outline-secondary">Grades</button>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Loading indicator -->
+      <div id="sections-loading" class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading sections...</span>
         </div>
-        <div class="col-md-6">
-          <div class="action-card d-block p-3 border rounded-3 position-relative overflow-hidden" style="transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(25, 135, 84, 0.05) 0%, rgba(25, 135, 84, 0.02) 100%);"></div>
-            <div class="position-relative">
-              <div class="d-flex align-items-center gap-3">
-                <div class="stat-icon bg-success-subtle text-success" style="width: 40px; height: 40px; transition: all 0.3s ease;">
-                  <svg width="20" height="20" fill="currentColor">
-                    <use href="#icon-sections"></use>
-                  </svg>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="fw-semibold">Grade 10-B</div>
-                  <div class="text-muted small">Mathematics • 38 students</div>
-                  <div class="text-muted small">Schedule: Tue, Thu 9:00-10:00 AM</div>
-                  <div class="progress mt-2" style="height: 3px;">
-                    <div class="progress-bar bg-success" style="width: 78%" data-progress-to="78"></div>
-                  </div>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                  <button class="btn btn-sm btn-outline-primary">View</button>
-                  <button class="btn btn-sm btn-outline-secondary">Grades</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="action-card d-block p-3 border rounded-3 position-relative overflow-hidden" style="transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.05) 0%, rgba(255, 193, 7, 0.02) 100%);"></div>
-            <div class="position-relative">
-              <div class="d-flex align-items-center gap-3">
-                <div class="stat-icon bg-warning-subtle text-warning" style="width: 40px; height: 40px; transition: all 0.3s ease;">
-                  <svg width="20" height="20" fill="currentColor">
-                    <use href="#icon-sections"></use>
-                  </svg>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="fw-semibold">Grade 9-A</div>
-                  <div class="text-muted small">Science • 45 students</div>
-                  <div class="text-muted small">Schedule: Mon, Wed 10:00-11:00 AM</div>
-                  <div class="progress mt-2" style="height: 3px;">
-                    <div class="progress-bar bg-warning" style="width: 92%" data-progress-to="92"></div>
-                  </div>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                  <button class="btn btn-sm btn-outline-primary">View</button>
-                  <button class="btn btn-sm btn-outline-secondary">Grades</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <p class="text-muted mt-2">Loading your sections...</p>
+      </div>
+      
+      <!-- Empty state -->
+      <div id="sections-empty" class="text-center py-5" style="display: none;">
+        <svg class="icon text-muted mb-3" width="48" height="48" fill="currentColor">
+          <use href="#icon-sections"></use>
+        </svg>
+        <h5 class="text-muted">No sections yet</h5>
+        <p class="text-muted">Create your first class to get started!</p>
+        <button class="btn btn-primary" onclick="location.href='/teacher/classes'">
+          <svg class="icon me-2" width="16" height="16" fill="currentColor">
+            <use href="#icon-plus"></use>
+          </svg>
+          Go to Classes
+        </button>
+      </div>
+      
+      <!-- Dynamic sections container -->
+      <div id="sections-container" class="row g-3" style="display: none;">
+        <!-- Sections will be dynamically loaded here -->
       </div>
     </div>
   </div>
@@ -362,7 +309,155 @@ document.getElementById('quickGradeForm').addEventListener('submit', function(e)
 </script>
 
 
- 
- < ! - -   T e a c h e r   D a s h b o a r d   S c r i p t s   - - >  
- < s c r i p t   s r c = " / a s s e t s / s t u d e n t - d a s h b o a r d . j s " > < / s c r i p t >  
+
+ 
+<!-- Teacher Dashboard Scripts -->
+<script>
+// Global variables for real-time updates
+let sectionsPollingInterval = null;
+let lastSectionsCount = 0;
+
+function refreshSections() {
+  const base = (window.__BASE_PATH__ || '/student-monitoring').replace(/\/$/, '');
+  
+  fetch(base + '/api/teacher/fetch_classes.php', { 
+    headers: { 'Accept': 'application/json' },
+    cache: 'no-cache'
+  })
+    .then(r => r.text())
+    .then(text => {
+      let json;
+      try {
+        json = JSON.parse(text);
+      } catch (e) {
+        console.error('Failed to parse sections response:', e);
+        return;
+      }
+      
+      if (!json || !json.success) {
+        console.error('Failed to fetch sections:', json?.message);
+        return;
+      }
+      
+      renderSections(json.data || []);
+      
+      // Check for new sections
+      const currentCount = json.data?.length || 0;
+      if (currentCount > lastSectionsCount && lastSectionsCount > 0) {
+        showNotification(`New section created! Total: ${currentCount}`, { type: 'success' });
+      }
+      lastSectionsCount = currentCount;
+    })
+    .catch(err => {
+      console.error('Error fetching sections:', err);
+    });
+}
+
+function renderSections(sections) {
+  const container = document.getElementById('sections-container');
+  const loading = document.getElementById('sections-loading');
+  const empty = document.getElementById('sections-empty');
+  
+  // Hide loading
+  if (loading) loading.style.display = 'none';
+  
+  if (!sections || sections.length === 0) {
+    // Show empty state
+    if (empty) empty.style.display = 'block';
+    if (container) container.style.display = 'none';
+    return;
+  }
+  
+  // Hide empty state
+  if (empty) empty.style.display = 'none';
+  
+  // Show container and render sections
+  if (container) {
+    container.style.display = 'block';
+    container.innerHTML = sections.map(sectionData => `
+      <div class="col-md-6">
+        <div class="action-card d-block p-3 border rounded-3 position-relative overflow-hidden" style="transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0.02) 100%);"></div>
+          <div class="position-relative">
+            <div class="d-flex align-items-center gap-3">
+              <div class="stat-icon bg-primary-subtle text-primary" style="width: 40px; height: 40px; transition: all 0.3s ease;">
+                <svg width="20" height="20" fill="currentColor">
+                  <use href="#icon-sections"></use>
+                </svg>
+              </div>
+              <div class="flex-grow-1">
+                <div class="fw-semibold">${escapeHtml(sectionData.class_name)}</div>
+                <div class="text-muted small">${escapeHtml(sectionData.subject)} • ${sectionData.student_count} students</div>
+                <div class="text-muted small">Room: ${escapeHtml(sectionData.room)}</div>
+                <div class="progress mt-2" style="height: 3px;">
+                  <div class="progress-bar bg-primary" style="width: ${sectionData.attendance_rate}%" data-progress-to="${sectionData.attendance_rate}"></div>
+                </div>
+              </div>
+              <div class="d-flex flex-column gap-1">
+                <button class="btn btn-sm btn-outline-primary" onclick="location.href='/teacher/classes'">View</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="location.href='/grade'">Grades</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function startSectionsPolling() {
+  // Stop existing polling
+  if (sectionsPollingInterval) {
+    clearInterval(sectionsPollingInterval);
+  }
+  
+  // Initial load
+  refreshSections();
+  
+  // Start polling every 5 seconds
+  sectionsPollingInterval = setInterval(refreshSections, 5000);
+}
+
+function stopSectionsPolling() {
+  if (sectionsPollingInterval) {
+    clearInterval(sectionsPollingInterval);
+    sectionsPollingInterval = null;
+  }
+}
+
+// Shim for showNotification
+if (typeof window.showNotification === 'undefined') {
+    window.showNotification = function(message, options = {}) {
+        if (window.notificationSystem) {
+            const type = options.type || 'info';
+            window.notificationSystem[type](message, options);
+        } else {
+            console.log(`Notification: ${message} (Type: ${options.type || 'info'})`);
+            alert(message);
+        }
+    };
+}
+
+// Start polling when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  startSectionsPolling();
+});
+
+// Stop polling when page is hidden
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    stopSectionsPolling();
+  } else {
+    startSectionsPolling();
+  }
+});
+</script>
+ 
  
