@@ -110,11 +110,14 @@ class AdminController extends Controller
             'user_id' => $userId
         ]);
 
+<<<<<<< Updated upstream
         if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'status' => 'active']);
             return;
         }
+=======
+>>>>>>> Stashed changes
         header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
@@ -145,11 +148,14 @@ class AdminController extends Controller
         $stmt = $pdo->prepare('DELETE FROM users WHERE id = :user_id AND status = "pending"');
         $stmt->execute(['user_id' => $userId]);
 
+<<<<<<< Updated upstream
         if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'deleted' => true]);
             return;
         }
+=======
+>>>>>>> Stashed changes
         header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
@@ -183,11 +189,14 @@ class AdminController extends Controller
             'admin_id' => $user['id'] // Prevent admin from suspending themselves
         ]);
 
+<<<<<<< Updated upstream
         if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'status' => 'suspended']);
             return;
         }
+=======
+>>>>>>> Stashed changes
         header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
@@ -218,6 +227,7 @@ class AdminController extends Controller
         $stmt = $pdo->prepare('UPDATE users SET status = "active" WHERE id = :user_id');
         $stmt->execute(['user_id' => $userId]);
 
+<<<<<<< Updated upstream
         if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'status' => 'active']);
@@ -267,6 +277,8 @@ class AdminController extends Controller
             echo json_encode(['success' => (bool)$ok, 'deleted' => (bool)$ok]);
             return;
         }
+=======
+>>>>>>> Stashed changes
         header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
