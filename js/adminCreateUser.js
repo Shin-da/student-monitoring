@@ -1,4 +1,5 @@
 (function(){
+  // MODIFIED BY CURSOR on 2025-10-13: Route student creation to /admin/create_student.php with JSON payload
   'use strict';
 
   document.addEventListener('DOMContentLoaded', function(){
@@ -64,6 +65,29 @@
 
       var base = (window.__BASE_PATH__ || '').replace(/\/$/, '');
       var endpoint = base + '/api/create_user.php';
+      // If creating a student, use dedicated transactional endpoint
+      if (role === 'student') {
+        endpoint = base + '/admin/create_student.php';
+        // Map available role-specific fields if present in DOM
+        var sectionIdEl = document.getElementById('section_id');
+        var schoolYearEl = document.getElementById('school_year');
+        var adviserIdEl = document.getElementById('adviser_id');
+        var contactNameEl = document.getElementById('contact_name');
+        var emergencyEl = document.getElementById('emergency_contact');
+        var relationshipEl = document.getElementById('relationship');
+        var addressEl = document.getElementById('address');
+
+        if (studentIdAsLRN) payload.lrn = studentIdAsLRN;
+        if (gradeLevel) payload.grade_level = parseInt(gradeLevel, 10) || null;
+        // Optional extended fields (send only if present)
+        if (sectionIdEl && sectionIdEl.value) payload.section_id = parseInt(sectionIdEl.value, 10) || null;
+        if (schoolYearEl && schoolYearEl.value) payload.school_year = schoolYearEl.value.trim();
+        if (adviserIdEl && adviserIdEl.value) payload.adviser_id = parseInt(adviserIdEl.value, 10) || null;
+        if (contactNameEl && contactNameEl.value) payload.contact_name = contactNameEl.value.trim();
+        if (emergencyEl && emergencyEl.value) payload.emergency_contact = emergencyEl.value.trim();
+        if (relationshipEl && relationshipEl.value) payload.relationship = relationshipEl.value.trim();
+        if (addressEl && addressEl.value) payload.address = addressEl.value.trim();
+      }
       fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

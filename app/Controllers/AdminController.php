@@ -1,4 +1,5 @@
 <?php
+// MODIFIED BY CURSOR on 2025-10-13: Fix student listing query to join students table for lrn/grade_level
 declare(strict_types=1);
 
 namespace Controllers;
@@ -364,12 +365,13 @@ class AdminController extends Controller
             $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
             $pdo = Database::connection($config['database']);
 
-            // Get all active student users for parent linking (centralized)
+            // Get all active student users for parent linking with student details
             $stmt = $pdo->prepare('
-                SELECT id, name, lrn, grade_level 
-                FROM users 
-                WHERE role = "student" AND status = "active" 
-                ORDER BY name
+                SELECT u.id AS id, u.name AS name, s.lrn, s.grade_level
+                FROM users u
+                JOIN students s ON s.user_id = u.id
+                WHERE u.role = "student" AND u.status = "active"
+                ORDER BY u.name
             ');
             $stmt->execute();
             $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
