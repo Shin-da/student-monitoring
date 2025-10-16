@@ -5,11 +5,11 @@
       <p class="text-muted mb-0">Add a new user account to the system</p>
     </div>
     <div>
- Updated upstream
+
   <a href="<?= \Helpers\Url::to('/admin/users') ?>" class="btn btn-outline-secondary btn-sm">
 
       <a href="<?= \Helpers\Url::to('/admin/users') ?>" class="btn btn-outline-secondary btn-sm">
- Stashed changes
+
         <svg width="16" height="16" fill="currentColor">
           <use href="#icon-arrow-left"></use>
         </svg>
@@ -28,11 +28,11 @@
         </div>
       <?php endif; ?>
 
-Updated upstream
+
   <form method="post" action="<?= \Helpers\Url::to('/admin/create-user') ?>" id="createUserForm" novalidate>
 
       <form method="post" action="<?= \Helpers\Url::to('/admin/create-user') ?>">
-Stashed changes
+
         <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
         
         <div class="row g-3">
