@@ -563,4 +563,98 @@ class StaticData
             ]
         ];
     }
+
+    /**
+     * TEACHER GRADES STATIC DATA (for grades management page)
+     */
+    public static function getTeacherGradesData(): array
+    {
+        return [
+            [
+                'id' => 1,
+                'student_id' => 1,
+                'student_name' => 'Alice Johnson',
+                'lrn' => 'LRN000001',
+                'class_name' => 'Grade 10-A',
+                'subject_name' => 'Mathematics',
+                'description' => 'Quiz 3 - Trigonometry',
+                'grade_type' => 'quiz',
+                'grade_value' => 95.0,
+                'max_score' => 100.0,
+                'max_grade' => 100.0,
+                'percentage' => 95.0,
+                'grade_date' => '2025-01-17',
+                'graded_at' => '2025-01-17 14:30:00',
+                'status' => 'passing'
+            ],
+            [
+                'id' => 2,
+                'student_id' => 2,
+                'student_name' => 'Bob Smith',
+                'lrn' => 'LRN000002',
+                'class_name' => 'Grade 10-A',
+                'subject_name' => 'Mathematics',
+                'description' => 'Quiz 3 - Trigonometry',
+                'grade_type' => 'quiz',
+                'grade_value' => 78.0,
+                'max_score' => 100.0,
+                'max_grade' => 100.0,
+                'percentage' => 78.0,
+                'grade_date' => '2025-01-17',
+                'graded_at' => '2025-01-17 14:30:00',
+                'status' => 'passing'
+            ],
+            [
+                'id' => 3,
+                'student_id' => 3,
+                'student_name' => 'Carol Davis',
+                'lrn' => 'LRN000003',
+                'class_name' => 'Grade 10-A',
+                'subject_name' => 'Science',
+                'description' => 'Lab Report 2',
+                'grade_type' => 'lab_report',
+                'grade_value' => 88.0,
+                'max_score' => 100.0,
+                'max_grade' => 100.0,
+                'percentage' => 88.0,
+                'grade_date' => '2025-01-16',
+                'graded_at' => '2025-01-16 16:45:00',
+                'status' => 'passing'
+            ],
+            [
+                'id' => 4,
+                'student_id' => 4,
+                'student_name' => 'David Wilson',
+                'lrn' => 'LRN000004',
+                'class_name' => 'Grade 10-B',
+                'subject_name' => 'Physics',
+                'description' => 'Problem Set 1',
+                'grade_type' => 'homework',
+                'grade_value' => 65.0,
+                'max_score' => 50.0,
+                'max_grade' => 50.0,
+                'percentage' => 65.0,
+                'grade_date' => '2025-01-15',
+                'graded_at' => '2025-01-15 10:20:00',
+                'status' => 'failing'
+            ],
+            [
+                'id' => 5,
+                'student_id' => 5,
+                'student_name' => 'Emma Brown',
+                'lrn' => 'LRN000005',
+                'class_name' => 'Grade 10-A',
+                'subject_name' => 'English',
+                'description' => 'Essay Writing',
+                'grade_type' => 'essay',
+                'grade_value' => 0.0,
+                'max_score' => 100.0,
+                'max_grade' => 100.0,
+                'percentage' => 0.0,
+                'grade_date' => null,
+                'graded_at' => null,
+                'status' => 'pending'
+            ]
+        ];
+    }
 }

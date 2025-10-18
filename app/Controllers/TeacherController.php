@@ -212,56 +212,47 @@ class TeacherController extends Controller
             return;
         }
 
-        try {
-            $pdo = $this->getDatabaseConnection();
-            $teacherId = $user['id'];
+        // STATIC DATA: Replace database queries with static data for frontend development
+        $staticData = StaticData::getTeacherDashboardData();
+        $gradesData = StaticData::getTeacherGradesData();
 
-            // Get URL parameters for filtering
-            $sectionId = $_GET['section'] ?? null;
-            $subjectId = $_GET['subject'] ?? null;
-            $gradeType = $_GET['grade_type'] ?? null;
+        // Get URL parameters for filtering (for UI state)
+        $sectionId = $_GET['section'] ?? null;
+        $subjectId = $_GET['subject'] ?? null;
+        $gradeType = $_GET['grade_type'] ?? null;
 
-            // Get teacher's sections for filter dropdown
-            $sections = $this->getTeacherSections($pdo, $teacherId);
-
-            // Get subjects taught by this teacher
-            $stmt = $pdo->prepare("
-                SELECT DISTINCT s.id, s.name, s.grade_level 
-                FROM subjects s 
-                JOIN teacher_sections ts ON s.id = ts.subject_id 
-                WHERE ts.teacher_id = ? 
-                ORDER BY s.grade_level, s.name
-            ");
-            $stmt->execute([$teacherId]);
-            $subjects = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-            // Get grade statistics
-            $stats = $this->getGradeStats($pdo, $teacherId, $sectionId, $subjectId);
-
-            // Get grades with detailed information
-            $grades = $this->getGradesWithDetails($pdo, $teacherId, $sectionId, $subjectId, $gradeType);
-
-            // Get assignments for this teacher
-            $assignments = $this->getTeacherAssignments($pdo, $teacherId, $sectionId, $subjectId);
-
-            $this->view->render('teacher/grades', [
-                'title' => 'Grade Management',
-                'user' => $user,
-                'activeNav' => 'grades',
-                'sections' => $sections,
-                'subjects' => $subjects,
-                'stats' => $stats,
-                'grades' => $grades,
-                'assignments' => $assignments,
-                'filters' => [
-                    'section_id' => $sectionId,
-                    'subject_id' => $subjectId,
-                    'grade_type' => $gradeType
+        $this->view->render('teacher/grades', [
+            'title' => 'Grade Management',
+            'user' => $user,
+            'activeNav' => 'grades',
+            'sections' => $staticData['sections'],
+            'subjects' => [
+                ['id' => 1, 'name' => 'Mathematics', 'grade_level' => 10],
+                ['id' => 2, 'name' => 'Science', 'grade_level' => 10],
+                ['id' => 3, 'name' => 'Physics', 'grade_level' => 11]
+            ],
+            'stats' => [
+                'total_students' => 85,
+                'grades_entered' => 78,
+                'pending_grades' => 7,
+                'avg_grade' => 87.5,
+                'grade_distribution' => [
+                    'A' => 25,
+                    'B' => 35,
+                    'C' => 15,
+                    'D' => 5,
+                    'F' => 3
                 ]
-            ], 'layouts/dashboard');
-        } catch (\Exception $e) {
-            \Helpers\ErrorHandler::internalServerError('Failed to load grades: ' . $e->getMessage());
-        }
+            ],
+            'grades' => $gradesData,
+            'assignments' => StaticData::getAssignmentsData(),
+            'filters' => [
+                'section_id' => $sectionId,
+                'subject_id' => $subjectId,
+                'grade_type' => $gradeType
+            ],
+            'staticDataIndicator' => StaticData::getStaticDataIndicator('grades data'),
+        ], 'layouts/dashboard');
     }
 
     private function getGradeStats($pdo, $teacherId, $sectionId = null, $subjectId = null)
@@ -447,67 +438,61 @@ class TeacherController extends Controller
             return;
         }
 
-        try {
-            $pdo = $this->getDatabaseConnection();
-            $teacherId = $user['id'];
+        // STATIC DATA: Replace database queries with static data for frontend development
+        $staticData = StaticData::getTeacherDashboardData();
+        $gradesData = StaticData::getGradesData();
 
-            // Get detailed sections information
-            $sections = $this->getTeacherSections($pdo, $teacherId);
-
-            // Get students for each section with enhanced data
-            foreach ($sections as &$section) {
-                $stmt = $pdo->prepare("
-                    SELECT 
-                        s.id as student_id,
-                        u.name as student_name,
-                        u.email as student_email,
-                        s.lrn,
-                        s.grade_level,
-                        COALESCE(AVG(g.grade_value), 0) as avg_grade,
-                        COUNT(g.id) as grades_count,
-                        COUNT(CASE WHEN att.status = 'present' THEN 1 END) as present_count,
-                        COUNT(CASE WHEN att.status = 'late' THEN 1 END) as late_count,
-                        COUNT(CASE WHEN att.status = 'absent' THEN 1 END) as absent_count,
-                        COUNT(att.id) as total_attendance,
-                        MAX(att.attendance_date) as last_attendance_date,
-                        COUNT(CASE WHEN a.due_date < NOW() AND a.id NOT IN (
-                            SELECT assignment_id FROM grades g2 WHERE g2.student_id = s.id AND g2.section_id = ? AND g2.subject_id = ?
-                        ) THEN 1 END) as missing_assignments
-                    FROM students s
-                    JOIN users u ON s.user_id = u.id
-                    LEFT JOIN grades g ON g.student_id = s.id AND g.section_id = ? AND g.subject_id = ?
-                    LEFT JOIN attendance att ON att.student_id = s.id AND att.section_id = ? AND att.subject_id = ?
-                    LEFT JOIN assignments a ON a.section_id = ? AND a.subject_id = ? AND a.is_active = 1
-                    WHERE s.section_id = ?
-                    GROUP BY s.id, u.name, u.email, s.lrn, s.grade_level
-                    ORDER BY u.name
-                ");
-                $stmt->execute([
-                    $section['section_id'], $section['subject_id'], // for missing assignments
-                    $section['section_id'], $section['subject_id'], // for grades
-                    $section['section_id'], $section['subject_id'], // for attendance
-                    $section['section_id'], $section['subject_id'], // for assignments
-                    $section['section_id'] // for students
-                ]);
-                $section['students'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                
-                // Calculate section-level statistics
-                $section['total_students'] = count($section['students']);
-                $section['students_with_grades'] = count(array_filter($section['students'], function($s) { return $s['grades_count'] > 0; }));
-                $section['students_present_today'] = count(array_filter($section['students'], function($s) { 
-                    return $s['last_attendance_date'] === date('Y-m-d'); 
-                }));
-            }
-
-            $this->view->render('teacher/sections', [
-                'title' => 'My Sections',
-                'user' => $user,
-                'sections' => $sections,
-                'activeNav' => 'classes',
-            ], 'layouts/dashboard');
-        } catch (\Exception $e) {
-            \Helpers\ErrorHandler::internalServerError('Failed to load sections: ' . $e->getMessage());
+        // Enhance sections with student data
+        $sections = $staticData['sections'];
+        foreach ($sections as &$section) {
+            $section['students'] = [
+                [
+                    'student_id' => 1,
+                    'student_name' => 'Alice Johnson',
+                    'student_email' => 'alice.johnson@school.edu',
+                    'lrn' => 'LRN000001',
+                    'grade_level' => 10,
+                    'avg_grade' => 92.5,
+                    'grades_count' => 8,
+                    'present_count' => 15,
+                    'late_count' => 1,
+                    'absent_count' => 2,
+                    'total_attendance' => 18,
+                    'last_attendance_date' => date('Y-m-d'),
+                    'missing_assignments' => 0
+                ],
+                [
+                    'student_id' => 2,
+                    'student_name' => 'Bob Smith',
+                    'student_email' => 'bob.smith@school.edu',
+                    'lrn' => 'LRN000002',
+                    'grade_level' => 10,
+                    'avg_grade' => 78.2,
+                    'grades_count' => 6,
+                    'present_count' => 12,
+                    'late_count' => 3,
+                    'absent_count' => 3,
+                    'total_attendance' => 18,
+                    'last_attendance_date' => date('Y-m-d', strtotime('-1 day')),
+                    'missing_assignments' => 2
+                ]
+            ];
+            
+            // Calculate section-level statistics
+            $section['total_students'] = count($section['students']);
+            $section['students_with_grades'] = count(array_filter($section['students'], function($s) { return $s['grades_count'] > 0; }));
+            $section['students_present_today'] = count(array_filter($section['students'], function($s) { 
+                return $s['last_attendance_date'] === date('Y-m-d'); 
+            }));
         }
+
+        $this->view->render('teacher/sections', [
+            'title' => 'My Sections',
+            'user' => $user,
+            'sections' => $sections,
+            'activeNav' => 'classes',
+            'staticDataIndicator' => StaticData::getStaticDataIndicator('sections data'),
+        ], 'layouts/dashboard');
     }
 
     public function assignments(): void
@@ -691,42 +676,33 @@ class TeacherController extends Controller
             \Helpers\ErrorHandler::forbidden('You need teacher privileges to access this page.');
             return;
         }
-        try {
-            $pdo = $this->getDatabaseConnection();
-            $teacherId = $user['id'];
+        // STATIC DATA: Replace database queries with static data for frontend development
+        $staticData = StaticData::getTeacherDashboardData();
+        $attendanceData = StaticData::getAttendanceData();
 
-            $date = $_GET['date'] ?? date('Y-m-d');
-            $sections = $this->getTeacherSections($pdo, $teacherId);
+        $date = $_GET['date'] ?? date('Y-m-d');
+        $sectionId = $_GET['section'] ?? 1;
+        $subjectId = $_GET['subject'] ?? 1;
 
-            $sectionId = isset($_GET['section']) && $_GET['section'] !== '' ? (int)$_GET['section'] : (isset($sections[0]) ? (int)$sections[0]['section_id'] : null);
-            $subjectId = isset($_GET['subject']) && $_GET['subject'] !== '' ? (int)$_GET['subject'] : (isset($sections[0]) ? (int)$sections[0]['subject_id'] : null);
-
-            $students = [];
-            $summary = [ 'present' => 0, 'absent' => 0, 'late' => 0, 'excused' => 0 ];
-
-            if ($sectionId && $subjectId) {
-                $stmt = $pdo->prepare("\n                    SELECT \n                        s.id AS student_id,\n                        u.name AS student_name,\n                        s.lrn,\n                        s.grade_level,\n                        a.status AS attendance_status\n                    FROM students s\n                    JOIN users u ON s.user_id = u.id\n                    LEFT JOIN attendance a \n                        ON a.student_id = s.id \n                        AND a.section_id = ? \n                        AND a.subject_id = ? \n                        AND a.attendance_date = ?\n                    WHERE s.section_id = ?\n                    ORDER BY u.name\n                ");
-                $stmt->execute([$sectionId, $subjectId, $date, $sectionId]);
-                $students = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-                foreach ($students as $st) {
-                    $stStatus = $st['attendance_status'] ?? null;
-                    if ($stStatus && isset($summary[$stStatus])) { $summary[$stStatus]++; }
-                }
-            }
-
-            $this->view->render('teacher/attendance', [
-                'title' => 'Attendance Management',
-                'user' => $user,
-                'activeNav' => 'attendance',
-                'sections' => $sections,
-                'filters' => [ 'date' => $date, 'section_id' => $sectionId, 'subject_id' => $subjectId ],
-                'students' => $students,
-                'summary' => $summary,
-            ], 'layouts/dashboard');
-        } catch (\Exception $e) {
-            \Helpers\ErrorHandler::internalServerError('Failed to load attendance: ' . $e->getMessage());
-        }
+        $this->view->render('teacher/attendance', [
+            'title' => 'Attendance Management',
+            'user' => $user,
+            'activeNav' => 'attendance',
+            'sections' => $staticData['sections'],
+            'filters' => [ 
+                'date' => $date, 
+                'section_id' => $sectionId, 
+                'subject_id' => $subjectId 
+            ],
+            'students' => $attendanceData['students'],
+            'summary' => [
+                'present' => 26,
+                'absent' => 2,
+                'late' => 1,
+                'excused' => 0
+            ],
+            'staticDataIndicator' => StaticData::getStaticDataIndicator('attendance data'),
+        ], 'layouts/dashboard');
     }
 
     public function getAttendanceList(): void

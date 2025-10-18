@@ -6,6 +6,9 @@
 <?php /** @var array $assignments */ ?>
 <?php /** @var array $filters */ ?>
 
+<!-- Static Data Indicator -->
+<?= $staticDataIndicator ?? '' ?>
+
 <!-- Teacher Grade Management Header -->
 <div class="dashboard-header mb-4">
   <div class="d-flex justify-content-between align-items-center">
@@ -42,7 +45,7 @@
         </div>
         <div>
           <div class="h4 fw-bold text-primary mb-0" data-count-to="<?= $stats['total_students'] ?>">0</div>
-          <div class="text-muted small">Total Students</div>
+          <div class="text-muted small">Total Students <?= \Helpers\StaticData::getStaticDataBadge() ?></div>
         </div>
       </div>
     </div>
@@ -58,7 +61,7 @@
         </div>
         <div>
           <div class="h4 fw-bold text-success mb-0" data-count-to="<?= $stats['grades_entered'] ?>">0</div>
-          <div class="text-muted small">Grades Entered</div>
+          <div class="text-muted small">Grades Entered <?= \Helpers\StaticData::getStaticDataBadge() ?></div>
         </div>
       </div>
     </div>
@@ -74,7 +77,7 @@
         </div>
         <div>
           <div class="h4 fw-bold text-warning mb-0" data-count-to="<?= $stats['pending_grades'] ?>">0</div>
-          <div class="text-muted small">Pending Grades</div>
+          <div class="text-muted small">Pending Grades <?= \Helpers\StaticData::getStaticDataBadge() ?></div>
         </div>
       </div>
     </div>
@@ -90,7 +93,7 @@
         </div>
         <div>
           <div class="h4 fw-bold text-info mb-0" data-count-to="<?= $stats['avg_grade'] ?>" data-count-decimals="1">0</div>
-          <div class="text-muted small">Average Grade</div>
+          <div class="text-muted small">Average Grade <?= \Helpers\StaticData::getStaticDataBadge() ?></div>
         </div>
       </div>
     </div>

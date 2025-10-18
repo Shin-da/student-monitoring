@@ -12,6 +12,9 @@
   $selectedSubjectName = $selectedSection['subject_name'] ?? '—';
 ?>
 
+<!-- Static Data Indicator -->
+<?= $staticDataIndicator ?? '' ?>
+
 <!-- Teacher Attendance Management Header -->
 <div class="dashboard-header">
   <div class="d-flex justify-content-between align-items-center">

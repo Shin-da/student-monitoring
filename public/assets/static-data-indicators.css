@@ -8,6 +8,23 @@
     font-size: 0.875rem;
     margin-bottom: 1rem;
     animation: slideInDown 0.3s ease-out;
+    color: #0c5460 !important; /* Dark blue text for visibility */
+}
+
+.static-data-indicator,
+.static-data-indicator * {
+    color: #0c5460 !important; /* Force all text to be dark blue */
+}
+
+/* Override Bootstrap alert styles */
+.static-data-indicator.alert-info {
+    color: #0c5460 !important;
+    background: linear-gradient(135deg, rgba(13, 202, 240, 0.1) 0%, rgba(13, 202, 240, 0.05) 100%) !important;
+    border-color: #0dcaf0 !important;
+}
+
+.static-data-indicator.alert-info * {
+    color: #0c5460 !important;
 }
 
 .static-data-indicator .btn-close {
@@ -17,6 +34,10 @@
 
 .static-data-indicator svg {
     flex-shrink: 0;
+}
+
+.static-data-indicator strong {
+    color: #0c5460 !important; /* Ensure strong text is visible */
 }
 
 .static-data-badge {
@@ -175,11 +196,26 @@
     }
 }
 
+/* Light mode support - ensure text is visible */
+@media (prefers-color-scheme: light) {
+    .static-data-indicator {
+        color: #0c5460 !important;
+    }
+    
+    .static-data-indicator strong {
+        color: #0c5460 !important;
+    }
+}
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
+    .static-data-indicator,
+    .static-data-indicator * {
+        color: #e9ecef !important; /* Force all text to be light in dark mode */
+    }
+    
     .static-data-indicator {
         background: linear-gradient(135deg, rgba(13, 202, 240, 0.2) 0%, rgba(13, 202, 240, 0.1) 100%);
-        color: #e9ecef;
     }
     
     .static-data-container {

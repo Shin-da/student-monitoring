@@ -1,6 +1,9 @@
 <?php /** @var array $user */ ?>
 <?php /** @var array $sections */ ?>
 
+<!-- Static Data Indicator -->
+<?= $staticDataIndicator ?? '' ?>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
     <h1 class="h4 fw-bold mb-1">My Sections</h1>
