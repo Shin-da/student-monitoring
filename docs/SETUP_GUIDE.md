@@ -29,6 +29,16 @@ php database/init_admin.php
 
 ### Step 4: Access Application
 - **URL**: http://localhost/student-monitoring/public/
+- If accessing from `http://localhost/student-monitoring/`, ensure `.htaccess` exists in project root:
+```
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /student-monitoring/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ public/index.php [L]
+</IfModule>
+```
 - **Admin Login**: admin@example.com / admin123
 - **⚠️ Change admin password immediately!**
 
@@ -76,7 +86,12 @@ php database/init_admin.php
 ### 404 Errors
 - Check Apache mod_rewrite is enabled
 - Verify `.htaccess` file exists in `public/` directory
-- Access via: `http://localhost/student-monitoring/public/`
+- Access via: `http://localhost/student-monitoring/public/` or enable root `.htaccess` redirect as above
+
+### Error Pages Not Showing
+- Ensure error routes exist in `routes/web.php`
+- Verify `app/Core/Router.php` redirects unknown routes to `/error/404`
+- Controllers should use `Helpers\ErrorHandler` for 401/403 redirections
 
 ### Permission Errors
 - Check file permissions on project directory

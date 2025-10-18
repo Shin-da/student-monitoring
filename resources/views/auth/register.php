@@ -1,92 +1,94 @@
-<div class="row justify-content-center">
-  <div class="col-md-5 col-lg-4">
-    <div class="auth-card surface p-4 p-md-5">
-      <div class="text-center mb-4">
-        <div class="auth-icon mb-3">
-          <svg width="48" height="48" fill="currentColor">
-            <use href="#icon-star"></use>
-          </svg>
-        </div>
-        <h2 class="h4 fw-bold mb-2">Create your account</h2>
-        <p class="text-muted small">Join our student monitoring platform</p>
-      </div>
-      
-      <?php if (isset($error)): ?>
-        <div class="alert alert-danger" role="alert">
-          <?= htmlspecialchars($error) ?>
-        </div>
-      <?php endif; ?>
-      
-      <?php if (isset($success)): ?>
-        <div class="alert alert-success" role="alert">
-          <?= htmlspecialchars($success) ?>
-        </div>
-      <?php endif; ?>
-      
-      <?php if (!isset($success)): ?>
-      <form method="post" action="<?= \Helpers\Url::to('/register') ?>" class="auth-form" id="registerForm" novalidate>
-        <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
-        <input type="hidden" name="role" value="student">
-        
-        <div class="form-group mb-3">
-          <label for="name" class="form-label">Full Name</label>
-          <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required minlength="2" maxlength="100">
-          <div class="form-help">Enter your complete name as it appears on official documents</div>
-        </div>
-        
-        <div class="form-group mb-3">
-          <label for="email" class="form-label">Email address</label>
-          <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
-          <div class="form-help">We'll use this to send you important updates</div>
-        </div>
-        
-        <div class="form-group mb-4">
-          <label for="password" class="form-label">Password</label>
-          <div class="input-group">
-            <input type="password" class="form-control" id="password" name="password" placeholder="Create a strong password" required minlength="8">
-            <button type="button" class="btn btn-outline-secondary password-toggle" tabindex="-1">
-              <svg class="icon" width="16" height="16" fill="currentColor">
-                <use href="#icon-eye"></use>
-              </svg>
-            </button>
-          </div>
-          <div class="password-strength mt-2">
-            <div class="password-strength-bar">
-              <div class="password-strength-fill"></div>
-            </div>
-            <div class="password-strength-text small text-muted"></div>
-          </div>
-          <div class="form-help">Password must be at least 8 characters with uppercase, lowercase, number, and special character</div>
-        </div>
-        
-        <div class="form-check mb-4">
-          <input class="form-check-input" type="checkbox" id="agreeTerms" required>
-          <label class="form-check-label" for="agreeTerms">
-            I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
-          </label>
-        </div>
-        
-        <button type="submit" class="btn btn-primary w-100 btn-lg mb-3" id="registerBtn">
-          <span class="btn-text">Create account</span>
-          <span class="btn-loading d-none">
-            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-            Creating account...
-          </span>
-        </button>
-      </form>
-      <?php endif; ?>
-      
-      <div class="text-center">
-        <p class="text-muted small mb-0">Already have an account? 
-          <a href="<?= \Helpers\Url::to('/login') ?>" class="text-decoration-none fw-semibold">Sign in</a>
-        </p>
-      </div>
+<div class="auth-card">
+  <div class="text-center mb-4">
+    <div class="auth-icon">
+      <svg width="40" height="40" fill="currentColor">
+        <use href="#icon-star"></use>
+      </svg>
     </div>
+    <h2 class="h3 fw-bold mb-2 text-dark">Create your account</h2>
+    <p class="text-muted">Join our student monitoring platform</p>
+  </div>
+  
+  <?php if (isset($error)): ?>
+    <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+      <svg width="20" height="20" fill="currentColor">
+        <use href="#icon-alert"></use>
+      </svg>
+      <span><?= htmlspecialchars($error) ?></span>
+    </div>
+  <?php endif; ?>
+  
+  <?php if (isset($success)): ?>
+    <div class="alert alert-success d-flex align-items-center gap-2" role="alert">
+      <svg width="20" height="20" fill="currentColor">
+        <use href="#icon-check"></use>
+      </svg>
+      <span><?= htmlspecialchars($success) ?></span>
+    </div>
+  <?php endif; ?>
+  
+  <?php if (!isset($success)): ?>
+  <form method="post" action="<?= \Helpers\Url::to('/register') ?>" class="auth-form" id="registerForm" novalidate>
+    <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
+    <input type="hidden" name="role" value="student">
+    
+    <div class="form-group">
+      <label for="name" class="form-label">Full Name</label>
+      <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required minlength="2" maxlength="100">
+      <div class="form-help">Enter your complete name as it appears on official documents</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="email" class="form-label">Email Address</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required>
+      <div class="form-help">We'll use this to send you important updates</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="password" class="form-label">Password</label>
+      <div class="input-group">
+        <input type="password" class="form-control" id="password" name="password" placeholder="Create a strong password" required minlength="8">
+        <button type="button" class="btn btn-outline-secondary password-toggle" tabindex="-1" aria-label="Toggle password visibility">
+          <svg class="icon" width="16" height="16" fill="currentColor">
+            <use href="#icon-eye"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="password-strength">
+        <div class="password-strength-bar">
+          <div class="password-strength-fill"></div>
+        </div>
+        <div class="password-strength-text"></div>
+      </div>
+      <div class="form-help">Password must be at least 8 characters with uppercase, lowercase, number, and special character</div>
+    </div>
+    
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+      <label class="form-check-label" for="agreeTerms">
+        I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+      </label>
+    </div>
+    
+    <button type="submit" class="btn btn-primary w-100" id="registerBtn">
+      <span class="btn-text">Create Account</span>
+      <span class="btn-loading d-none">
+        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+        Creating account...
+      </span>
+    </button>
+  </form>
+  <?php endif; ?>
+  
+  <div class="auth-links">
+    <p class="text-muted mb-0">Already have an account? 
+      <a href="<?= \Helpers\Url::to('/login') ?>">Sign in</a>
+    </p>
   </div>
 </div>
 
 <script>
-// Enhanced Register Form
+// Enhanced Register Form with Modern UX
 document.addEventListener('DOMContentLoaded', function() {
   const registerForm = document.getElementById('registerForm');
   const registerBtn = document.getElementById('registerBtn');
@@ -96,25 +98,38 @@ document.addEventListener('DOMContentLoaded', function() {
   const emailInput = document.getElementById('email');
   const agreeTermsCheckbox = document.getElementById('agreeTerms');
 
-  // Password visibility toggle
+  // Password visibility toggle with smooth animation
   if (passwordToggle && passwordInput) {
-    passwordToggle.addEventListener('click', function() {
+    passwordToggle.addEventListener('click', function(e) {
+      e.preventDefault();
       const isPassword = passwordInput.type === 'password';
       passwordInput.type = isPassword ? 'text' : 'password';
       
       const icon = passwordToggle.querySelector('svg use');
       icon.setAttribute('href', isPassword ? '#icon-eye-off' : '#icon-eye');
+      
+      // Add visual feedback
+      passwordToggle.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        passwordToggle.style.transform = 'scale(1)';
+      }, 150);
     });
   }
 
-  // Password strength indicator
+  // Enhanced password strength indicator
   if (passwordInput) {
     passwordInput.addEventListener('input', function() {
       updatePasswordStrength(this.value);
+      clearFieldError(this);
+      if (this.value && this.value.length < 8) {
+        showFieldError(this, 'Password must be at least 8 characters long');
+      } else if (this.value && this.value.length >= 8) {
+        showFieldSuccess(this, 'Password looks good!');
+      }
     });
   }
 
-  // Form submission with loading state
+  // Enhanced form submission with better UX
   if (registerForm) {
     registerForm.addEventListener('submit', function(e) {
       if (!validateForm()) {
@@ -122,57 +137,83 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      // Show loading state
+      // Show loading state with animation
       registerBtn.disabled = true;
       registerBtn.querySelector('.btn-text').classList.add('d-none');
       registerBtn.querySelector('.btn-loading').classList.remove('d-none');
       registerBtn.classList.add('loading');
+      
+      // Add success animation after a delay (simulate processing)
+      setTimeout(() => {
+        if (registerBtn.classList.contains('loading')) {
+          registerBtn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+          registerBtn.querySelector('.btn-loading').innerHTML = 
+            '<svg class="icon me-2" width="16" height="16" fill="currentColor"><use href="#icon-check"></use></svg>Account created!';
+        }
+      }, 1500);
     });
   }
 
-  // Real-time validation
+  // Real-time validation with better feedback
   if (nameInput) {
+    nameInput.addEventListener('input', function() {
+      clearFieldError(this);
+      if (this.value && this.value.length < 2) {
+        showFieldError(this, 'Name must be at least 2 characters long');
+      }
+    });
+    
     nameInput.addEventListener('blur', function() {
       if (this.value && this.value.length < 2) {
         showFieldError(this, 'Name must be at least 2 characters long');
-      } else {
-        clearFieldError(this);
+      } else if (this.value && this.value.length >= 2) {
+        showFieldSuccess(this, 'Name looks good!');
       }
     });
   }
 
   if (emailInput) {
+    emailInput.addEventListener('input', function() {
+      clearFieldError(this);
+      if (this.value && !isValidEmail(this.value)) {
+        showFieldError(this, 'Please enter a valid email address');
+      }
+    });
+    
     emailInput.addEventListener('blur', function() {
       if (this.value && !isValidEmail(this.value)) {
         showFieldError(this, 'Please enter a valid email address');
-      } else {
-        clearFieldError(this);
-      }
-    });
-  }
-
-  if (passwordInput) {
-    passwordInput.addEventListener('blur', function() {
-      if (this.value && this.value.length < 8) {
-        showFieldError(this, 'Password must be at least 8 characters long');
-      } else {
-        clearFieldError(this);
+      } else if (this.value && isValidEmail(this.value)) {
+        showFieldSuccess(this, 'Email looks good!');
       }
     });
   }
 
   if (agreeTermsCheckbox) {
     agreeTermsCheckbox.addEventListener('change', function() {
+      clearFieldError(this);
       if (!this.checked) {
         showFieldError(this, 'You must agree to the terms and conditions');
       } else {
-        clearFieldError(this);
+        showFieldSuccess(this, 'Terms accepted!');
       }
     });
   }
+
+  // Add focus animations
+  const inputs = document.querySelectorAll('.form-control');
+  inputs.forEach(input => {
+    input.addEventListener('focus', function() {
+      this.parentNode.classList.add('focused');
+    });
+    
+    input.addEventListener('blur', function() {
+      this.parentNode.classList.remove('focused');
+    });
+  });
 });
 
-// Password strength calculation
+// Enhanced password strength calculation
 function updatePasswordStrength(password) {
   let score = 0;
   let feedback = [];
@@ -215,10 +256,11 @@ function updatePasswordStrength(password) {
     fill.style.width = score + '%';
     fill.className = `password-strength-fill bg-${color}`;
     textElement.textContent = text;
+    textElement.className = `password-strength-text text-${color}`;
   }
 }
 
-// Form validation
+// Enhanced form validation
 function validateForm() {
   let isValid = true;
   
@@ -269,130 +311,57 @@ function showFieldError(field, message) {
   errorDiv.textContent = message;
   
   field.parentNode.appendChild(errorDiv);
+  
+  // Add shake animation
+  field.style.animation = 'shake 0.5s ease-in-out';
+  setTimeout(() => {
+    field.style.animation = '';
+  }, 500);
+}
+
+function showFieldSuccess(field, message) {
+  clearFieldError(field);
+  field.classList.add('is-valid');
+  
+  // Check if success message already exists
+  const existingSuccess = field.parentNode.querySelector('.valid-feedback');
+  if (existingSuccess) {
+    existingSuccess.textContent = message;
+    return;
+  }
+  
+  const successDiv = document.createElement('div');
+  successDiv.className = 'valid-feedback';
+  successDiv.textContent = message;
+  
+  field.parentNode.appendChild(successDiv);
+  
+  // Remove success message after 3 seconds
+  setTimeout(() => {
+    if (successDiv.parentNode) {
+      successDiv.remove();
+    }
+  }, 3000);
 }
 
 function clearFieldError(field) {
-  field.classList.remove('is-invalid');
+  field.classList.remove('is-invalid', 'is-valid');
+  
+  // Remove all feedback messages
   const errorDiv = field.parentNode.querySelector('.invalid-feedback');
-  if (errorDiv) {
-    errorDiv.remove();
+  const successDiv = field.parentNode.querySelector('.valid-feedback');
+  
+  if (errorDiv) errorDiv.remove();
+  if (successDiv) successDiv.remove();
+  
+  // Also check for any existing feedback in the form group
+  const formGroup = field.closest('.form-group');
+  if (formGroup) {
+    const existingError = formGroup.querySelector('.invalid-feedback');
+    const existingSuccess = formGroup.querySelector('.valid-feedback');
+    if (existingError) existingError.remove();
+    if (existingSuccess) existingSuccess.remove();
   }
 }
 </script>
 
-<style>
-/* Enhanced Register Form Styles */
-.auth-form .form-group {
-  margin-bottom: 1.5rem;
-}
-
-.auth-form .form-label {
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: var(--bs-body-color);
-}
-
-.auth-form .form-control {
-  border-radius: 0.5rem;
-  border: 1px solid var(--bs-border-color);
-  padding: 0.75rem 1rem;
-  transition: all 0.2s ease;
-}
-
-.auth-form .form-control:focus {
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
-  transform: translateY(-1px);
-}
-
-.auth-form .input-group .form-control {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.auth-form .input-group .btn {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-left: 0;
-}
-
-.auth-form .form-check {
-  margin-bottom: 1.5rem;
-}
-
-.auth-form .form-check-input:checked {
-  background-color: var(--bs-primary);
-  border-color: var(--bs-primary);
-}
-
-.auth-form .btn {
-  border-radius: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.auth-form .btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
-
-.auth-form .btn.loading {
-  pointer-events: none;
-}
-
-.form-help {
-  font-size: 0.875rem;
-  color: var(--bs-gray-600);
-  margin-top: 0.25rem;
-}
-
-.password-strength {
-  margin-top: 0.5rem;
-}
-
-.password-strength-bar {
-  height: 4px;
-  background-color: var(--bs-gray-200);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 0.25rem;
-}
-
-.password-strength-fill {
-  height: 100%;
-  transition: width 0.3s ease, background-color 0.3s ease;
-  border-radius: 2px;
-}
-
-.password-strength-fill.bg-danger {
-  background-color: var(--bs-danger) !important;
-}
-
-.password-strength-fill.bg-warning {
-  background-color: var(--bs-warning) !important;
-}
-
-.password-strength-fill.bg-success {
-  background-color: var(--bs-success) !important;
-}
-
-.password-strength-text {
-  font-size: 0.75rem;
-  line-height: 1.2;
-}
-
-.invalid-feedback {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: var(--bs-danger);
-}
-
-.icon {
-  width: 1em;
-  height: 1em;
-  vertical-align: -0.125em;
-}
-</style>

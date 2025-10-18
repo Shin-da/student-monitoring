@@ -1,0 +1,44 @@
+// =============================================================================
+// MAIN APPLICATION STYLESHEET
+// Consolidated from multiple CSS files for better performance
+// =============================================================================
+
+// 1. Critical CSS (Above-the-fold styles)
+@import 'critical';
+
+// 2. Design Tokens & Variables
+@import 'tokens';
+
+// 3. Base Styles
+@import 'base';
+
+// 4. Layout Components
+@import 'layout/app-layout';
+@import 'layout/dashboard-layout';
+@import 'layout/sidebar';
+
+// 5. UI Components
+@import 'components/buttons';
+@import 'components/forms';
+@import 'components/modals';
+@import 'components/cards';
+@import 'components/tables';
+@import 'components/navigation';
+@import 'components/alerts';
+@import 'components/badges';
+@import 'components/progress';
+
+// 6. Utility Classes
+@import 'utilities';
+
+// 7. Responsive Design
+@import 'responsive';
+
+// 8. Dark Mode
+@import 'themes/dark';
+
+// 9. Accessibility
+@import 'accessibility';
+
+// 10. Performance Optimizations
+@import 'performance';

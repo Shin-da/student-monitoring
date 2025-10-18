@@ -13,13 +13,14 @@
   
   /* Sidebar Colors */
   /* Unified glass palette for sidebar/nav */
+  /* Defaults for non-role pages (admin/teachers etc.) */
   --sidebar-bg: linear-gradient(140deg, rgba(15,23,42,0.55) 0%, rgba(148,163,184,0.12) 100%);
   --sidebar-bg-dark: linear-gradient(140deg, rgba(2,6,23,0.55) 0%, rgba(148,163,184,0.12) 100%);
   --sidebar-border: var(--color-border);
-  --sidebar-text: rgba(255, 255, 255, 0.9);
-  --sidebar-text-hover: rgba(255, 255, 255, 1);
-  --sidebar-text-active: rgba(255, 255, 255, 1);
-  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-text: var(--sidebar-text, rgba(255, 255, 255, 0.9));
+  --sidebar-text-hover: var(--sidebar-text-hover, rgba(255, 255, 255, 1));
+  --sidebar-text-active: var(--sidebar-text-active, rgba(255, 255, 255, 1));
+  --sidebar-border: var(--sidebar-border, rgba(255, 255, 255, 0.1));
   --sidebar-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   --sidebar-shadow-dark: 2px 0 10px rgba(0, 0, 0, 0.3);
   
@@ -336,13 +337,13 @@
 }
 
 .nav-submenu .nav-link:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--accent-14, rgba(197,112,93,0.14));
   color: var(--sidebar-text-hover);
   transform: translateX(4px);
 }
 
 .nav-submenu .nav-link.active {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--accent-16, rgba(255, 255, 255, 0.2));
   color: var(--sidebar-text-active);
   font-weight: 600;
 }
@@ -374,13 +375,13 @@
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--accent-16, rgba(197,112,93,0.16));
   color: var(--sidebar-text-hover);
   transform: translateX(4px);
 }
 
 .nav-link.active {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--accent-16, rgba(255, 255, 255, 0.2));
   color: var(--sidebar-text-active);
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -487,7 +488,7 @@
 
 .mobile-toggle:hover,
 .mobile-toggle:focus {
-  background: rgba(13,110,253,0.10);
+  background: rgba(197,112,93,0.12);
   box-shadow: 0 8px 32px rgba(2,6,23,0.18);
   transform: scale(1.08);
 }
@@ -516,7 +517,7 @@
   box-shadow: 0 1px 4px rgba(2,6,23,0.08);
 }
 .mobile-toggle:active .mobile-toggle-icon span {
-  background: #0d6efd;
+  background: #c5705d;
 }
 
 /* ========================================

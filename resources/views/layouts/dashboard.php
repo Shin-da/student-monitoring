@@ -159,9 +159,16 @@
         <path fill="currentColor" d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.11 3.89 23 5 23H19C20.11 23 21 22.11 21 21V9M19 9H14V4H5V21H19V9Z"/>
       </symbol>
     </svg>
+<?php
+  // Ensure user context is available for role-scoped theming
+  if (!isset($user) || !is_array($user)) {
+    $user = \Core\Session::get('user') ?? [];
+  }
+  $roleDataAttr = $user['role'] ?? '';
+?>
 </head>
 
-<body>
+<body data-role="<?= htmlspecialchars($roleDataAttr) ?>">
   <!-- Mobile Toggle Button -->
   <button class="mobile-toggle d-md-none" id="mobileToggle" aria-label="Open sidebar" type="button">
     <span class="mobile-toggle-icon">

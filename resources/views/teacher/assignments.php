@@ -1,9 +1,15 @@
-<?php
-$title = 'Assignment Management';
-?>
+<?php /** @var array $user */ ?>
+<?php /** @var array $stats */ ?>
+<?php /** @var array $sections */ ?>
+<?php /** @var array $subjects */ ?>
+<?php /** @var array $assignments */ ?>
+<?php /** @var array $filters */ ?>
+
+<!-- Static Data Indicator -->
+<?= $staticDataIndicator ?? '' ?>
 
 <!-- Teacher Assignment Management Header -->
-<div class="dashboard-header">
+<div class="dashboard-header mb-4">
   <div class="d-flex justify-content-between align-items-center">
     <div>
       <h1 class="h3 mb-1 text-primary">Assignment Management</h1>
@@ -37,7 +43,7 @@ $title = 'Assignment Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-primary mb-0" data-count-to="24">0</div>
+          <div class="h4 fw-bold text-primary mb-0" data-count-to="<?= $stats['total_assignments'] ?>">0</div>
           <div class="text-muted small">Total Assignments</div>
         </div>
       </div>
@@ -53,7 +59,7 @@ $title = 'Assignment Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-success mb-0" data-count-to="18">0</div>
+          <div class="h4 fw-bold text-success mb-0" data-count-to="<?= $stats['completed_assignments'] ?>">0</div>
           <div class="text-muted small">Completed</div>
         </div>
       </div>
@@ -69,7 +75,7 @@ $title = 'Assignment Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-warning mb-0" data-count-to="4">0</div>
+          <div class="h4 fw-bold text-warning mb-0" data-count-to="<?= $stats['active_assignments'] ?>">0</div>
           <div class="text-muted small">Active</div>
         </div>
       </div>
@@ -85,7 +91,7 @@ $title = 'Assignment Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-info mb-0" data-count-to="2">0</div>
+          <div class="h4 fw-bold text-info mb-0" data-count-to="<?= $stats['overdue_assignments'] ?>">0</div>
           <div class="text-muted small">Overdue</div>
         </div>
       </div>
@@ -95,47 +101,45 @@ $title = 'Assignment Management';
 
 <!-- Assignment Filters and Search -->
 <div class="surface mb-4">
-  <div class="row g-3 align-items-center">
+  <form method="GET" action="/teacher/assignments" class="row g-3 align-items-center">
     <div class="col-md-3">
       <label class="form-label">Subject</label>
-      <select class="form-select" id="subjectFilter">
+      <select class="form-select" name="subject" id="subjectFilter">
         <option value="">All Subjects</option>
-        <option value="mathematics">Mathematics</option>
-        <option value="science">Science</option>
-        <option value="english">English</option>
+        <?php foreach ($subjects as $subject): ?>
+          <option value="<?= $subject['id'] ?>" <?= $filters['subject_id'] == $subject['id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($subject['name']) ?> (Grade <?= $subject['grade_level'] ?>)
+          </option>
+        <?php endforeach; ?>
       </select>
     </div>
     <div class="col-md-3">
       <label class="form-label">Class</label>
-      <select class="form-select" id="classFilter">
+      <select class="form-select" name="section" id="classFilter">
         <option value="">All Classes</option>
-        <option value="grade-10-a">Grade 10-A</option>
-        <option value="grade-10-b">Grade 10-B</option>
-        <option value="grade-9-a">Grade 9-A</option>
+        <?php foreach ($sections as $section): ?>
+          <option value="<?= $section['section_id'] ?>" <?= $filters['section_id'] == $section['section_id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($section['class_name']) ?> - <?= htmlspecialchars($section['subject_name']) ?>
+          </option>
+        <?php endforeach; ?>
       </select>
     </div>
     <div class="col-md-3">
       <label class="form-label">Status</label>
-      <select class="form-select" id="statusFilter">
+      <select class="form-select" name="status" id="statusFilter">
         <option value="">All Status</option>
-        <option value="active">Active</option>
-        <option value="completed">Completed</option>
-        <option value="overdue">Overdue</option>
-        <option value="draft">Draft</option>
+        <option value="active" <?= $filters['status'] == 'active' ? 'selected' : '' ?>>Active</option>
+        <option value="completed" <?= $filters['status'] == 'completed' ? 'selected' : '' ?>>Completed</option>
+        <option value="overdue" <?= $filters['status'] == 'overdue' ? 'selected' : '' ?>>Overdue</option>
       </select>
     </div>
     <div class="col-md-3">
-      <label class="form-label">Search</label>
-      <div class="input-group">
-        <span class="input-group-text">
-          <svg class="icon" width="16" height="16" fill="currentColor">
-            <use href="#icon-search"></use>
-          </svg>
-        </span>
-        <input type="text" class="form-control" placeholder="Search assignments..." id="assignmentSearch">
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+        <a href="/teacher/assignments" class="btn btn-outline-secondary btn-sm">Clear</a>
       </div>
     </div>
-  </div>
+  </form>
 </div>
 
 <!-- Assignment Management Tabs -->
@@ -201,9 +205,6 @@ $title = 'Assignment Management';
           <table class="table table-hover" id="assignmentsTable">
             <thead class="table-light">
               <tr>
-                <th>
-                  <input type="checkbox" class="form-check-input" id="selectAllAssignments">
-                </th>
                 <th>Assignment</th>
                 <th>Subject</th>
                 <th>Class</th>
@@ -214,169 +215,88 @@ $title = 'Assignment Management';
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <input type="checkbox" class="form-check-input" value="1">
-                </td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                      <svg class="icon text-primary" width="16" height="16" fill="currentColor">
+              <?php if (empty($assignments)): ?>
+                <tr>
+                  <td colspan="7" class="text-center py-5">
+                    <svg class="icon text-muted mb-3" width="64" height="64" fill="currentColor">
+                      <use href="#icon-plus"></use>
+                    </svg>
+                    <h4 class="text-muted mb-3">No Assignments Found</h4>
+                    <p class="text-muted mb-4">
+                      <?php if (!empty($filters['section_id']) || !empty($filters['subject_id']) || !empty($filters['status'])): ?>
+                        No assignments match your current filters. Try adjusting your search criteria.
+                      <?php else: ?>
+                        You haven't created any assignments yet. Create your first assignment to get started!
+                      <?php endif; ?>
+                    </p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAssignmentModal">
+                      <svg class="icon me-2" width="16" height="16" fill="currentColor">
                         <use href="#icon-plus"></use>
                       </svg>
-                    </div>
-                    <div>
-                      <div class="fw-semibold">Algebra Quiz #3</div>
-                      <div class="text-muted small">Mathematics • 50 points</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="badge bg-primary">Mathematics</span></td>
-                <td><span class="badge bg-info">Grade 10-A</span></td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <svg class="icon text-muted me-1" width="14" height="14" fill="currentColor">
-                      <use href="#icon-calendar"></use>
-                    </svg>
-                    <span>Dec 20, 2024</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <div class="progress me-2" style="width: 60px; height: 6px;">
-                      <div class="progress-bar bg-success" style="width: 85%"></div>
-                    </div>
-                    <span class="small">42/50</span>
-                  </div>
-                </td>
-                <td><span class="badge bg-success">Active</span></td>
-                <td>
-                  <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                      <svg class="icon" width="16" height="16" fill="currentColor">
-                        <use href="#icon-more"></use>
-                      </svg>
+                      Create Assignment
                     </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#" onclick="viewAssignment(1)">View Details</a></li>
-                      <li><a class="dropdown-item" href="#" onclick="editAssignment(1)">Edit Assignment</a></li>
-                      <li><a class="dropdown-item" href="#" onclick="gradeAssignment(1)">Grade Students</a></li>
-                      <li><a class="dropdown-item" href="#" onclick="duplicateAssignment(1)">Duplicate</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item text-danger" href="#" onclick="deleteAssignment(1)">Delete</a></li>
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-              
-              <tr>
-                <td>
-                  <input type="checkbox" class="form-check-input" value="2">
-                </td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
-                      <svg class="icon text-success" width="16" height="16" fill="currentColor">
-                        <use href="#icon-check"></use>
-                      </svg>
-                    </div>
-                    <div>
-                      <div class="fw-semibold">Science Lab Report</div>
-                      <div class="text-muted small">Science • 100 points</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="badge bg-success">Science</span></td>
-                <td><span class="badge bg-info">Grade 9-A</span></td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <svg class="icon text-muted me-1" width="14" height="14" fill="currentColor">
-                      <use href="#icon-calendar"></use>
-                    </svg>
-                    <span>Dec 15, 2024</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <div class="progress me-2" style="width: 60px; height: 6px;">
-                      <div class="progress-bar bg-success" style="width: 100%"></div>
-                    </div>
-                    <span class="small">45/45</span>
-                  </div>
-                </td>
-                <td><span class="badge bg-success">Completed</span></td>
-                <td>
-                  <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                      <svg class="icon" width="16" height="16" fill="currentColor">
-                        <use href="#icon-more"></use>
-                      </svg>
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#" onclick="viewAssignment(2)">View Details</a></li>
-                      <li><a class="dropdown-item" href="#" onclick="viewGrades(2)">View Grades</a></li>
-                      <li><a class="dropdown-item" href="#" onclick="duplicateAssignment(2)">Duplicate</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item text-danger" href="#" onclick="deleteAssignment(2)">Delete</a></li>
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-              
-              <tr>
-                <td>
-                  <input type="checkbox" class="form-check-input" value="3">
-                </td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
-                      <svg class="icon text-warning" width="16" height="16" fill="currentColor">
-                        <use href="#icon-clock"></use>
-                      </svg>
-                    </div>
-                    <div>
-                      <div class="fw-semibold">English Essay</div>
-                      <div class="text-muted small">English • 75 points</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="badge bg-warning">English</span></td>
-                <td><span class="badge bg-info">Grade 10-B</span></td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <svg class="icon text-muted me-1" width="14" height="14" fill="currentColor">
-                      <use href="#icon-calendar"></use>
-                    </svg>
-                    <span>Dec 18, 2024</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <div class="progress me-2" style="width: 60px; height: 6px;">
-                      <div class="progress-bar bg-warning" style="width: 60%"></div>
-                    </div>
-                    <span class="small">23/38</span>
-                  </div>
-                </td>
-                <td><span class="badge bg-warning">Active</span></td>
-                <td>
-                  <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                      <svg class="icon" width="16" height="16" fill="currentColor">
-                        <use href="#icon-more"></use>
-                      </svg>
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#" onclick="viewAssignment(3)">View Details</a></li>
-                      <li><a class="dropdown-item" href="#" onclick="editAssignment(3)">Edit Assignment</a></li>
-                      <li><a class="dropdown-item" href="#" onclick="gradeAssignment(3)">Grade Students</a></li>
-                      <li><a class="dropdown-item" href="#" onclick="duplicateAssignment(3)">Duplicate</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item text-danger" href="#" onclick="deleteAssignment(3)">Delete</a></li>
-                    </ul>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              <?php else: ?>
+                <?php foreach ($assignments as $assignment): ?>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                          <svg class="icon text-primary" width="16" height="16" fill="currentColor">
+                            <use href="#icon-plus"></use>
+                          </svg>
+                        </div>
+                        <div>
+                          <div class="fw-semibold"><?= htmlspecialchars($assignment['title']) ?></div>
+                          <div class="text-muted small"><?= htmlspecialchars($assignment['subject_name']) ?> • <?= $assignment['max_score'] ?> points</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="badge bg-primary"><?= htmlspecialchars($assignment['subject_name']) ?></span></td>
+                    <td><span class="badge bg-info"><?= htmlspecialchars($assignment['class_name']) ?></span></td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <svg class="icon text-muted me-1" width="14" height="14" fill="currentColor">
+                          <use href="#icon-calendar"></use>
+                        </svg>
+                        <span><?= $assignment['due_date'] ? date('M j, Y', strtotime($assignment['due_date'])) : 'No due date' ?></span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="progress me-2" style="width: 60px; height: 6px;">
+                          <div class="progress-bar <?= $assignment['completion_percentage'] >= 80 ? 'bg-success' : ($assignment['completion_percentage'] >= 50 ? 'bg-warning' : 'bg-danger') ?>" 
+                               style="width: <?= $assignment['completion_percentage'] ?>%"></div>
+                        </div>
+                        <span class="small"><?= $assignment['graded_students'] ?>/<?= $assignment['total_students'] ?></span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge <?= $assignment['status'] == 'active' ? 'bg-success' : ($assignment['status'] == 'overdue' ? 'bg-danger' : 'bg-warning') ?>">
+                        <?= ucfirst($assignment['status']) ?>
+                      </span>
+                    </td>
+                    <td>
+                      <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                          <svg class="icon" width="16" height="16" fill="currentColor">
+                            <use href="#icon-more"></use>
+                          </svg>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#" onclick="viewAssignment(<?= $assignment['id'] ?>)">View Details</a></li>
+                          <li><a class="dropdown-item" href="#" onclick="editAssignment(<?= $assignment['id'] ?>)">Edit Assignment</a></li>
+                          <li><a class="dropdown-item" href="#" onclick="gradeAssignment(<?= $assignment['id'] ?>)">Grade Students</a></li>
+                          <li><a class="dropdown-item" href="#" onclick="duplicateAssignment(<?= $assignment['id'] ?>)">Duplicate</a></li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li><a class="dropdown-item text-danger" href="#" onclick="deleteAssignment(<?= $assignment['id'] ?>)">Delete</a></li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
@@ -627,43 +547,44 @@ $title = 'Assignment Management';
             </div>
             <div class="col-md-6">
               <label class="form-label">Subject</label>
-              <select class="form-select" required>
+              <select class="form-select" name="subject_id" required>
                 <option value="">Select Subject</option>
-                <option value="mathematics">Mathematics</option>
-                <option value="science">Science</option>
-                <option value="english">English</option>
-                <option value="filipino">Filipino</option>
+                <?php foreach ($subjects as $subject): ?>
+                  <option value="<?= $subject['id'] ?>">
+                    <?= htmlspecialchars($subject['name']) ?> (Grade <?= $subject['grade_level'] ?>)
+                  </option>
+                <?php endforeach; ?>
               </select>
             </div>
             <div class="col-md-6">
               <label class="form-label">Assignment Type</label>
-              <select class="form-select" required>
+              <select class="form-select" name="assignment_type" required>
                 <option value="">Select Type</option>
+                <option value="ww">Written Work</option>
+                <option value="pt">Performance Task</option>
+                <option value="qe">Quarterly Exam</option>
                 <option value="quiz">Quiz</option>
-                <option value="assignment">Assignment</option>
                 <option value="project">Project</option>
-                <option value="exam">Exam</option>
                 <option value="lab">Lab Activity</option>
               </select>
             </div>
             <div class="col-md-6">
               <label class="form-label">Max Points</label>
-              <input type="number" class="form-control" placeholder="100" required>
+              <input type="number" class="form-control" name="max_score" placeholder="100" required>
             </div>
             <div class="col-md-6">
               <label class="form-label">Due Date</label>
-              <input type="date" class="form-control" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Due Time</label>
-              <input type="time" class="form-control" value="23:59">
+              <input type="date" class="form-control" name="due_date" required>
             </div>
             <div class="col-12">
-              <label class="form-label">Classes</label>
-              <select class="form-select" multiple required>
-                <option value="grade-10-a">Grade 10-A</option>
-                <option value="grade-10-b">Grade 10-B</option>
-                <option value="grade-9-a">Grade 9-A</option>
+              <label class="form-label">Section</label>
+              <select class="form-select" name="section_id" required>
+                <option value="">Select Section</option>
+                <?php foreach ($sections as $section): ?>
+                  <option value="<?= $section['section_id'] ?>">
+                    <?= htmlspecialchars($section['class_name']) ?> - <?= htmlspecialchars($section['subject_name']) ?>
+                  </option>
+                <?php endforeach; ?>
               </select>
             </div>
             <div class="col-12">

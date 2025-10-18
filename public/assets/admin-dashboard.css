@@ -316,3 +316,80 @@
     color: white;
   }
 }
+
+/* Enhanced Dark Mode Table Support for Admin Dashboard */
+[data-theme="dark"] .surface {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .stat-card {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .quick-action-card {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .table {
+  background-color: var(--color-surface-200) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+  background-color: transparent !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .table thead th {
+  background-color: var(--color-surface-300) !important;
+  color: var(--color-text) !important;
+  border-bottom-color: var(--color-border) !important;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .table tbody tr {
+  background-color: var(--color-surface-200) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .table tbody tr:nth-child(even) {
+  background-color: var(--color-surface-300) !important;
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+  background-color: var(--color-surface-400) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .table-light {
+  background-color: var(--color-surface-300) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .table-light th {
+  background-color: var(--color-surface-300) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .table-responsive {
+  background-color: var(--color-surface-200) !important;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+[data-theme="dark"] .table-surface {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .table-surface .table {
+  background-color: transparent !important;
+  color: var(--color-text) !important;
+}

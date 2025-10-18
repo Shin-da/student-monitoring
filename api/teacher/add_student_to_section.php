@@ -91,7 +91,8 @@ try {
     }
 
     // Fetch student info for dynamic table
-    $stuStmt = $pdo->prepare('SELECT name, lrn, grade_level FROM users WHERE id = :id LIMIT 1');
+    // Fetch LRN and grade from students table joined with users table
+    $stuStmt = $pdo->prepare('SELECT u.name, s.lrn, s.grade_level FROM users u LEFT JOIN students s ON s.user_id = u.id WHERE u.id = :id LIMIT 1');
     $stuStmt->execute(['id' => $studentUserId]);
     $stu = $stuStmt->fetch(PDO::FETCH_ASSOC) ?: [];
 

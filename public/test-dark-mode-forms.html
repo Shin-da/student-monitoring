@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Forms Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/app.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 2rem;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+        }
+        .test-section {
+            margin-bottom: 3rem;
+        }
+        .test-section h3 {
+            margin-bottom: 1rem;
+            color: var(--color-text);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1 class="mb-4">Dark Mode Forms Test</h1>
+        
+        <!-- Theme Toggle -->
+        <div class="mb-4">
+            <button class="btn btn-outline-primary" onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+
+        <!-- Test Section 1: Basic Form Controls -->
+        <div class="test-section">
+            <h3>Basic Form Controls</h3>
+            <div class="surface p-4">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="textInput" class="form-label">Text Input</label>
+                            <input type="text" class="form-control" id="textInput" placeholder="Enter text here">
+                            <div class="form-help">This is a basic text input field</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="emailInput" class="form-label">Email Input</label>
+                            <input type="email" class="form-control" id="emailInput" placeholder="user@example.com">
+                            <div class="form-help">Enter a valid email address</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="passwordInput" class="form-label">Password Input</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="passwordInput" placeholder="Enter password">
+                                <button type="button" class="btn btn-outline-secondary password-toggle">
+                                    <svg width="16" height="16" fill="currentColor">
+                                        <use href="#icon-eye"></use>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="password-strength-bar">
+                                    <div class="password-strength-fill bg-warning" style="width: 60%;"></div>
+                                </div>
+                                <div class="password-strength-text">Medium strength</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selectInput" class="form-label">Select Dropdown</label>
+                            <select class="form-select" id="selectInput">
+                                <option value="">Choose an option</option>
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                                <option value="option3">Option 3</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="textareaInput" class="form-label">Textarea</label>
+                            <textarea class="form-control" id="textareaInput" rows="3" placeholder="Enter your message here..."></textarea>
+                            <div class="character-counter">0/500 characters</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Test Section 2: Floating Labels -->
+        <div class="test-section">
+            <h3>Floating Labels</h3>
+            <div class="surface p-4">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="floatingText" placeholder="John Doe">
+                                <label for="floatingText">Full Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="floatingEmail" placeholder="user@example.com">
+                                <label for="floatingEmail">Email Address</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="floatingSelect">
+                                    <option value=""></option>
+                                    <option value="admin">Admin</option>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="student">Student</option>
+                                </select>
+                                <label for="floatingSelect">Role</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" id="floatingDate">
+                                <label for="floatingDate">Date of Birth</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Test Section 3: Form Validation States -->
+        <div class="test-section">
+            <h3>Form Validation States</h3>
+            <div class="surface p-4">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="validInput" class="form-label">Valid Input</label>
+                            <input type="text" class="form-control is-valid" id="validInput" value="Valid input">
+                            <div class="valid-feedback">Looks good!</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="invalidInput" class="form-label">Invalid Input</label>
+                            <input type="text" class="form-control is-invalid" id="invalidInput" value="Invalid input">
+                            <div class="invalid-feedback">Please provide a valid input.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="validSelect" class="form-label">Valid Select</label>
+                            <select class="form-select is-valid" id="validSelect">
+                                <option value="option1" selected>Option 1</option>
+                                <option value="option2">Option 2</option>
+                            </select>
+                            <div class="valid-feedback">Great choice!</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="invalidSelect" class="form-label">Invalid Select</label>
+                            <select class="form-select is-invalid" id="invalidSelect">
+                                <option value="">Please select</option>
+                                <option value="option1">Option 1</option>
+                            </select>
+                            <div class="invalid-feedback">Please select an option.</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Test Section 4: Checkboxes and Radio Buttons -->
+        <div class="test-section">
+            <h3>Checkboxes and Radio Buttons</h3>
+            <div class="surface p-4">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6>Checkboxes</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkbox1" checked>
+                                <label class="form-check-label" for="checkbox1">Option 1 (checked)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkbox2">
+                                <label class="form-check-label" for="checkbox2">Option 2</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkbox3" disabled>
+                                <label class="form-check-label" for="checkbox3">Option 3 (disabled)</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Radio Buttons</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="radioGroup" id="radio1" checked>
+                                <label class="form-check-label" for="radio1">Option A (selected)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="radioGroup" id="radio2">
+                                <label class="form-check-label" for="radio2">Option B</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="radioGroup" id="radio3" disabled>
+                                <label class="form-check-label" for="radio3">Option C (disabled)</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Test Section 5: Form Sections -->
+        <div class="test-section">
+            <h3>Form Sections</h3>
+            <div class="surface p-4">
+                <form>
+                    <div class="form-section">
+                        <h5>Personal Information</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" placeholder="Enter first name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" placeholder="Enter last name">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h5>Contact Information</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" placeholder="Enter email">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-control" placeholder="Enter phone number">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Test Section 6: Form Steps -->
+        <div class="test-section">
+            <h3>Form Steps</h3>
+            <div class="surface p-4">
+                <div class="form-steps">
+                    <div class="form-step completed">
+                        <div class="form-step-number">1</div>
+                        <div class="form-step-label">Personal Info</div>
+                    </div>
+                    <div class="form-step active">
+                        <div class="form-step-number">2</div>
+                        <div class="form-step-label">Contact Details</div>
+                    </div>
+                    <div class="form-step">
+                        <div class="form-step-number">3</div>
+                        <div class="form-step-label">Review</div>
+                    </div>
+                </div>
+                
+                <div class="form-progress">
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 66%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Section 7: Special Input Types -->
+        <div class="test-section">
+            <h3>Special Input Types</h3>
+            <div class="surface p-4">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="dateInput" class="form-label">Date Input</label>
+                            <input type="date" class="form-control" id="dateInput">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="timeInput" class="form-label">Time Input</label>
+                            <input type="time" class="form-control" id="timeInput">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="numberInput" class="form-label">Number Input</label>
+                            <input type="number" class="form-control" id="numberInput" placeholder="Enter number">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rangeInput" class="form-label">Range Input</label>
+                            <input type="range" class="form-range" id="rangeInput" min="0" max="100" value="50">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fileInput" class="form-label">File Input</label>
+                            <input type="file" class="form-control" id="fileInput">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="colorInput" class="form-label">Color Input</label>
+                            <input type="color" class="form-control" id="colorInput" value="#1976d2">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Test Section 8: Form Actions -->
+        <div class="test-section">
+            <h3>Form Actions</h3>
+            <div class="surface p-4">
+                <form>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline-secondary">Cancel</button>
+                        <button type="button" class="btn btn-outline-primary">Save Draft</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Test Section 9: Modal Form -->
+        <div class="test-section">
+            <h3>Modal Form</h3>
+            <div class="surface p-4">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#testModal">
+                    Open Modal Form
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Modal -->
+    <div class="modal fade" id="testModal" tabindex="-1" aria-labelledby="testModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="testModalLabel">Modal Form Test</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="modalName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="modalName" placeholder="Enter name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="modalEmail" placeholder="Enter email">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="modalCheck">
+                                <label class="form-check-label" for="modalCheck">I agree to the terms</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+        }
+
+        // Password toggle functionality
+        document.querySelectorAll('.password-toggle').forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+            });
+        });
+
+        // Character counter functionality
+        const textarea = document.getElementById('textareaInput');
+        const counter = document.querySelector('.character-counter');
+        
+        if (textarea && counter) {
+            textarea.addEventListener('input', function() {
+                const length = this.value.length;
+                counter.textContent = `${length}/500 characters`;
+                
+                if (length > 450) {
+                    counter.classList.add('text-warning');
+                } else if (length > 500) {
+                    counter.classList.remove('text-warning');
+                    counter.classList.add('text-danger');
+                } else {
+                    counter.classList.remove('text-warning', 'text-danger');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

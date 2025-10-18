@@ -5,6 +5,7 @@ namespace Controllers;
 
 use Core\Controller;
 use Core\Session;
+use Helpers\StaticData;
 
 class StudentController extends Controller
 {
@@ -12,14 +13,22 @@ class StudentController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'student') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need student privileges to access this page.');
             return;
         }
+        // STATIC DATA: Replace database queries with static data for frontend development
+        $staticData = StaticData::getStudentDashboardData();
+
         $this->view->render('student/dashboard', [
             'title' => 'Student Dashboard',
             'user' => $user,
             'activeNav' => 'dashboard',
             'showBack' => false,
+            'student_info' => $staticData['student_info'],
+            'academic_stats' => $staticData['academic_stats'],
+            'recent_grades' => $staticData['recent_grades'],
+            'upcoming_assignments' => $staticData['upcoming_assignments'],
+            'staticDataIndicator' => StaticData::getStaticDataIndicator('student dashboard data'),
         ], 'layouts/dashboard');
     }
 
@@ -27,7 +36,7 @@ class StudentController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'student') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need student privileges to access this page.');
             return;
         }
         $this->view->render('student/grades', [
@@ -41,7 +50,7 @@ class StudentController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'student') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need student privileges to access this page.');
             return;
         }
         $this->view->render('student/assignments', [
@@ -55,7 +64,7 @@ class StudentController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'student') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need student privileges to access this page.');
             return;
         }
         $this->view->render('student/profile', [
@@ -69,7 +78,7 @@ class StudentController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'student') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need student privileges to access this page.');
             return;
         }
         $this->view->render('student/attendance', [
@@ -83,7 +92,7 @@ class StudentController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'student') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need student privileges to access this page.');
             return;
         }
         $this->view->render('student/alerts', [
@@ -97,7 +106,7 @@ class StudentController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'student') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need student privileges to access this page.');
             return;
         }
         $this->view->render('student/schedule', [
@@ -111,7 +120,7 @@ class StudentController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'student') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need student privileges to access this page.');
             return;
         }
         $this->view->render('student/resources', [

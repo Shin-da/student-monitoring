@@ -1,3 +1,6 @@
+<!-- Static Data Indicator -->
+<?= $staticDataIndicator ?? '' ?>
+
 <!-- Epic Admin Dashboard Header -->
 <div class="dashboard-header mb-4 position-relative overflow-hidden">
   <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); opacity: 0.1;"></div>
@@ -92,7 +95,7 @@
           <span class="badge bg-primary-subtle text-primary">Active</span>
         </div>
         <h3 class="h4 fw-bold mb-1 text-primary" data-count-to="<?= $studentCount ?>">0</h3>
-        <p class="text-muted small mb-0">Total Students</p>
+        <p class="text-muted small mb-0">Total Students <?= \Helpers\StaticData::getStaticDataBadge() ?></p>
         <div class="progress mt-2" style="height: 4px;">
           <div class="progress-bar bg-primary" style="width: 85%" data-progress-to="85"></div>
         </div>
@@ -121,7 +124,7 @@
           <span class="badge bg-success-subtle text-success">Active</span>
         </div>
         <h3 class="h4 fw-bold mb-1 text-success" data-count-to="<?= $teacherCount ?>">0</h3>
-        <p class="text-muted small mb-0">Teachers</p>
+        <p class="text-muted small mb-0">Teachers <?= \Helpers\StaticData::getStaticDataBadge() ?></p>
         <div class="progress mt-2" style="height: 4px;">
           <div class="progress-bar bg-success" style="width: 75%" data-progress-to="75"></div>
         </div>
@@ -146,7 +149,7 @@
           <?php endif; ?>
         </div>
         <h3 class="h4 fw-bold mb-1 text-warning" data-count-to="<?= $pendingCount ?>">0</h3>
-        <p class="text-muted small mb-0">Pending Approvals</p>
+        <p class="text-muted small mb-0">Pending Approvals <?= \Helpers\StaticData::getStaticDataBadge() ?></p>
         <div class="progress mt-2" style="height: 4px;">
           <div class="progress-bar bg-warning" style="width: <?= $pendingCount > 0 ? '60' : '100' ?>%" data-progress-to="<?= $pendingCount > 0 ? '60' : '100' ?>"></div>
         </div>

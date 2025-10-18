@@ -365,24 +365,375 @@
   }
 }
 
-/* Dark Mode Support */
+/* Enhanced Dark Mode Form Support */
 [data-theme="dark"] .form-section {
-  background-color: var(--bs-gray-800);
-  border-color: var(--bs-gray-700);
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .form-section h5 {
+  color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-section h6 {
+  color: var(--color-text) !important;
 }
 
 [data-theme="dark"] .file-item {
-  background-color: var(--bs-gray-800);
-  border-color: var(--bs-gray-700);
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
 }
 
 [data-theme="dark"] .file-item:hover {
-  background-color: var(--bs-gray-700);
+  background-color: var(--color-surface-300) !important;
+  border-color: var(--color-primary) !important;
 }
 
 [data-theme="dark"] .validation-summary {
-  background-color: rgba(var(--bs-danger-rgb), 0.1);
-  border-color: var(--bs-danger);
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  border-color: #ef4444 !important;
+}
+
+[data-theme="dark"] .validation-summary h6 {
+  color: #ef4444 !important;
+}
+
+[data-theme="dark"] .validation-summary li {
+  color: #ef4444 !important;
+}
+
+/* Enhanced Form Controls Dark Mode */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: var(--color-muted) !important;
+  opacity: 0.7;
+}
+
+[data-theme="dark"] .form-select::placeholder {
+  color: var(--color-muted) !important;
+  opacity: 0.7;
+}
+
+/* Form Labels Dark Mode */
+[data-theme="dark"] .form-label {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-group label {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-check-label {
+  color: var(--color-text) !important;
+}
+
+/* Form Help Text Dark Mode */
+[data-theme="dark"] .form-help {
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .form-help.text-danger {
+  color: #ef4444 !important;
+}
+
+[data-theme="dark"] .form-help.text-warning {
+  color: #f59e0b !important;
+}
+
+[data-theme="dark"] .form-help.text-success {
+  color: #10b981 !important;
+}
+
+/* Form Checkboxes and Radio Buttons Dark Mode */
+[data-theme="dark"] .form-check-input {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .form-check-input:checked {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-check-input:focus {
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* Form Floating Labels Dark Mode */
+[data-theme="dark"] .form-floating > .form-control,
+[data-theme="dark"] .form-floating > .form-select {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-floating > .form-control:focus,
+[data-theme="dark"] .form-floating > .form-select:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .form-floating > label {
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .form-floating > .form-control:focus ~ label,
+[data-theme="dark"] .form-floating > .form-control:not(:placeholder-shown) ~ label,
+[data-theme="dark"] .form-floating > .form-select:focus ~ label,
+[data-theme="dark"] .form-floating > .form-select:not([value=""]) ~ label {
+  color: var(--color-primary) !important;
+}
+
+/* Input Groups Dark Mode */
+[data-theme="dark"] .input-group-text {
+  background-color: var(--color-surface-300) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .input-group .form-control {
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .input-group .form-control:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* Password Toggle Button Dark Mode */
+[data-theme="dark"] .password-toggle {
+  background-color: var(--color-surface-300) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .password-toggle:hover {
+  background-color: var(--color-surface-400) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .password-toggle:focus {
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* Password Strength Indicator Dark Mode */
+[data-theme="dark"] .password-strength-bar {
+  background-color: var(--color-surface-400) !important;
+}
+
+[data-theme="dark"] .password-strength-fill.bg-danger {
+  background-color: #ef4444 !important;
+}
+
+[data-theme="dark"] .password-strength-fill.bg-warning {
+  background-color: #f59e0b !important;
+}
+
+[data-theme="dark"] .password-strength-fill.bg-success {
+  background-color: #10b981 !important;
+}
+
+[data-theme="dark"] .password-strength-text {
+  color: var(--color-text) !important;
+}
+
+/* Character Counter Dark Mode */
+[data-theme="dark"] .character-counter {
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .character-counter.text-warning {
+  color: #f59e0b !important;
+}
+
+[data-theme="dark"] .character-counter.text-danger {
+  color: #ef4444 !important;
+}
+
+/* Form Validation States Dark Mode */
+[data-theme="dark"] .form-control.is-invalid,
+[data-theme="dark"] .form-select.is-invalid {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 .2rem rgba(239, 68, 68, 0.25) !important;
+}
+
+[data-theme="dark"] .form-control.is-valid,
+[data-theme="dark"] .form-select.is-valid {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 .2rem rgba(16, 185, 129, 0.25) !important;
+}
+
+[data-theme="dark"] .invalid-feedback {
+  color: #ef4444 !important;
+}
+
+[data-theme="dark"] .valid-feedback {
+  color: #10b981 !important;
+}
+
+/* Form Steps Dark Mode */
+[data-theme="dark"] .form-step-number {
+  background-color: var(--color-surface-300) !important;
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .form-step.active .form-step-number {
+  background-color: var(--color-primary) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .form-step.completed .form-step-number {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .form-step::before {
+  background-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .form-step.active::before,
+[data-theme="dark"] .form-step.completed::before {
+  background-color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-step-label {
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .form-step.active .form-step-label {
+  color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-step.completed .form-step-label {
+  color: #10b981 !important;
+}
+
+/* Form Progress Dark Mode */
+[data-theme="dark"] .form-progress .progress {
+  background-color: var(--color-surface-300) !important;
+}
+
+[data-theme="dark"] .form-progress .progress-bar {
+  background-color: var(--color-primary) !important;
+}
+
+/* Form Actions Dark Mode */
+[data-theme="dark"] .form-actions {
+  border-top-color: var(--color-border) !important;
+}
+
+/* Form Groups Dark Mode */
+[data-theme="dark"] .form-group.required label::after {
+  color: #ef4444 !important;
+}
+
+/* Auth Forms Dark Mode */
+[data-theme="dark"] .auth-form .form-control,
+[data-theme="dark"] .auth-form .form-select {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .auth-form .form-control:focus,
+[data-theme="dark"] .auth-form .form-select:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .auth-form .form-floating > .form-control:focus ~ label,
+[data-theme="dark"] .auth-form .form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: var(--color-primary) !important;
+}
+
+/* Modal Forms Dark Mode */
+[data-theme="dark"] .modal .form-control,
+[data-theme="dark"] .modal .form-select {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .modal .form-control:focus,
+[data-theme="dark"] .modal .form-select:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .modal .form-label {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .modal .form-check-label {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .modal .form-help {
+  color: var(--color-muted) !important;
+}
+
+/* Form Text Areas Dark Mode */
+[data-theme="dark"] .form-control[type="textarea"],
+[data-theme="dark"] textarea.form-control {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-control[type="textarea"]:focus,
+[data-theme="dark"] textarea.form-control:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* Form Range Inputs Dark Mode */
+[data-theme="dark"] .form-range {
+  background-color: var(--color-surface-300) !important;
+}
+
+[data-theme="dark"] .form-range::-webkit-slider-thumb {
+  background-color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-range::-moz-range-thumb {
+  background-color: var(--color-primary) !important;
+}
+
+/* Form File Inputs Dark Mode */
+[data-theme="dark"] .form-control[type="file"] {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-control[type="file"]:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
 }
 
 /* Animation Classes */

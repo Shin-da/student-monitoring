@@ -21,6 +21,20 @@ class HomeController extends Controller
         ]);
     }
 
+    public function componentSystemDemo(): void
+    {
+        $this->view->render('examples/component-system-demo', [
+            'title' => 'Component System Demo',
+        ]);
+    }
+
+    public function componentShowcase(): void
+    {
+        $this->view->render('examples/component-library-showcase', [
+            'title' => 'Component Library Showcase',
+        ]);
+    }
+
     public function pwaFeatures(): void
     {
         $this->view->render('demo/pwa-features', [

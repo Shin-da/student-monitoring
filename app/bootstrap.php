@@ -21,6 +21,7 @@ spl_autoload_register(function (string $class): void {
         'Controllers' => APP_PATH . DIRECTORY_SEPARATOR . 'Controllers',
         'Models' => APP_PATH . DIRECTORY_SEPARATOR . 'Models',
         'Helpers' => APP_PATH . DIRECTORY_SEPARATOR . 'Helpers',
+        'App' => APP_PATH,
     ];
 
     foreach ($prefixes as $ns => $dir) {

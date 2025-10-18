@@ -1,0 +1,472 @@
+/* Auth Pages Styles - Following System Design Patterns */
+
+/* Auth Page Layout - Using System Background */
+.auth-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  position: relative;
+}
+
+[data-theme="dark"] .auth-page {
+  background: var(--color-bg);
+}
+
+/* Auth Main Content - Following System Layout */
+.auth-main {
+  position: relative;
+  z-index: 100;
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+}
+
+/* Auth Card - Following System Surface Pattern */
+.auth-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--trans-slow);
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+[data-theme="dark"] .auth-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--bs-primary);
+}
+
+/* Auth Icon - Following System Icon Pattern */
+.auth-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: var(--bs-primary);
+  border-radius: 50%;
+  color: white;
+  font-size: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Auth Form Styles - Following System Form Patterns */
+.auth-form {
+  margin-top: 1.5rem;
+}
+
+.auth-form .form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.auth-form .form-label {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.auth-form .form-control {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all var(--trans-fast);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .auth-form .form-control {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.auth-form .form-control:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+  transform: translateY(-1px);
+  background-color: var(--color-bg);
+}
+
+[data-theme="dark"] .auth-form .form-control:focus {
+  background-color: var(--color-surface);
+}
+
+.auth-form .form-control::placeholder {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+/* Input Group Styles - Following System Pattern */
+.auth-form .input-group {
+  position: relative;
+}
+
+.auth-form .input-group .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.auth-form .input-group .btn {
+  border: 1px solid var(--color-border);
+  border-left: none;
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-muted);
+  transition: all var(--trans-fast);
+  padding: 0.75rem 1rem;
+}
+
+[data-theme="dark"] .auth-form .input-group .btn {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-muted);
+}
+
+.auth-form .input-group .btn:hover {
+  background: var(--accent-10);
+  color: var(--bs-primary);
+  transform: translateY(-1px);
+}
+
+.auth-form .input-group .btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+  border-color: var(--bs-primary);
+}
+
+/* Password Strength Indicator - Following System Pattern */
+.password-strength {
+  margin-top: 0.75rem;
+}
+
+.password-strength-bar {
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.password-strength-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: all var(--trans-fast);
+  width: 0%;
+}
+
+.password-strength-fill.bg-danger {
+  background: var(--color-danger-300) !important;
+}
+
+.password-strength-fill.bg-warning {
+  background: var(--color-warning-300) !important;
+}
+
+.password-strength-fill.bg-success {
+  background: var(--color-success-300) !important;
+}
+
+.password-strength-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.password-strength-text.text-danger {
+  color: var(--color-danger-300) !important;
+}
+
+.password-strength-text.text-warning {
+  color: var(--color-warning-300) !important;
+}
+
+.password-strength-text.text-success {
+  color: var(--color-success-300) !important;
+}
+
+/* Checkbox Styles - Following System Pattern */
+.auth-form .form-check {
+  margin-bottom: 1.5rem;
+}
+
+.auth-form .form-check-input {
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-top: 0.1rem;
+  transition: all var(--trans-fast);
+  background-color: var(--color-bg);
+}
+
+[data-theme="dark"] .auth-form .form-check-input {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.auth-form .form-check-input:checked {
+  background: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.auth-form .form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.auth-form .form-check-label {
+  color: var(--color-text);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-left: 0.5rem;
+}
+
+.auth-form .form-check-label a {
+  color: var(--bs-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--trans-fast);
+}
+
+.auth-form .form-check-label a:hover {
+  color: var(--bs-primary-dark);
+  text-decoration: underline;
+}
+
+/* Button Styles - Following System Button Pattern */
+.auth-form .btn {
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all var(--trans-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-form .btn-primary {
+  background: var(--bs-primary);
+  border: none;
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-form .btn-primary:hover {
+  background: var(--bs-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.auth-form .btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-form .btn.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.auth-form .btn .spinner-border {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Alert Styles - Following System Alert Pattern */
+.auth-form .alert {
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.auth-form .alert-danger {
+  background: var(--color-danger-100);
+  color: var(--color-danger-300);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] .auth-form .alert-danger {
+  background: var(--color-danger-200);
+  color: var(--color-danger-100);
+}
+
+.auth-form .alert-success {
+  background: var(--color-success-100);
+  color: var(--color-success-300);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] .auth-form .alert-success {
+  background: var(--color-success-200);
+  color: var(--color-success-100);
+}
+
+/* Form Help Text - Following System Pattern */
+.form-help {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Validation States - Following System Pattern */
+.auth-form .is-invalid {
+  border-color: var(--color-danger-300) !important;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.invalid-feedback {
+  color: var(--color-danger-300);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.valid-feedback {
+  color: var(--color-success-300);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* Auth Links - Following System Link Pattern */
+.auth-links {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.auth-links a {
+  color: var(--bs-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all var(--trans-fast);
+  position: relative;
+}
+
+.auth-links a:hover {
+  color: var(--bs-primary-dark);
+  text-decoration: none;
+}
+
+.auth-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--bs-primary);
+  transition: width var(--trans-fast);
+}
+
+.auth-links a:hover::after {
+  width: 100%;
+}
+
+/* Auth Footer - Following System Footer Pattern */
+.auth-footer {
+  position: relative;
+  z-index: 100;
+  padding: 1.5rem 0;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.auth-footer p {
+  color: var(--color-muted);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design - Following System Breakpoints */
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 1.5rem;
+    margin: 1rem;
+    border-radius: var(--radius-md);
+  }
+  
+  .auth-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .auth-form .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-card {
+    padding: 1.25rem;
+    margin: 0.5rem;
+  }
+  
+  .auth-form .form-control {
+    padding: 0.75rem;
+  }
+  
+  .auth-form .btn {
+    padding: 0.75rem 1.25rem;
+  }
+}
+
+/* Focus States - Following System Focus Pattern */
+.form-control:focus,
+.form-check-input:focus,
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Reduced Motion - Following System Accessibility Pattern */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .auth-card:hover {
+    transform: none;
+  }
+  
+  .btn:hover {
+    transform: none !important;
+  }
+}

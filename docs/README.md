@@ -11,6 +11,11 @@ The system works seamlessly when deployed in a subfolder (e.g., `/student-monito
 Service Worker, manifest, and offline page are base-path aware and portable.
 Troubleshooting and setup guides updated to reflect these changes.
 
+### ❗ Error Pages & Routing
+- Unified error pages (401/403/404/500/503) via `ErrorController`
+- Use `Helpers\\ErrorHandler` in controllers instead of `Response::forbidden()`
+- XAMPP users: ensure the root `.htaccess` redirects to `public/index.php` for clean URLs
+
 ### Prerequisites
 - XAMPP (Apache + MySQL + PHP 8.x)
 - Web browser

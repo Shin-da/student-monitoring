@@ -1,0 +1,118 @@
+// =============================================================================
+// CRITICAL CSS - Above-the-fold styles only
+// These styles are inlined in the HTML head for fastest rendering
+// =============================================================================
+
+// Critical design tokens
+:root {
+  /* Base colors - warm theme */
+  --color-bg: #fff9f5;
+  --color-text: #4a2e1f;
+  --color-muted: #8c7d74;
+  --color-primary: #c5705d;
+  --color-surface: #fffaf6;
+  --color-border: #f4d9c6;
+
+  /* Radii */
+  --radius-sm: .5rem;
+  --radius-md: .75rem;
+  --radius-lg: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 16px rgba(2,6,23,0.06);
+  --shadow-md: 0 8px 25px rgba(2,6,23,0.10);
+  --shadow-lg: 0 16px 45px rgba(2,6,23,0.16);
+
+  /* Transitions */
+  --trans-fast: .15s ease;
+  --trans-slow: .25s ease;
+
+  color-scheme: light;
+}
+
+// Critical base styles
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  transition: background-color var(--trans-fast), color var(--trans-fast);
+}
+
+// Critical layout
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  padding-top: 4rem; // Space for fixed navbar
+}
+
+// Critical navbar styles
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  transition: all var(--trans-fast);
+}
+
+.navbar-glass {
+  background: rgba(255, 249, 245, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+// Critical skip link
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--color-primary);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 9999;
+  transition: top var(--trans-fast);
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+// Critical loading states
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

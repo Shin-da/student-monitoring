@@ -1,5 +1,15 @@
+<?php /** @var array $sections */ /** @var array $filters */ /** @var array $students */ /** @var array $summary */ ?>
+<?php $title = 'Attendance Management'; ?>
 <?php
-$title = 'Attendance Management';
+  // Resolve selected section/subject names
+  $selectedSection = null;
+  foreach (($sections ?? []) as $sec) {
+    if ((int)($filters['section_id'] ?? 0) === (int)$sec['section_id'] && (int)($filters['subject_id'] ?? 0) === (int)$sec['subject_id']) {
+      $selectedSection = $sec; break;
+    }
+  }
+  $selectedClassName = $selectedSection['class_name'] ?? '—';
+  $selectedSubjectName = $selectedSection['subject_name'] ?? '—';
 ?>
 
 <!-- Teacher Attendance Management Header -->
@@ -37,7 +47,7 @@ $title = 'Attendance Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-success mb-0" data-count-to="95">0</div>
+          <div class="h4 fw-bold text-success mb-0" data-count-to="<?= (int)($summary['present'] ?? 0) ?>">0</div>
           <div class="text-muted small">Present Today</div>
         </div>
       </div>
@@ -53,7 +63,7 @@ $title = 'Attendance Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-danger mb-0" data-count-to="5">0</div>
+          <div class="h4 fw-bold text-danger mb-0" data-count-to="<?= (int)($summary['absent'] ?? 0) ?>">0</div>
           <div class="text-muted small">Absent Today</div>
         </div>
       </div>
@@ -69,7 +79,7 @@ $title = 'Attendance Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-info mb-0" data-count-to="88.5" data-count-decimals="1">0</div>
+          <div class="h4 fw-bold text-info mb-0" data-count-to="<?= (int)(($summary['present'] ?? 0) + ($summary['late'] ?? 0) + ($summary['excused'] ?? 0) + ($summary['absent'] ?? 0)) > 0 ? round((($summary['present'] ?? 0) / max(1, ($summary['present'] + $summary['late'] + $summary['excused'] + $summary['absent'])))*100, 1) : 0 ?>" data-count-decimals="1">0</div>
           <div class="text-muted small">Average Attendance</div>
         </div>
       </div>
@@ -85,7 +95,7 @@ $title = 'Attendance Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-warning mb-0" data-count-to="12">0</div>
+          <div class="h4 fw-bold text-warning mb-0" data-count-to="<?= (int)($summary['late'] ?? 0) ?>">0</div>
           <div class="text-muted small">At Risk</div>
         </div>
       </div>
@@ -95,48 +105,35 @@ $title = 'Attendance Management';
 
 <!-- Attendance Filters -->
 <div class="surface mb-4">
-  <div class="row g-3 align-items-center">
-    <div class="col-md-3">
-      <label class="form-label">Class</label>
-      <select class="form-select" id="classFilter">
-        <option value="">All Classes</option>
-        <option value="grade-10-a">Grade 10-A</option>
-        <option value="grade-10-b">Grade 10-B</option>
-        <option value="grade-9-a">Grade 9-A</option>
+  <form method="GET" action="<?= \Helpers\Url::to('/teacher/attendance') ?>" class="row g-3 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label">Section - Subject</label>
+      <select class="form-select" name="section" id="sectionSelect">
+        <?php foreach (($sections ?? []) as $sec): ?>
+          <option value="<?= (int)$sec['section_id'] ?>" data-subject="<?= (int)$sec['subject_id'] ?>" <?= ((int)($filters['section_id'] ?? 0) === (int)$sec['section_id']) ? 'selected' : '' ?>>
+            <?= htmlspecialchars($sec['class_name']) ?> — <?= htmlspecialchars($sec['subject_name']) ?>
+          </option>
+        <?php endforeach; ?>
       </select>
     </div>
     <div class="col-md-3">
-      <label class="form-label">Date Range</label>
-      <select class="form-select" id="dateRangeFilter">
-        <option value="today">Today</option>
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-        <option value="quarter">This Quarter</option>
-        <option value="custom">Custom Range</option>
-      </select>
+      <label class="form-label">Date</label>
+      <input type="date" class="form-control" name="date" value="<?= htmlspecialchars($filters['date'] ?? date('Y-m-d')) ?>">
     </div>
-    <div class="col-md-3">
-      <label class="form-label">Status</label>
-      <select class="form-select" id="statusFilter">
-        <option value="">All Status</option>
-        <option value="present">Present</option>
-        <option value="absent">Absent</option>
-        <option value="late">Late</option>
-        <option value="excused">Excused</option>
-      </select>
+    <input type="hidden" name="subject" id="subjectInput" value="<?= (int)($filters['subject_id'] ?? 0) ?>">
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Apply</button>
     </div>
     <div class="col-md-3">
       <label class="form-label">Search</label>
       <div class="input-group">
         <span class="input-group-text">
-          <svg class="icon" width="16" height="16" fill="currentColor">
-            <use href="#icon-search"></use>
-          </svg>
+          <svg class="icon" width="16" height="16" fill="currentColor"><use href="#icon-search"></use></svg>
         </span>
         <input type="text" class="form-control" placeholder="Search students..." id="studentSearch">
       </div>
     </div>
-  </div>
+  </form>
 </div>
 
 <!-- Attendance Management Tabs -->
@@ -173,7 +170,7 @@ $title = 'Attendance Management';
     <div class="tab-pane fade show active" id="today" role="tabpanel">
       <div class="p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h5 class="mb-0">Today's Attendance - December 20, 2024</h5>
+          <h5 class="mb-0">Today's Attendance - <?= htmlspecialchars(date('M j, Y', strtotime($filters['date'] ?? date('Y-m-d')))) ?> · <?= htmlspecialchars($selectedClassName) ?> · <?= htmlspecialchars($selectedSubjectName) ?></h5>
           <div class="d-flex gap-2">
             <button class="btn btn-outline-primary btn-sm" onclick="markAllPresent()">
               <svg class="icon me-1" width="16" height="16" fill="currentColor">
@@ -196,151 +193,58 @@ $title = 'Attendance Management';
               <table class="table table-hover" id="todayAttendanceTable">
                 <thead class="table-light">
                   <tr>
-                    <th>
-                      <input type="checkbox" class="form-check-input" id="selectAllToday">
-                    </th>
                     <th>Student</th>
-                    <th>Class</th>
-                    <th>Time In</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <input type="checkbox" class="form-check-input" value="1">
-                    </td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
-                          <svg class="icon text-success" width="16" height="16" fill="currentColor">
-                            <use href="#icon-user"></use>
-                          </svg>
-                        </div>
-                        <div>
-                          <div class="fw-semibold">John Doe</div>
-                          <div class="text-muted small">LRN: 123456789012</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-primary">Grade 10-A</span></td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <svg class="icon text-success me-1" width="14" height="14" fill="currentColor">
-                          <use href="#icon-clock"></use>
-                        </svg>
-                        <span>8:15 AM</span>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-success">Present</span></td>
-                    <td>
-                      <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                          <svg class="icon" width="16" height="16" fill="currentColor">
-                            <use href="#icon-more"></use>
-                          </svg>
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href="#" onclick="markAbsent(1)">Mark Absent</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="markLate(1)">Mark Late</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="markExcused(1)">Mark Excused</a></li>
-                          <li><hr class="dropdown-divider"></li>
-                          <li><a class="dropdown-item" href="#" onclick="viewStudentAttendance(1)">View History</a></li>
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
-                  
-                  <tr>
-                    <td>
-                      <input type="checkbox" class="form-check-input" value="2">
-                    </td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3">
-                          <svg class="icon text-danger" width="16" height="16" fill="currentColor">
-                            <use href="#icon-user"></use>
-                          </svg>
-                        </div>
-                        <div>
-                          <div class="fw-semibold">Jane Smith</div>
-                          <div class="text-muted small">LRN: 123456789013</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-primary">Grade 10-A</span></td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <svg class="icon text-muted me-1" width="14" height="14" fill="currentColor">
-                          <use href="#icon-clock"></use>
-                        </svg>
-                        <span>-</span>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-danger">Absent</span></td>
-                    <td>
-                      <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                          <svg class="icon" width="16" height="16" fill="currentColor">
-                            <use href="#icon-more"></use>
-                          </svg>
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href="#" onclick="markPresent(2)">Mark Present</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="markLate(2)">Mark Late</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="markExcused(2)">Mark Excused</a></li>
-                          <li><hr class="dropdown-divider"></li>
-                          <li><a class="dropdown-item" href="#" onclick="viewStudentAttendance(2)">View History</a></li>
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
-                  
-                  <tr>
-                    <td>
-                      <input type="checkbox" class="form-check-input" value="3">
-                    </td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
-                          <svg class="icon text-warning" width="16" height="16" fill="currentColor">
-                            <use href="#icon-user"></use>
-                          </svg>
-                        </div>
-                        <div>
-                          <div class="fw-semibold">Mike Johnson</div>
-                          <div class="text-muted small">LRN: 123456789014</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-primary">Grade 10-A</span></td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <svg class="icon text-warning me-1" width="14" height="14" fill="currentColor">
-                          <use href="#icon-clock"></use>
-                        </svg>
-                        <span>8:45 AM</span>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-warning">Late</span></td>
-                    <td>
-                      <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                          <svg class="icon" width="16" height="16" fill="currentColor">
-                            <use href="#icon-more"></use>
-                          </svg>
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href="#" onclick="markPresent(3)">Mark Present</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="markAbsent(3)">Mark Absent</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="markExcused(3)">Mark Excused</a></li>
-                          <li><hr class="dropdown-divider"></li>
-                          <li><a class="dropdown-item" href="#" onclick="viewStudentAttendance(3)">View History</a></li>
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
+                <tbody id="attendanceBody">
+                  <?php if (empty($students)): ?>
+                    <tr><td colspan="3" class="text-center text-muted py-4">No students found for this section.</td></tr>
+                  <?php else: ?>
+                    <?php foreach ($students as $st): ?>
+                      <tr data-student-id="<?= (int)$st['student_id'] ?>">
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                              <svg class="icon text-primary" width="16" height="16" fill="currentColor"><use href="#icon-user"></use></svg>
+                            </div>
+                            <div>
+                              <div class="fw-semibold"><?= htmlspecialchars($st['student_name']) ?></div>
+                              <div class="text-muted small">LRN: <?= htmlspecialchars($st['lrn'] ?? '—') ?></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <?php $status = $st['attendance_status'] ?? null; ?>
+                          <?php if ($status === 'present'): ?>
+                            <span class="badge bg-success">Present</span>
+                          <?php elseif ($status === 'absent'): ?>
+                            <span class="badge bg-danger">Absent</span>
+                          <?php elseif ($status === 'late'): ?>
+                            <span class="badge bg-warning">Late</span>
+                          <?php elseif ($status === 'excused'): ?>
+                            <span class="badge bg-info">Excused</span>
+                          <?php else: ?>
+                            <span class="badge bg-secondary">Unmarked</span>
+                          <?php endif; ?>
+                        </td>
+                        <td>
+                          <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                              <svg class="icon" width="16" height="16" fill="currentColor"><use href="#icon-more"></use></svg>
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="#" onclick="markStatus(<?= (int)$st['student_id'] ?>,'present')">Mark Present</a></li>
+                              <li><a class="dropdown-item" href="#" onclick="markStatus(<?= (int)$st['student_id'] ?>,'absent')">Mark Absent</a></li>
+                              <li><a class="dropdown-item" href="#" onclick="markStatus(<?= (int)$st['student_id'] ?>,'late')">Mark Late</a></li>
+                              <li><a class="dropdown-item" href="#" onclick="markStatus(<?= (int)$st['student_id'] ?>,'excused')">Mark Excused</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
                 </tbody>
               </table>
             </div>
@@ -757,13 +661,16 @@ class TeacherAttendanceManagement {
   constructor() {
     this.charts = {};
     this.selectedStudents = [];
+    this.sectionId = <?= (int)($filters['section_id'] ?? 0) ?>;
+    this.subjectId = <?= (int)($filters['subject_id'] ?? 0) ?>;
+    this.date = '<?= htmlspecialchars($filters['date'] ?? date('Y-m-d')) ?>';
     this.init();
   }
 
   init() {
     this.initializeCharts();
     this.bindEvents();
-    this.loadAttendanceData();
+    // no-op for now; SSR renders initial state
   }
 
   initializeCharts() {
@@ -846,10 +753,16 @@ class TeacherAttendanceManagement {
   }
 
   bindEvents() {
+    const sectionSelect = document.getElementById('sectionSelect');
+    const subjectInput = document.getElementById('subjectInput');
+    if (sectionSelect && subjectInput) {
+      sectionSelect.addEventListener('change', () => {
+        const opt = sectionSelect.options[sectionSelect.selectedIndex];
+        subjectInput.value = opt.getAttribute('data-subject') || '';
+      });
+    }
     // Filter changes
-    document.getElementById('classFilter').addEventListener('change', () => this.filterAttendance());
-    document.getElementById('dateRangeFilter').addEventListener('change', () => this.filterAttendance());
-    document.getElementById('statusFilter').addEventListener('change', () => this.filterAttendance());
+    // removed unused demo filters
 
     // Search
     document.getElementById('studentSearch').addEventListener('input', (e) => {
@@ -867,10 +780,7 @@ class TeacherAttendanceManagement {
     });
   }
 
-  loadAttendanceData() {
-    console.log('Loading attendance data...');
-    // Load attendance data from API
-  }
+  loadAttendanceData() {}
 
   filterAttendance() {
     const className = document.getElementById('classFilter').value;
@@ -910,19 +820,64 @@ class TeacherAttendanceManagement {
 
 // Global functions
 function markPresent(studentId) {
-  showNotification(`Marking student ${studentId} as present...`, { type: 'info' });
+  markStatus(studentId, 'present');
 }
 
 function markAbsent(studentId) {
-  showNotification(`Marking student ${studentId} as absent...`, { type: 'info' });
+  markStatus(studentId, 'absent');
 }
 
 function markLate(studentId) {
-  showNotification(`Marking student ${studentId} as late...`, { type: 'info' });
+  markStatus(studentId, 'late');
 }
 
 function markExcused(studentId) {
-  showNotification(`Marking student ${studentId} as excused...`, { type: 'info' });
+  markStatus(studentId, 'excused');
+}
+
+async function markStatus(studentId, status) {
+  try {
+    const sectionId = <?= (int)($filters['section_id'] ?? 0) ?>;
+    const subjectId = <?= (int)($filters['subject_id'] ?? 0) ?>;
+    const dateStr = '<?= htmlspecialchars($filters['date'] ?? date('Y-m-d')) ?>';
+    const res = await fetch('<?= \Helpers\Url::to('/teacher/api/attendance/save') ?>', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept':'application/json' },
+      body: JSON.stringify({ student_id: studentId, section_id: sectionId, subject_id: subjectId, date: dateStr, status })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'Failed');
+    // Update row badge
+    const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
+    if (row) {
+      const cell = row.children[1];
+      if (cell) {
+        cell.innerHTML = status === 'present' ? '<span class="badge bg-success">Present</span>' :
+                         status === 'absent' ? '<span class="badge bg-danger">Absent</span>' :
+                         status === 'late' ? '<span class="badge bg-warning">Late</span>' :
+                         '<span class="badge bg-info">Excused</span>';
+      }
+    }
+    showNotification('Attendance saved', { type: 'success' });
+  } catch (e) {
+    showNotification(e.message || 'Failed to save attendance', { type: 'error' });
+  }
+}
+
+async function bulkMark(status) {
+  try {
+    const rows = Array.from(document.querySelectorAll('#attendanceBody tr[data-student-id]'));
+    if (rows.length === 0) { showNotification('No students to mark', { type: 'warning' }); return; }
+    showNotification(`Marking ${rows.length} students as ${status}...`, { type: 'info' });
+    for (const row of rows) {
+      const sid = parseInt(row.getAttribute('data-student-id'), 10);
+      // sequential to avoid flooding server; can optimize to batching later
+      // eslint-disable-next-line no-await-in-loop
+      await markStatus(sid, status);
+    }
+    showNotification('Bulk attendance saved', { type: 'success' });
+  } catch (e) {
+    showNotification(e.message || 'Failed bulk attendance', { type: 'error' });
+  }
 }
 
 function viewStudentAttendance(studentId) {
@@ -930,15 +885,15 @@ function viewStudentAttendance(studentId) {
 }
 
 function markAllPresent() {
-  showNotification('Marking all students as present...', { type: 'info' });
+  bulkMark('present');
 }
 
 function markAllLate() {
-  showNotification('Marking all students as late...', { type: 'info' });
+  bulkMark('late');
 }
 
 function markAllAbsent() {
-  showNotification('Marking all students as absent...', { type: 'info' });
+  bulkMark('absent');
 }
 
 function sendAbsenceNotification() {

@@ -7,6 +7,7 @@ use Core\Controller;
 use Core\Session;
 use Core\Database;
 use Helpers\Csrf;
+use Helpers\StaticData;
 use PDO;
 
 class AdminController extends Controller
@@ -15,30 +16,23 @@ class AdminController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
-        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
-        $pdo = Database::connection($config['database']);
-
-        // Get pending users count
-        $stmt = $pdo->prepare('SELECT COUNT(*) as count FROM users WHERE status = "pending"');
-        $stmt->execute();
-        $pendingCount = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-
-        // Get total users by role
-        $stmt = $pdo->prepare('SELECT role, COUNT(*) as count FROM users WHERE status = "active" GROUP BY role');
-        $stmt->execute();
-        $userStats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // STATIC DATA: Replace database queries with static data for frontend development
+        $staticData = StaticData::getAdminDashboardData();
 
         $this->view->render('admin/dashboard', [
             'title' => 'Admin Dashboard',
             'user' => $user,
             'activeNav' => 'dashboard',
             'showBack' => false,
-            'pendingCount' => $pendingCount,
-            'userStats' => $userStats,
+            'pendingCount' => $staticData['pendingCount'],
+            'userStats' => $staticData['userStats'],
+            'systemStats' => $staticData['systemStats'],
+            'recentActivity' => $staticData['recentActivity'],
+            'staticDataIndicator' => StaticData::getStaticDataIndicator('dashboard data'),
         ], 'layouts/dashboard');
     }
 
@@ -46,7 +40,7 @@ class AdminController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
@@ -70,6 +64,7 @@ class AdminController extends Controller
             'activeNav' => 'users',
             'users' => $users,
             'csrf_token' => \Helpers\Csrf::token(),
+            'staticDataIndicator' => StaticData::getStaticDataIndicator('user management interface - data is dynamic'),
         ], 'layouts/dashboard');
     }
 
@@ -77,18 +72,28 @@ class AdminController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
         if (!Csrf::check($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'CSRF token mismatch']);
+                return;
+            }
             header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
         $userId = (int)($_POST['user_id'] ?? 0);
         if (!$userId) {
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Invalid user ID']);
+                return;
+            }
             header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
@@ -96,43 +101,158 @@ class AdminController extends Controller
         $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
         $pdo = Database::connection($config['database']);
 
-        // Update user status to active and set approval info
-        $stmt = $pdo->prepare('
-            UPDATE users 
-            SET status = "active", 
-                approved_by = :admin_id, 
-                approved_at = NOW() 
-            WHERE id = :user_id AND status = "pending"
-        ');
-        $stmt->execute([
-            'admin_id' => $user['id'],
-            'user_id' => $userId
-        ]);
+        try {
+            $pdo->beginTransaction();
 
-        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'status' => 'active']);
-            return;
+            // Get user details
+            $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :user_id AND status = "pending"');
+            $stmt->execute(['user_id' => $userId]);
+            $userToApprove = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$userToApprove) {
+                throw new \Exception('User not found or not pending approval');
+            }
+
+            // Update user status to active and set approval info
+            $stmt = $pdo->prepare('
+                UPDATE users 
+                SET status = "active", 
+                    approved_by = :admin_id, 
+                    approved_at = NOW() 
+                WHERE id = :user_id AND status = "pending"
+            ');
+            $stmt->execute([
+                'admin_id' => $user['id'],
+                'user_id' => $userId
+            ]);
+
+            // Create role-specific entry
+            $role = $userToApprove['role'];
+            switch ($role) {
+                case 'student':
+                    $stmt = $pdo->prepare('
+                        INSERT INTO students (user_id, lrn, grade_level, section_id) 
+                        VALUES (:user_id, :lrn, :grade_level, :section_id)
+                    ');
+                    $stmt->execute([
+                        'user_id' => $userId,
+                        'lrn' => 'LRN' . str_pad((string)$userId, 6, '0', STR_PAD_LEFT),
+                        'grade_level' => 7, // Default grade level
+                        'section_id' => 1   // Default section
+                    ]);
+                    break;
+
+                case 'teacher':
+                    $stmt = $pdo->prepare('
+                        INSERT INTO teachers (user_id, is_adviser) 
+                        VALUES (:user_id, 0)
+                    ');
+                    $stmt->execute(['user_id' => $userId]);
+                    break;
+
+                case 'adviser':
+                    $stmt = $pdo->prepare('
+                        INSERT INTO teachers (user_id, is_adviser) 
+                        VALUES (:user_id, 1)
+                    ');
+                    $stmt->execute(['user_id' => $userId]);
+                    
+                    // Also create adviser entry
+                    $stmt = $pdo->prepare('
+                        INSERT INTO advisers (user_id, section_id) 
+                        VALUES (:user_id, :section_id)
+                    ');
+                    $stmt->execute([
+                        'user_id' => $userId,
+                        'section_id' => 1 // Default section
+                    ]);
+                    break;
+
+                case 'parent':
+                    // Parents don't need a separate table entry initially
+                    // They can be linked to students later
+                    break;
+            }
+
+            // Update user request status
+            $stmt = $pdo->prepare('
+                UPDATE user_requests 
+                SET status = "approved", 
+                    processed_at = NOW(), 
+                    processed_by = :admin_id 
+                WHERE user_id = :user_id AND status = "pending"
+            ');
+            $stmt->execute([
+                'admin_id' => $user['id'],
+                'user_id' => $userId
+            ]);
+
+            // Log the approval action
+            $stmt = $pdo->prepare('
+                INSERT INTO audit_logs (user_id, action, target_type, target_id, details, ip_address, user_agent) 
+                VALUES (:admin_id, "user_approved", "user", :target_id, :details, :ip, :user_agent)
+            ');
+            $stmt->execute([
+                'admin_id' => $user['id'],
+                'target_id' => $userId,
+                'details' => json_encode([
+                    'approved_role' => $role,
+                    'user_email' => $userToApprove['email'],
+                    'user_name' => $userToApprove['name']
+                ]),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
+            ]);
+
+            $pdo->commit();
+
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'status' => 'active', 'message' => 'User approved successfully']);
+                return;
+            }
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
+
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+                return;
+            }
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
         }
-        header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
     public function rejectUser(): void
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
         if (!Csrf::check($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'CSRF token mismatch']);
+                return;
+            }
             header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
 
         $userId = (int)($_POST['user_id'] ?? 0);
+        $rejectionReason = trim($_POST['rejection_reason'] ?? 'No reason provided');
+        
         if (!$userId) {
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Invalid user ID']);
+                return;
+            }
             header('Location: ' . \Helpers\Url::to('/admin/users'));
             return;
         }
@@ -140,23 +260,81 @@ class AdminController extends Controller
         $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
         $pdo = Database::connection($config['database']);
 
-        // Delete pending user
-        $stmt = $pdo->prepare('DELETE FROM users WHERE id = :user_id AND status = "pending"');
-        $stmt->execute(['user_id' => $userId]);
+        try {
+            $pdo->beginTransaction();
 
-        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'deleted' => true]);
-            return;
+            // Get user details before deletion
+            $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :user_id AND status = "pending"');
+            $stmt->execute(['user_id' => $userId]);
+            $userToReject = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$userToReject) {
+                throw new \Exception('User not found or not pending approval');
+            }
+
+            // Update user request status to rejected
+            $stmt = $pdo->prepare('
+                UPDATE user_requests 
+                SET status = "rejected", 
+                    processed_at = NOW(), 
+                    processed_by = :admin_id,
+                    rejection_reason = :rejection_reason
+                WHERE user_id = :user_id AND status = "pending"
+            ');
+            $stmt->execute([
+                'admin_id' => $user['id'],
+                'user_id' => $userId,
+                'rejection_reason' => $rejectionReason
+            ]);
+
+            // Delete pending user
+            $stmt = $pdo->prepare('DELETE FROM users WHERE id = :user_id AND status = "pending"');
+            $stmt->execute(['user_id' => $userId]);
+
+            // Log the rejection action
+            $stmt = $pdo->prepare('
+                INSERT INTO audit_logs (user_id, action, target_type, target_id, details, ip_address, user_agent) 
+                VALUES (:admin_id, "user_rejected", "user", :target_id, :details, :ip, :user_agent)
+            ');
+            $stmt->execute([
+                'admin_id' => $user['id'],
+                'target_id' => $userId,
+                'details' => json_encode([
+                    'rejected_role' => $userToReject['role'],
+                    'user_email' => $userToReject['email'],
+                    'user_name' => $userToReject['name'],
+                    'rejection_reason' => $rejectionReason
+                ]),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
+            ]);
+
+            $pdo->commit();
+
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'deleted' => true, 'message' => 'User rejected successfully']);
+                return;
+            }
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
+
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+                return;
+            }
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
         }
-        header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
     public function suspendUser(): void
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
@@ -194,7 +372,7 @@ class AdminController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
@@ -229,7 +407,7 @@ class AdminController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
@@ -237,7 +415,7 @@ class AdminController extends Controller
             http_response_code(419);
             if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
                 header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'error' => 'CSRF failed']);
+                echo json_encode(['success' => false, 'error' => 'CSRF token mismatch']);
                 return;
             }
             header('Location: ' . \Helpers\Url::to('/admin/users'));
@@ -248,7 +426,7 @@ class AdminController extends Controller
         if (!$userId || $userId === (int)$user['id']) {
             if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
                 header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'error' => 'Invalid user id']);
+                echo json_encode(['success' => false, 'error' => 'Cannot delete yourself or invalid user ID']);
                 return;
             }
             header('Location: ' . \Helpers\Url::to('/admin/users'));
@@ -258,22 +436,82 @@ class AdminController extends Controller
         $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
         $pdo = Database::connection($config['database']);
 
-        $stmt = $pdo->prepare('DELETE FROM users WHERE id = :user_id');
-        $ok = $stmt->execute(['user_id' => $userId]);
+        try {
+            $pdo->beginTransaction();
 
-        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => (bool)$ok, 'deleted' => (bool)$ok]);
-            return;
+            // Get user details before deletion
+            $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :user_id');
+            $stmt->execute(['user_id' => $userId]);
+            $userToDelete = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$userToDelete) {
+                throw new \Exception('User not found');
+            }
+
+            // Delete role-specific entries first (due to foreign key constraints)
+            $role = $userToDelete['role'];
+            switch ($role) {
+                case 'student':
+                    $stmt = $pdo->prepare('DELETE FROM students WHERE user_id = :user_id');
+                    $stmt->execute(['user_id' => $userId]);
+                    break;
+
+                case 'teacher':
+                case 'adviser':
+                case 'parent':
+                case 'admin':
+                    // These roles don't have separate tables in the current schema
+                    // They only exist in the users table
+                    break;
+            }
+
+            // Delete the user
+            $stmt = $pdo->prepare('DELETE FROM users WHERE id = :user_id');
+            $stmt->execute(['user_id' => $userId]);
+
+            // Log the deletion action
+            $stmt = $pdo->prepare('
+                INSERT INTO audit_logs (user_id, action, target_type, target_id, details, ip_address, user_agent) 
+                VALUES (:admin_id, "user_deleted", "user", :target_id, :details, :ip, :user_agent)
+            ');
+            $stmt->execute([
+                'admin_id' => $user['id'],
+                'target_id' => $userId,
+                'details' => json_encode([
+                    'deleted_role' => $role,
+                    'user_email' => $userToDelete['email'],
+                    'user_name' => $userToDelete['name']
+                ]),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
+            ]);
+
+            $pdo->commit();
+
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'deleted' => true, 'message' => 'User deleted successfully']);
+                return;
+            }
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
+
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            
+            if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest' || (($_SERVER['HTTP_ACCEPT'] ?? '') === 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+                return;
+            }
+            header('Location: ' . \Helpers\Url::to('/admin/users'));
         }
-        header('Location: ' . \Helpers\Url::to('/admin/users'));
     }
 
     public function createUser(): void
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
@@ -356,7 +594,7 @@ class AdminController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
@@ -365,12 +603,13 @@ class AdminController extends Controller
             $pdo = Database::connection($config['database']);
 
             // Get all active student users for parent linking (centralized)
-            $stmt = $pdo->prepare('
-                SELECT id, name, lrn, grade_level 
-                FROM users 
-                WHERE role = "student" AND status = "active" 
-                ORDER BY name
-            ');
+                $stmt = $pdo->prepare('
+                    SELECT u.id, u.name, s.lrn, s.grade_level 
+                    FROM users u 
+                    LEFT JOIN students s ON s.user_id = u.id 
+                    WHERE u.role = "student" AND u.status = "active" 
+                    ORDER BY u.name
+                ');
             $stmt->execute();
             $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -469,7 +708,7 @@ class AdminController extends Controller
             $pdo->commit();
             header('Location: ' . \Helpers\Url::to('/admin/users'));
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $pdo->rollBack();
             $this->view->render('admin/create-parent', [
                 'title' => 'Create Parent Account',
@@ -484,7 +723,7 @@ class AdminController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
@@ -499,7 +738,7 @@ class AdminController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 
@@ -546,7 +785,7 @@ class AdminController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'admin') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
             return;
         }
 

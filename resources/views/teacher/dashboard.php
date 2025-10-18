@@ -1,3 +1,6 @@
+<!-- Static Data Indicator -->
+<?= $staticDataIndicator ?? '' ?>
+
 <!-- Enhanced Teacher Dashboard Header -->
 <div class="dashboard-header mb-4 position-relative overflow-hidden">
   <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); opacity: 0.1;"></div>
@@ -11,18 +14,18 @@
             <svg width="14" height="14" fill="currentColor" class="me-1">
               <use href="#icon-sections"></use>
             </svg>
-            Mathematics & Science Teacher
+            <?= $stats['subjects_count'] ?> Subject<?= $stats['subjects_count'] != 1 ? 's' : '' ?> Taught
           </span>
           <span class="badge bg-success-subtle text-success">
             <svg width="14" height="14" fill="currentColor" class="me-1">
               <use href="#icon-star"></use>
             </svg>
-            3 Sections Assigned
+            <?= $stats['sections_count'] ?> Section<?= $stats['sections_count'] != 1 ? 's' : '' ?> Assigned
           </span>
         </div>
       </div>
       <div class="d-flex gap-2">
-        <button class="btn btn-outline-primary btn-sm" onclick="location.href='/grade'">
+        <button class="btn btn-outline-primary btn-sm" onclick="location.href='/teacher/grades'">
           <svg width="16" height="16" fill="currentColor">
             <use href="#icon-chart"></use>
           </svg>
@@ -39,7 +42,7 @@
   </div>
 </div>
 
-<!-- Enhanced Teacher Statistics Cards with Animations -->
+<!-- Enhanced Teacher Statistics Cards with Real Data -->
 <div class="row g-4 mb-5">
   <div class="col-md-6 col-lg-3">
     <div class="stat-card surface p-4 h-100 position-relative overflow-hidden" style="transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
@@ -51,12 +54,12 @@
               <use href="#icon-sections"></use>
             </svg>
           </div>
-          <span class="badge bg-primary-subtle text-primary">3</span>
+          <span class="badge bg-primary-subtle text-primary"><?= $stats['sections_count'] ?></span>
         </div>
-        <h3 class="h4 fw-bold mb-1 text-primary" data-count-to="3">0</h3>
-        <p class="text-muted small mb-0">Assigned Sections</p>
+        <h3 class="h4 fw-bold mb-1 text-primary" data-count-to="<?= $stats['sections_count'] ?>">0</h3>
+        <p class="text-muted small mb-0">Assigned Sections <?= \Helpers\StaticData::getStaticDataBadge() ?></p>
         <div class="progress mt-2" style="height: 4px;">
-          <div class="progress-bar bg-primary" style="width: 75%" data-progress-to="75"></div>
+          <div class="progress-bar bg-primary" style="width: <?= min(100, ($stats['sections_count'] / 5) * 100) ?>%" data-progress-to="<?= min(100, ($stats['sections_count'] / 5) * 100) ?>"></div>
         </div>
       </div>
     </div>
@@ -72,12 +75,12 @@
               <use href="#icon-students"></use>
             </svg>
           </div>
-          <span class="badge bg-success-subtle text-success">+5%</span>
+          <span class="badge bg-success-subtle text-success"><?= $stats['students_count'] ?></span>
         </div>
-        <h3 class="h4 fw-bold mb-1 text-success" data-count-to="127">0</h3>
-        <p class="text-muted small mb-0">Total Students</p>
+        <h3 class="h4 fw-bold mb-1 text-success" data-count-to="<?= $stats['students_count'] ?>">0</h3>
+        <p class="text-muted small mb-0">Total Students <?= \Helpers\StaticData::getStaticDataBadge() ?></p>
         <div class="progress mt-2" style="height: 4px;">
-          <div class="progress-bar bg-success" style="width: 85%" data-progress-to="85"></div>
+          <div class="progress-bar bg-success" style="width: <?= min(100, ($stats['students_count'] / 50) * 100) ?>%" data-progress-to="<?= min(100, ($stats['students_count'] / 50) * 100) ?>"></div>
         </div>
       </div>
     </div>
@@ -93,12 +96,12 @@
               <use href="#icon-subjects"></use>
             </svg>
           </div>
-          <span class="badge bg-warning-subtle text-warning">2</span>
+          <span class="badge bg-warning-subtle text-warning"><?= $stats['subjects_count'] ?></span>
         </div>
-        <h3 class="h4 fw-bold mb-1 text-warning" data-count-to="2">0</h3>
-        <p class="text-muted small mb-0">Subjects Taught</p>
+        <h3 class="h4 fw-bold mb-1 text-warning" data-count-to="<?= $stats['subjects_count'] ?>">0</h3>
+        <p class="text-muted small mb-0">Subjects Taught <?= \Helpers\StaticData::getStaticDataBadge() ?></p>
         <div class="progress mt-2" style="height: 4px;">
-          <div class="progress-bar bg-warning" style="width: 60%" data-progress-to="60"></div>
+          <div class="progress-bar bg-warning" style="width: <?= min(100, ($stats['subjects_count'] / 3) * 100) ?>%" data-progress-to="<?= min(100, ($stats['subjects_count'] / 3) * 100) ?>"></div>
         </div>
       </div>
     </div>
@@ -114,12 +117,12 @@
               <use href="#icon-alerts"></use>
             </svg>
           </div>
-          <span class="badge bg-info-subtle text-info">5</span>
+          <span class="badge bg-info-subtle text-info"><?= $stats['alerts_count'] ?></span>
         </div>
-        <h3 class="h4 fw-bold mb-1 text-info" data-count-to="5">0</h3>
+        <h3 class="h4 fw-bold mb-1 text-info" data-count-to="<?= $stats['alerts_count'] ?>">0</h3>
         <p class="text-muted small mb-0">Pending Alerts</p>
         <div class="progress mt-2" style="height: 4px;">
-          <div class="progress-bar bg-info" style="width: 25%" data-progress-to="25"></div>
+          <div class="progress-bar bg-info" style="width: <?= min(100, ($stats['alerts_count'] / 10) * 100) ?>%" data-progress-to="<?= min(100, ($stats['alerts_count'] / 10) * 100) ?>"></div>
         </div>
       </div>
     </div>
@@ -134,33 +137,52 @@
         <h5 class="fw-bold mb-0">My Sections</h5>
         <span class="text-muted small">Manage your assigned classes</span>
       </div>
-      <!-- Loading indicator -->
-      <div id="sections-loading" class="text-center py-4">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading sections...</span>
-        </div>
-        <p class="text-muted mt-2">Loading your sections...</p>
-      </div>
       
-      <!-- Empty state -->
-      <div id="sections-empty" class="text-center py-5" style="display: none;">
-        <svg class="icon text-muted mb-3" width="48" height="48" fill="currentColor">
-          <use href="#icon-sections"></use>
-        </svg>
-        <h5 class="text-muted">No sections yet</h5>
-        <p class="text-muted">Create your first class to get started!</p>
-        <button class="btn btn-primary" onclick="location.href='/teacher/classes'">
-          <svg class="icon me-2" width="16" height="16" fill="currentColor">
-            <use href="#icon-plus"></use>
+      <?php if (empty($sections)): ?>
+        <!-- Empty state -->
+        <div class="text-center py-5">
+          <svg class="icon text-muted mb-3" width="48" height="48" fill="currentColor">
+            <use href="#icon-sections"></use>
           </svg>
-          Go to Classes
-        </button>
-      </div>
-      
-      <!-- Dynamic sections container -->
-      <div id="sections-container" class="row g-3" style="display: none;">
-        <!-- Sections will be dynamically loaded here -->
-      </div>
+          <h5 class="text-muted">No sections assigned</h5>
+          <p class="text-muted">Contact your administrator to get assigned to sections.</p>
+        </div>
+      <?php else: ?>
+        <!-- Real sections data -->
+        <div class="row g-3">
+          <?php foreach ($sections as $section): ?>
+            <div class="col-md-6">
+              <div class="action-card d-block p-3 border rounded-3 position-relative overflow-hidden" style="transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0.02) 100%);"></div>
+                <div class="position-relative">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-primary-subtle text-primary" style="width: 40px; height: 40px; transition: all 0.3s ease;">
+                      <svg width="20" height="20" fill="currentColor">
+                        <use href="#icon-sections"></use>
+                      </svg>
+                    </div>
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold"><?= htmlspecialchars($section['class_name']) ?></div>
+                      <div class="text-muted small"><?= htmlspecialchars($section['subject_name']) ?> • <?= $section['student_count'] ?> students</div>
+                      <div class="text-muted small">Room: <?= htmlspecialchars($section['room']) ?></div>
+                      <?php if ($section['is_adviser']): ?>
+                        <span class="badge bg-success-subtle text-success small">Adviser</span>
+                      <?php endif; ?>
+                      <div class="progress mt-2" style="height: 3px;">
+                        <div class="progress-bar bg-primary" style="width: <?= round($section['attendance_rate']) ?>%" data-progress-to="<?= round($section['attendance_rate']) ?>"></div>
+                      </div>
+                    </div>
+                    <div class="d-flex flex-column gap-1">
+                      <button class="btn btn-sm btn-outline-primary" onclick="location.href='/teacher/sections'">View</button>
+                      <button class="btn btn-sm btn-outline-secondary" onclick="location.href='/teacher/grades'">Grades</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
     </div>
   </div>
   
@@ -169,36 +191,32 @@
     <div class="surface p-4 mb-4">
       <h5 class="fw-bold mb-4">Recent Activity</h5>
       <div class="activity-list">
-        <div class="activity-item d-flex gap-3 mb-3">
-          <svg class="activity-icon" width="20" height="20" fill="currentColor">
-            <use href="#icon-chart"></use>
-          </svg>
-          <div class="flex-grow-1">
-            <div class="small fw-semibold">Grade entered</div>
-            <div class="text-muted small">Math Quiz #3 for Grade 10-A</div>
-            <div class="text-muted small">2 hours ago</div>
+        <?php if (empty($activities)): ?>
+          <div class="text-center py-3">
+            <p class="text-muted small">No recent activity</p>
           </div>
-        </div>
-        <div class="activity-item d-flex gap-3 mb-3">
-          <svg class="activity-icon" width="20" height="20" fill="currentColor">
-            <use href="#icon-alerts"></use>
-          </svg>
-          <div class="flex-grow-1">
-            <div class="small fw-semibold">Alert created</div>
-            <div class="text-muted small">Low performance in Grade 9-A Science</div>
-            <div class="text-muted small">4 hours ago</div>
-          </div>
-        </div>
-        <div class="activity-item d-flex gap-3">
-          <svg class="activity-icon" width="20" height="20" fill="currentColor">
-            <use href="#icon-user"></use>
-          </svg>
-          <div class="flex-grow-1">
-            <div class="small fw-semibold">Student consultation</div>
-            <div class="text-muted small">Meeting with John Doe about grades</div>
-            <div class="text-muted small">6 hours ago</div>
-          </div>
-        </div>
+        <?php else: ?>
+          <?php foreach ($activities as $activity): ?>
+            <div class="activity-item d-flex gap-3 mb-3">
+              <svg class="activity-icon" width="20" height="20" fill="currentColor">
+                <?php if ($activity['activity_type'] === 'grade_entered'): ?>
+                  <use href="#icon-chart"></use>
+                <?php elseif ($activity['activity_type'] === 'assignment_created'): ?>
+                  <use href="#icon-plus"></use>
+                <?php elseif ($activity['activity_type'] === 'attendance_recorded'): ?>
+                  <use href="#icon-user"></use>
+                <?php else: ?>
+                  <use href="#icon-alerts"></use>
+                <?php endif; ?>
+              </svg>
+              <div class="flex-grow-1">
+                <div class="small fw-semibold"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $activity['activity_type']))) ?></div>
+                <div class="text-muted small"><?= htmlspecialchars($activity['description']) ?></div>
+                <div class="text-muted small"><?= date('M j, Y g:i A', strtotime($activity['created_at'])) ?></div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
       </div>
     </div>
     
@@ -313,150 +331,43 @@ document.getElementById('quickGradeForm').addEventListener('submit', function(e)
  
 <!-- Teacher Dashboard Scripts -->
 <script>
-// Global variables for real-time updates
-let sectionsPollingInterval = null;
-let lastSectionsCount = 0;
-
-function refreshSections() {
-  const base = (window.__BASE_PATH__ || '/student-monitoring').replace(/\/$/, '');
-  
-  fetch(base + '/api/teacher/fetch_classes.php', { 
-    headers: { 'Accept': 'application/json' },
-    cache: 'no-cache'
-  })
-    .then(r => r.text())
-    .then(text => {
-      let json;
-      try {
-        json = JSON.parse(text);
-      } catch (e) {
-        console.error('Failed to parse sections response:', e);
-        return;
-      }
-      
-      if (!json || !json.success) {
-        console.error('Failed to fetch sections:', json?.message);
-        return;
-      }
-      
-      renderSections(json.data || []);
-      
-      // Check for new sections
-      const currentCount = json.data?.length || 0;
-      if (currentCount > lastSectionsCount && lastSectionsCount > 0) {
-        showNotification(`New section created! Total: ${currentCount}`, { type: 'success' });
-      }
-      lastSectionsCount = currentCount;
-    })
-    .catch(err => {
-      console.error('Error fetching sections:', err);
-    });
-}
-
-function renderSections(sections) {
-  const container = document.getElementById('sections-container');
-  const loading = document.getElementById('sections-loading');
-  const empty = document.getElementById('sections-empty');
-  
-  // Hide loading
-  if (loading) loading.style.display = 'none';
-  
-  if (!sections || sections.length === 0) {
-    // Show empty state
-    if (empty) empty.style.display = 'block';
-    if (container) container.style.display = 'none';
-    return;
-  }
-  
-  // Hide empty state
-  if (empty) empty.style.display = 'none';
-  
-  // Show container and render sections
-  if (container) {
-    container.style.display = 'block';
-    container.innerHTML = sections.map(sectionData => `
-      <div class="col-md-6">
-        <div class="action-card d-block p-3 border rounded-3 position-relative overflow-hidden" style="transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-          <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0.02) 100%);"></div>
-          <div class="position-relative">
-            <div class="d-flex align-items-center gap-3">
-              <div class="stat-icon bg-primary-subtle text-primary" style="width: 40px; height: 40px; transition: all 0.3s ease;">
-                <svg width="20" height="20" fill="currentColor">
-                  <use href="#icon-sections"></use>
-                </svg>
-              </div>
-              <div class="flex-grow-1">
-                <div class="fw-semibold">${escapeHtml(sectionData.class_name)}</div>
-                <div class="text-muted small">${escapeHtml(sectionData.subject)} • ${sectionData.student_count} students</div>
-                <div class="text-muted small">Room: ${escapeHtml(sectionData.room)}</div>
-                <div class="progress mt-2" style="height: 3px;">
-                  <div class="progress-bar bg-primary" style="width: ${sectionData.attendance_rate}%" data-progress-to="${sectionData.attendance_rate}"></div>
-                </div>
-              </div>
-              <div class="d-flex flex-column gap-1">
-                <button class="btn btn-sm btn-outline-primary" onclick="location.href='/teacher/classes'">View</button>
-                <button class="btn btn-sm btn-outline-secondary" onclick="location.href='/grade'">Grades</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-}
-
-function escapeHtml(text) {
-  if (!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function startSectionsPolling() {
-  // Stop existing polling
-  if (sectionsPollingInterval) {
-    clearInterval(sectionsPollingInterval);
-  }
-  
-  // Initial load
-  refreshSections();
-  
-  // Start polling every 5 seconds
-  sectionsPollingInterval = setInterval(refreshSections, 5000);
-}
-
-function stopSectionsPolling() {
-  if (sectionsPollingInterval) {
-    clearInterval(sectionsPollingInterval);
-    sectionsPollingInterval = null;
-  }
-}
-
-// Shim for showNotification
-if (typeof window.showNotification === 'undefined') {
-    window.showNotification = function(message, options = {}) {
-        if (window.notificationSystem) {
-            const type = options.type || 'info';
-            window.notificationSystem[type](message, options);
-        } else {
-            console.log(`Notification: ${message} (Type: ${options.type || 'info'})`);
-            alert(message);
-        }
-    };
-}
-
-// Start polling when page loads
+// Initialize counter animations
 document.addEventListener('DOMContentLoaded', function() {
-  startSectionsPolling();
-});
-
-// Stop polling when page is hidden
-document.addEventListener('visibilitychange', function() {
-  if (document.hidden) {
-    stopSectionsPolling();
-  } else {
-    startSectionsPolling();
-  }
+  // Animate counters
+  const counters = document.querySelectorAll('[data-count-to]');
+  counters.forEach(counter => {
+    const target = parseInt(counter.getAttribute('data-count-to'));
+    const duration = 2000; // 2 seconds
+    const increment = target / (duration / 16); // 60fps
+    let current = 0;
+    
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      counter.textContent = Math.floor(current);
+    }, 16);
+  });
+  
+  // Animate progress bars
+  const progressBars = document.querySelectorAll('[data-progress-to]');
+  progressBars.forEach(bar => {
+    const target = parseInt(bar.getAttribute('data-progress-to'));
+    const duration = 1500; // 1.5 seconds
+    const increment = target / (duration / 16);
+    let current = 0;
+    
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      bar.style.width = Math.floor(current) + '%';
+    }, 16);
+  });
 });
 </script>
  

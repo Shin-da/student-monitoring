@@ -134,10 +134,33 @@
     <symbol id="icon-report" viewBox="0 0 24 24">
       <path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
     </symbol>
+    
+    <!-- Error page icons -->
+    <symbol id="icon-help" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41c0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+    </symbol>
+    <symbol id="icon-back" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20v-2z" />
+    </symbol>
   </svg>
+<?php
+  // Determine simple page context for CSS scopes
+  $path = $_SERVER['REQUEST_URI'] ?? '/';
+  $page = 'default';
+  if ($path === $base . '/' || $path === '/' ) { $page = 'landing'; }
+  elseif (str_starts_with($path, $base . '/login')) { $page = 'login'; }
+  elseif (str_starts_with($path, $base . '/register')) { $page = 'register'; }
+  elseif (str_starts_with($path, $base . '/auth')) { $page = 'auth'; }
+  elseif (
+    str_contains($path, '/error') ||
+    str_ends_with($path, '/401') || str_ends_with($path, '/403') ||
+    str_ends_with($path, '/404') || str_ends_with($path, '/500') ||
+    str_ends_with($path, '/503')
+  ) { $page = 'error'; }
+?>
 </head>
 
-<body class="app-container">
+<body class="app-container" data-page="<?= htmlspecialchars($page) ?>">
   <nav class="navbar navbar-expand-lg navbar-dark navbar-glass fixed-top" data-nav>
     <div class="container-fluid">
       <a class="navbar-brand fw-bold" href="<?= $base ?>/">SSM</a>
@@ -146,7 +169,6 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarsExample">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <?php $path = $_SERVER['REQUEST_URI'] ?? '/'; ?>
           <li class="nav-item"><a class="nav-link <?= $path === $base . '/' ? 'active' : '' ?>" href="<?= $base ?>/">Home</a></li>
           <li class="nav-item"><a class="nav-link <?= str_starts_with($path, $base . '/admin') ? 'active' : '' ?>" href="<?= \Helpers\Url::to('/admin') ?>">Admin</a></li>
         </ul>

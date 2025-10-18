@@ -26,6 +26,9 @@ $title = 'Adviser Dashboard';
   </div>
 </div>
 
+<!-- Static Data Indicator -->
+<?= $staticDataIndicator ?? '' ?>
+
 <!-- Advisory Class Statistics -->
 <div class="row g-4 mb-4">
   <div class="col-md-3">
@@ -37,8 +40,8 @@ $title = 'Adviser Dashboard';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-primary mb-0" data-count-to="32">0</div>
-          <div class="text-muted small">Total Students</div>
+          <div class="h4 fw-bold text-primary mb-0" data-count-to="<?= $class_stats['total_students'] ?? 32 ?>">0</div>
+          <div class="text-muted small">Total Students <?= \Helpers\StaticData::getStaticDataBadge() ?></div>
         </div>
       </div>
     </div>

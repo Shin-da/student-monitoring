@@ -5,6 +5,7 @@ namespace Controllers;
 
 use Core\Controller;
 use Core\Session;
+use Helpers\StaticData;
 
 class AdviserController extends Controller
 {
@@ -12,14 +13,21 @@ class AdviserController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'adviser') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need adviser privileges to access this page.');
             return;
         }
+        // STATIC DATA: Replace database queries with static data for frontend development
+        $staticData = StaticData::getAdviserDashboardData();
+
         $this->view->render('adviser/dashboard', [
             'title' => 'Class Adviser Dashboard',
             'user' => $user,
             'activeNav' => 'dashboard',
             'showBack' => false,
+            'class_stats' => $staticData['class_stats'],
+            'student_performance' => $staticData['student_performance'],
+            'recent_activities' => $staticData['recent_activities'],
+            'staticDataIndicator' => StaticData::getStaticDataIndicator('adviser dashboard data'),
         ], 'layouts/dashboard');
     }
 
@@ -27,7 +35,7 @@ class AdviserController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'adviser') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need adviser privileges to access this page.');
             return;
         }
         $this->view->render('adviser/students', [
@@ -41,7 +49,7 @@ class AdviserController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'adviser') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need adviser privileges to access this page.');
             return;
         }
         $this->view->render('adviser/performance', [
@@ -55,7 +63,7 @@ class AdviserController extends Controller
     {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== 'adviser') {
-            \Helpers\Response::forbidden();
+            \Helpers\ErrorHandler::forbidden('You need adviser privileges to access this page.');
             return;
         }
         $this->view->render('adviser/communication', [

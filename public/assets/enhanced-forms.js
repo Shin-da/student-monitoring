@@ -15,19 +15,26 @@ class EnhancedFormsSystem {
   }
 
   initializeFormValidation() {
-    // Real-time validation for all forms
+    // Real-time validation for all forms except auth forms
     document.querySelectorAll('form').forEach(form => {
-      this.enhanceFormValidation(form);
+      const isAuthForm = form.id === 'loginForm' || form.id === 'registerForm';
+      if (!isAuthForm) {
+        this.enhanceFormValidation(form);
+      }
     });
 
-    // Password strength validation
+    // Password strength validation (excludes auth forms)
     document.querySelectorAll('input[type="password"]').forEach(input => {
       this.enhancePasswordField(input);
     });
 
-    // Email validation
+    // Email validation (excludes auth forms)
     document.querySelectorAll('input[type="email"]').forEach(input => {
-      this.enhanceEmailField(input);
+      const parentForm = input.closest('form');
+      const isAuthForm = parentForm && (parentForm.id === 'loginForm' || parentForm.id === 'registerForm');
+      if (!isAuthForm) {
+        this.enhanceEmailField(input);
+      }
     });
 
     // Phone number validation
@@ -37,9 +44,12 @@ class EnhancedFormsSystem {
   }
 
   initializeFormUX() {
-    // Loading states for submit buttons
+    // Loading states for submit buttons (excludes auth forms)
     document.querySelectorAll('form').forEach(form => {
-      this.addLoadingStates(form);
+      const isAuthForm = form.id === 'loginForm' || form.id === 'registerForm';
+      if (!isAuthForm) {
+        this.addLoadingStates(form);
+      }
     });
 
     // Auto-save for long forms
@@ -96,7 +106,16 @@ class EnhancedFormsSystem {
     const container = input.closest('.form-group, .mb-3');
     if (!container) return;
 
-    // Create password strength indicator
+    // Detect auth forms and skip enhancement (they handle their own password toggles)
+    const parentForm = input.closest('form');
+    const isAuthForm = parentForm && (parentForm.id === 'loginForm' || parentForm.id === 'registerForm');
+    
+    if (isAuthForm) {
+      // Skip enhancement for auth forms - they have their own password toggle implementation
+      return;
+    }
+
+    // Create password strength indicator for non-auth forms
     const strengthIndicator = document.createElement('div');
     strengthIndicator.className = 'password-strength mt-2';
     strengthIndicator.innerHTML = `

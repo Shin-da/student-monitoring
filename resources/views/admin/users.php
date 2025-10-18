@@ -1,3 +1,14 @@
+<!-- Dynamic Data Indicator -->
+<div class="alert alert-success alert-dismissible fade show mb-2" role="alert">
+    <div class="d-flex align-items-center">
+        <svg width="16" height="16" fill="currentColor" class="me-2">
+            <use href="#icon-check"></use>
+        </svg>
+        <strong>Dynamic Data:</strong> User management is fully functional with database integration.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
 <div class="dashboard-header mb-4">
   <div class="d-flex justify-content-between align-items-center">
     <div>
@@ -434,17 +445,40 @@ class UsersManager {
         const actionType = form.dataset.action;
         const formData = new FormData(form);
         const userId = formData.get('user_id');
+        
+        // Show loading state
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+        
         try {
           const res = await fetch(form.action, {
             method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
-            body: formData
+            headers: { 
+              'X-Requested-With': 'XMLHttpRequest', 
+              'Accept': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams(formData)
           });
+          
           const json = await res.json();
-          if (!json.success) throw new Error(json.error || 'Action failed');
+          
+          if (!json.success) {
+            throw new Error(json.error || 'Action failed');
+          }
+          
           this.applyRowUpdate(parseInt(userId), actionType, json);
+          showNotification(json.message || 'Action completed successfully', 'success');
+          
         } catch (err) {
+          console.error('Action failed:', err);
           showNotification(err.message || 'Action failed', 'error');
+        } finally {
+          // Reset button state
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
         }
       }
     });

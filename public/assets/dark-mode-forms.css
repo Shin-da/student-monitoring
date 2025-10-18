@@ -1,0 +1,541 @@
+/**
+ * Dark Mode Form Support
+ * Comprehensive dark theme styling for all form components
+ */
+
+/* ===== CORE FORM CONTROLS ===== */
+
+/* Basic Form Controls */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: var(--color-muted) !important;
+  opacity: 0.7;
+}
+
+[data-theme="dark"] .form-select::placeholder {
+  color: var(--color-muted) !important;
+  opacity: 0.7;
+}
+
+/* ===== FORM LABELS AND TEXT ===== */
+
+/* Form Labels */
+[data-theme="dark"] .form-label {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-group label {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-check-label {
+  color: var(--color-text) !important;
+}
+
+/* Form Help Text */
+[data-theme="dark"] .form-help {
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .form-help.text-danger {
+  color: #ef4444 !important;
+}
+
+[data-theme="dark"] .form-help.text-warning {
+  color: #f59e0b !important;
+}
+
+[data-theme="dark"] .form-help.text-success {
+  color: #10b981 !important;
+}
+
+[data-theme="dark"] .form-text {
+  color: var(--color-muted) !important;
+}
+
+/* ===== FORM CHECKBOXES AND RADIO BUTTONS ===== */
+
+[data-theme="dark"] .form-check-input {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .form-check-input:checked {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-check-input:focus {
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .form-check-input:indeterminate {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+/* ===== FLOATING LABELS ===== */
+
+[data-theme="dark"] .form-floating > .form-control,
+[data-theme="dark"] .form-floating > .form-select {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-floating > .form-control:focus,
+[data-theme="dark"] .form-floating > .form-select:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .form-floating > label {
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .form-floating > .form-control:focus ~ label,
+[data-theme="dark"] .form-floating > .form-control:not(:placeholder-shown) ~ label,
+[data-theme="dark"] .form-floating > .form-select:focus ~ label,
+[data-theme="dark"] .form-floating > .form-select:not([value=""]) ~ label {
+  color: var(--color-primary) !important;
+}
+
+/* ===== INPUT GROUPS ===== */
+
+[data-theme="dark"] .input-group-text {
+  background-color: var(--color-surface-300) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .input-group .form-control {
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .input-group .form-control:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .input-group .btn {
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .input-group .btn:focus {
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* ===== PASSWORD FIELDS ===== */
+
+[data-theme="dark"] .password-toggle {
+  background-color: var(--color-surface-300) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .password-toggle:hover {
+  background-color: var(--color-surface-400) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .password-toggle:focus {
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* Password Strength Indicator */
+[data-theme="dark"] .password-strength-bar {
+  background-color: var(--color-surface-400) !important;
+}
+
+[data-theme="dark"] .password-strength-fill.bg-danger {
+  background-color: #ef4444 !important;
+}
+
+[data-theme="dark"] .password-strength-fill.bg-warning {
+  background-color: #f59e0b !important;
+}
+
+[data-theme="dark"] .password-strength-fill.bg-success {
+  background-color: #10b981 !important;
+}
+
+[data-theme="dark"] .password-strength-text {
+  color: var(--color-text) !important;
+}
+
+/* ===== FORM VALIDATION ===== */
+
+/* Validation States */
+[data-theme="dark"] .form-control.is-invalid,
+[data-theme="dark"] .form-select.is-invalid {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 .2rem rgba(239, 68, 68, 0.25) !important;
+}
+
+[data-theme="dark"] .form-control.is-valid,
+[data-theme="dark"] .form-select.is-valid {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 .2rem rgba(16, 185, 129, 0.25) !important;
+}
+
+[data-theme="dark"] .invalid-feedback {
+  color: #ef4444 !important;
+}
+
+[data-theme="dark"] .valid-feedback {
+  color: #10b981 !important;
+}
+
+/* Validation Summary */
+[data-theme="dark"] .validation-summary {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  border-color: #ef4444 !important;
+}
+
+[data-theme="dark"] .validation-summary h6 {
+  color: #ef4444 !important;
+}
+
+[data-theme="dark"] .validation-summary li {
+  color: #ef4444 !important;
+}
+
+/* ===== FORM SECTIONS ===== */
+
+[data-theme="dark"] .form-section {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .form-section h5 {
+  color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-section h6 {
+  color: var(--color-text) !important;
+}
+
+/* ===== FORM STEPS ===== */
+
+[data-theme="dark"] .form-step-number {
+  background-color: var(--color-surface-300) !important;
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .form-step.active .form-step-number {
+  background-color: var(--color-primary) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .form-step.completed .form-step-number {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .form-step::before {
+  background-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .form-step.active::before,
+[data-theme="dark"] .form-step.completed::before {
+  background-color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-step-label {
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .form-step.active .form-step-label {
+  color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-step.completed .form-step-label {
+  color: #10b981 !important;
+}
+
+/* ===== FORM PROGRESS ===== */
+
+[data-theme="dark"] .form-progress .progress {
+  background-color: var(--color-surface-300) !important;
+}
+
+[data-theme="dark"] .form-progress .progress-bar {
+  background-color: var(--color-primary) !important;
+}
+
+/* ===== FORM ACTIONS ===== */
+
+[data-theme="dark"] .form-actions {
+  border-top-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .form-actions .btn {
+  color: var(--color-text) !important;
+}
+
+/* ===== FORM GROUPS ===== */
+
+[data-theme="dark"] .form-group.required label::after {
+  color: #ef4444 !important;
+}
+
+/* ===== AUTH FORMS ===== */
+
+[data-theme="dark"] .auth-form .form-control,
+[data-theme="dark"] .auth-form .form-select {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .auth-form .form-control:focus,
+[data-theme="dark"] .auth-form .form-select:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .auth-form .form-floating > .form-control:focus ~ label,
+[data-theme="dark"] .auth-form .form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: var(--color-primary) !important;
+}
+
+/* ===== MODAL FORMS ===== */
+
+[data-theme="dark"] .modal .form-control,
+[data-theme="dark"] .modal .form-select {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .modal .form-control:focus,
+[data-theme="dark"] .modal .form-select:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+[data-theme="dark"] .modal .form-label {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .modal .form-check-label {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .modal .form-help {
+  color: var(--color-muted) !important;
+}
+
+/* ===== SPECIAL INPUT TYPES ===== */
+
+/* Text Areas */
+[data-theme="dark"] .form-control[type="textarea"],
+[data-theme="dark"] textarea.form-control {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-control[type="textarea"]:focus,
+[data-theme="dark"] textarea.form-control:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* Range Inputs */
+[data-theme="dark"] .form-range {
+  background-color: var(--color-surface-300) !important;
+}
+
+[data-theme="dark"] .form-range::-webkit-slider-thumb {
+  background-color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .form-range::-moz-range-thumb {
+  background-color: var(--color-primary) !important;
+}
+
+/* File Inputs */
+[data-theme="dark"] .form-control[type="file"] {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-control[type="file"]:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* Date and Time Inputs */
+[data-theme="dark"] .form-control[type="date"],
+[data-theme="dark"] .form-control[type="time"],
+[data-theme="dark"] .form-control[type="datetime-local"] {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-control[type="date"]:focus,
+[data-theme="dark"] .form-control[type="time"]:focus,
+[data-theme="dark"] .form-control[type="datetime-local"]:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* Number Inputs */
+[data-theme="dark"] .form-control[type="number"] {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .form-control[type="number"]:focus {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 .2rem rgba(197,112,93,0.25) !important;
+}
+
+/* ===== FILE UPLOAD COMPONENTS ===== */
+
+[data-theme="dark"] .file-item {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .file-item:hover {
+  background-color: var(--color-surface-300) !important;
+  border-color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .file-preview {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* ===== CHARACTER COUNTER ===== */
+
+[data-theme="dark"] .character-counter {
+  color: var(--color-muted) !important;
+}
+
+[data-theme="dark"] .character-counter.text-warning {
+  color: #f59e0b !important;
+}
+
+[data-theme="dark"] .character-counter.text-danger {
+  color: #ef4444 !important;
+}
+
+/* ===== LOADING STATES ===== */
+
+[data-theme="dark"] .btn.loading {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .spinner-border {
+  color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .spinner-border-sm {
+  color: var(--color-primary) !important;
+}
+
+/* ===== AUTO-SAVE INDICATOR ===== */
+
+[data-theme="dark"] .auto-save-indicator .alert {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+/* ===== FORM ACCESSIBILITY ===== */
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus,
+[data-theme="dark"] .btn:focus {
+  outline: 2px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
+@media (max-width: 768px) {
+  [data-theme="dark"] .form-actions {
+    flex-direction: column;
+  }
+  
+  [data-theme="dark"] .form-actions .btn {
+    width: 100%;
+  }
+  
+  [data-theme="dark"] .form-steps {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  [data-theme="dark"] .form-step::before {
+    display: none;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+
+@media (prefers-contrast: high) {
+  [data-theme="dark"] .form-control,
+  [data-theme="dark"] .form-select {
+    border-width: 2px !important;
+  }
+  
+  [data-theme="dark"] .btn {
+    border-width: 2px !important;
+  }
+  
+  [data-theme="dark"] .form-check-input {
+    border-width: 2px !important;
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="dark"] .form-control,
+  [data-theme="dark"] .form-select,
+  [data-theme="dark"] .btn,
+  [data-theme="dark"] .password-strength-fill {
+    transition: none !important;
+  }
+  
+  [data-theme="dark"] .fade-in,
+  [data-theme="dark"] .slide-in {
+    animation: none !important;
+  }
+}

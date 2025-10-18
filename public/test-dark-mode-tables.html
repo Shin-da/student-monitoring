@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Tables Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/app.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 2rem;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+        }
+        .test-section {
+            margin-bottom: 3rem;
+        }
+        .test-section h3 {
+            margin-bottom: 1rem;
+            color: var(--color-text);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1 class="mb-4">Dark Mode Tables Test</h1>
+        
+        <!-- Theme Toggle -->
+        <div class="mb-4">
+            <button class="btn btn-outline-primary" onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+
+        <!-- Test Section 1: Basic Table -->
+        <div class="test-section">
+            <h3>Basic Table</h3>
+            <div class="surface p-4">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                            <svg class="icon text-primary" width="16" height="16" fill="currentColor">
+                                                <use href="#icon-user"></use>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">John Doe</div>
+                                            <div class="text-muted small">ID: 001</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>john.doe@example.com</td>
+                                <td><span class="badge bg-primary">Admin</span></td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                                            <svg class="icon text-success" width="16" height="16" fill="currentColor">
+                                                <use href="#icon-user"></use>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Jane Smith</div>
+                                            <div class="text-muted small">ID: 002</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>jane.smith@example.com</td>
+                                <td><span class="badge bg-info">Teacher</span></td>
+                                <td><span class="badge bg-warning">Pending</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-success me-1">Approve</button>
+                                    <button class="btn btn-sm btn-outline-danger">Reject</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                                            <svg class="icon text-warning" width="16" height="16" fill="currentColor">
+                                                <use href="#icon-user"></use>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Bob Johnson</div>
+                                            <div class="text-muted small">ID: 003</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>bob.johnson@example.com</td>
+                                <td><span class="badge bg-secondary">Student</span></td>
+                                <td><span class="badge bg-danger">Suspended</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1">View</button>
+                                    <button class="btn btn-sm btn-outline-warning">Restore</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Section 2: Striped Table -->
+        <div class="test-section">
+            <h3>Striped Table</h3>
+            <div class="surface p-4">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Grade</th>
+                                <th>Score</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Mathematics</td>
+                                <td>A+</td>
+                                <td>95</td>
+                                <td><span class="badge bg-success">Passed</span></td>
+                                <td>2024-01-15</td>
+                            </tr>
+                            <tr>
+                                <td>Science</td>
+                                <td>B</td>
+                                <td>85</td>
+                                <td><span class="badge bg-success">Passed</span></td>
+                                <td>2024-01-16</td>
+                            </tr>
+                            <tr>
+                                <td>English</td>
+                                <td>A</td>
+                                <td>92</td>
+                                <td><span class="badge bg-success">Passed</span></td>
+                                <td>2024-01-17</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Section 3: Table with Filters -->
+        <div class="test-section">
+            <h3>Table with Filters</h3>
+            <div class="surface p-4">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <svg width="16" height="16" fill="currentColor">
+                                    <use href="#icon-search"></use>
+                                </svg>
+                            </span>
+                            <input type="text" class="form-control" placeholder="Search...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>Pending</option>
+                            <option>Suspended</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option>All Roles</option>
+                            <option>Admin</option>
+                            <option>Teacher</option>
+                            <option>Student</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-primary w-100">Filter</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>
+                                    <input type="checkbox" class="form-check-input">
+                                </th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input"></td>
+                                <td>Alice Brown</td>
+                                <td>alice.brown@example.com</td>
+                                <td><span class="badge bg-primary">Admin</span></td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                                            <li><a class="dropdown-item" href="#">View</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input"></td>
+                                <td>Charlie Wilson</td>
+                                <td>charlie.wilson@example.com</td>
+                                <td><span class="badge bg-info">Teacher</span></td>
+                                <td><span class="badge bg-warning">Pending</span></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                                            <li><a class="dropdown-item" href="#">View</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Section 4: Empty State -->
+        <div class="test-section">
+            <h3>Empty State Table</h3>
+            <div class="surface p-4">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No data available</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+        }
+    </script>
+</body>
+</html>

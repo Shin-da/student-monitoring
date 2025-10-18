@@ -93,7 +93,7 @@ This security audit was conducted on the Smart Student Monitoring System to iden
 3. **Input Validation**: All inputs validated and sanitized
 4. **Output Encoding**: All outputs properly encoded
 5. **Secure Defaults**: Security-first configuration
-6. **Error Handling**: No sensitive information in error messages
+6. **Error Handling**: No sensitive information in error messages; unified custom error pages (401/403/404/500/503) prevent raw server errors
 
 ## 📋 Security Checklist
 

@@ -1,9 +1,13 @@
-<?php
-$title = 'Grade Management';
-?>
+<?php /** @var array $user */ ?>
+<?php /** @var array $stats */ ?>
+<?php /** @var array $sections */ ?>
+<?php /** @var array $subjects */ ?>
+<?php /** @var array $grades */ ?>
+<?php /** @var array $assignments */ ?>
+<?php /** @var array $filters */ ?>
 
 <!-- Teacher Grade Management Header -->
-<div class="dashboard-header">
+<div class="dashboard-header mb-4">
   <div class="d-flex justify-content-between align-items-center">
     <div>
       <h1 class="h3 mb-1 text-primary">Grade Management</h1>
@@ -37,7 +41,7 @@ $title = 'Grade Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-primary mb-0" data-count-to="127">0</div>
+          <div class="h4 fw-bold text-primary mb-0" data-count-to="<?= $stats['total_students'] ?>">0</div>
           <div class="text-muted small">Total Students</div>
         </div>
       </div>
@@ -53,7 +57,7 @@ $title = 'Grade Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-success mb-0" data-count-to="89">0</div>
+          <div class="h4 fw-bold text-success mb-0" data-count-to="<?= $stats['grades_entered'] ?>">0</div>
           <div class="text-muted small">Grades Entered</div>
         </div>
       </div>
@@ -69,7 +73,7 @@ $title = 'Grade Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-warning mb-0" data-count-to="38">0</div>
+          <div class="h4 fw-bold text-warning mb-0" data-count-to="<?= $stats['pending_grades'] ?>">0</div>
           <div class="text-muted small">Pending Grades</div>
         </div>
       </div>
@@ -85,7 +89,7 @@ $title = 'Grade Management';
           </svg>
         </div>
         <div>
-          <div class="h4 fw-bold text-info mb-0" data-count-to="85.2" data-count-decimals="1">0</div>
+          <div class="h4 fw-bold text-info mb-0" data-count-to="<?= $stats['avg_grade'] ?>" data-count-decimals="1">0</div>
           <div class="text-muted small">Average Grade</div>
         </div>
       </div>
@@ -95,48 +99,45 @@ $title = 'Grade Management';
 
 <!-- Grade Management Filters -->
 <div class="surface mb-4">
-  <div class="row g-3 align-items-center">
+  <form method="GET" action="/teacher/grades" class="row g-3 align-items-center">
     <div class="col-md-3">
       <label class="form-label">Section</label>
-      <select class="form-select" id="sectionFilter">
+      <select class="form-select" name="section" id="sectionFilter">
         <option value="">All Sections</option>
-        <option value="grade-10-a">Grade 10-A</option>
-        <option value="grade-10-b">Grade 10-B</option>
-        <option value="grade-9-a">Grade 9-A</option>
+        <?php foreach ($sections as $section): ?>
+          <option value="<?= $section['section_id'] ?>" <?= $filters['section_id'] == $section['section_id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($section['class_name']) ?> - <?= htmlspecialchars($section['subject_name']) ?>
+          </option>
+        <?php endforeach; ?>
       </select>
     </div>
     <div class="col-md-3">
       <label class="form-label">Subject</label>
-      <select class="form-select" id="subjectFilter">
+      <select class="form-select" name="subject" id="subjectFilter">
         <option value="">All Subjects</option>
-        <option value="mathematics">Mathematics</option>
-        <option value="science">Science</option>
-        <option value="english">English</option>
+        <?php foreach ($subjects as $subject): ?>
+          <option value="<?= $subject['id'] ?>" <?= $filters['subject_id'] == $subject['id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($subject['name']) ?> (Grade <?= $subject['grade_level'] ?>)
+          </option>
+        <?php endforeach; ?>
       </select>
     </div>
     <div class="col-md-3">
       <label class="form-label">Grade Type</label>
-      <select class="form-select" id="gradeTypeFilter">
+      <select class="form-select" name="grade_type" id="gradeTypeFilter">
         <option value="">All Types</option>
-        <option value="ww">Written Work</option>
-        <option value="pt">Performance Task</option>
-        <option value="qe">Quarterly Exam</option>
+        <option value="ww" <?= $filters['grade_type'] == 'ww' ? 'selected' : '' ?>>Written Work</option>
+        <option value="pt" <?= $filters['grade_type'] == 'pt' ? 'selected' : '' ?>>Performance Task</option>
+        <option value="qe" <?= $filters['grade_type'] == 'qe' ? 'selected' : '' ?>>Quarterly Exam</option>
       </select>
     </div>
     <div class="col-md-3">
-      <label class="form-label">Quarter</label>
-      <div class="btn-group w-100" role="group">
-        <input type="radio" class="btn-check" name="quarter" id="q1" value="1" checked>
-        <label class="btn btn-outline-primary" for="q1">Q1</label>
-        <input type="radio" class="btn-check" name="quarter" id="q2" value="2">
-        <label class="btn btn-outline-primary" for="q2">Q2</label>
-        <input type="radio" class="btn-check" name="quarter" id="q3" value="3">
-        <label class="btn btn-outline-primary" for="q3">Q3</label>
-        <input type="radio" class="btn-check" name="quarter" id="q4" value="4">
-        <label class="btn btn-outline-primary" for="q4">Q4</label>
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+        <a href="/teacher/grades" class="btn btn-outline-secondary btn-sm">Clear</a>
       </div>
     </div>
-  </div>
+  </form>
 </div>
 
 <!-- Grade Management Charts -->
@@ -214,7 +215,7 @@ $title = 'Grade Management';
 <!-- Grade Management Table -->
 <div class="surface">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h5 class="mb-0">Student Grades</h5>
+    <h5 class="mb-0">Student Grades (<?= count($grades) ?> entries)</h5>
     <div class="d-flex gap-2">
       <button class="btn btn-outline-secondary btn-sm" onclick="exportGrades()">
         <svg class="icon me-1" width="16" height="16" fill="currentColor">
@@ -231,165 +232,172 @@ $title = 'Grade Management';
     </div>
   </div>
   
-  <div class="table-responsive">
-    <table class="table table-hover" id="gradesTable">
-      <thead class="table-light">
-        <tr>
-          <th>
-            <input type="checkbox" class="form-check-input" id="selectAll">
-          </th>
-          <th>Student</th>
-          <th>Section</th>
-          <th>Subject</th>
-          <th>Assignment</th>
-          <th>Type</th>
-          <th>Grade</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <input type="checkbox" class="form-check-input" value="1">
-          </td>
-          <td>
-            <div class="d-flex align-items-center">
-              <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                <svg class="icon text-primary" width="16" height="16" fill="currentColor">
-                  <use href="#icon-user"></use>
-                </svg>
+  <?php if (empty($grades)): ?>
+    <!-- Empty state -->
+    <div class="text-center py-5">
+      <svg class="icon text-muted mb-3" width="64" height="64" fill="currentColor">
+        <use href="#icon-chart"></use>
+      </svg>
+      <h4 class="text-muted mb-3">No Grades Found</h4>
+      <p class="text-muted mb-4">
+        <?php if (!empty($filters['section_id']) || !empty($filters['subject_id']) || !empty($filters['grade_type'])): ?>
+          No grades match your current filters. Try adjusting your search criteria.
+        <?php else: ?>
+          You haven't entered any grades yet. Create an assignment and start grading!
+        <?php endif; ?>
+      </p>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAssignmentModal">
+        <svg class="icon me-2" width="16" height="16" fill="currentColor">
+          <use href="#icon-plus"></use>
+        </svg>
+        Create Assignment
+      </button>
+    </div>
+  <?php else: ?>
+    <div class="table-responsive">
+      <table class="table table-hover" id="gradesTable">
+        <thead class="table-light">
+          <tr>
+            <th>Student</th>
+            <th>Section</th>
+            <th>Subject</th>
+            <th>Assignment</th>
+            <th>Type</th>
+            <th>Grade</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($grades as $grade): ?>
+            <tr>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                    <svg class="icon text-primary" width="16" height="16" fill="currentColor">
+                      <use href="#icon-user"></use>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="fw-semibold"><?= htmlspecialchars($grade['student_name']) ?></div>
+                    <div class="text-muted small">LRN: <?= htmlspecialchars($grade['lrn']) ?></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-primary"><?= htmlspecialchars($grade['class_name']) ?></span>
+              </td>
+              <td><?= htmlspecialchars($grade['subject_name']) ?></td>
+              <td><?= htmlspecialchars($grade['description'] ?: 'Manual Entry') ?></td>
+              <td>
+                <span class="badge bg-info">
+                  <?php
+                  switch($grade['grade_type']) {
+                    case 'ww': echo 'WW'; break;
+                    case 'pt': echo 'PT'; break;
+                    case 'qe': echo 'QE'; break;
+                    default: echo strtoupper($grade['grade_type']);
+                  }
+                  ?>
+                </span>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <span class="fw-semibold <?= $grade['grade_value'] >= 75 ? 'text-success' : 'text-danger' ?> me-2">
+                    <?= round($grade['grade_value'], 1) ?>
+                  </span>
+                  <div class="progress" style="width: 60px; height: 6px;">
+                    <div class="progress-bar <?= $grade['grade_value'] >= 75 ? 'bg-success' : 'bg-danger' ?>" 
+                         style="width: <?= min(100, ($grade['grade_value'] / $grade['max_score']) * 100) ?>%"></div>
+                  </div>
+                </div>
+                <div class="text-muted small">/ <?= $grade['max_score'] ?></div>
+              </td>
+              <td>
+                <span class="badge <?= $grade['status'] == 'passing' ? 'bg-success' : 'bg-danger' ?>">
+                  <?= ucfirst($grade['status']) ?>
+                </span>
+              </td>
+              <td>
+                <div class="text-muted small">
+                  <?= date('M j, Y', strtotime($grade['graded_at'])) ?>
+                </div>
+              </td>
+              <td>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                    <svg class="icon" width="16" height="16" fill="currentColor">
+                      <use href="#icon-more"></use>
+                    </svg>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="editGrade(<?= $grade['id'] ?>)">Edit Grade</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="viewGradeDetails(<?= $grade['id'] ?>)">View Details</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="deleteGrade(<?= $grade['id'] ?>)">Delete Grade</a></li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+  <?php endif; ?>
+</div>
+
+<!-- Assignments Section -->
+<?php if (!empty($assignments)): ?>
+<div class="surface mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="mb-0">Recent Assignments (<?= count($assignments) ?>)</h5>
+    <button class="btn btn-outline-primary btn-sm" onclick="location.href='/teacher/assignments'">
+      <svg class="icon me-1" width="16" height="16" fill="currentColor">
+        <use href="#icon-plus"></use>
+      </svg>
+      View All
+    </button>
+  </div>
+  
+  <div class="row g-3">
+    <?php foreach (array_slice($assignments, 0, 3) as $assignment): ?>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h6 class="card-title mb-0"><?= htmlspecialchars($assignment['title']) ?></h6>
+              <span class="badge bg-info">
+                <?php
+                switch($assignment['assignment_type']) {
+                  case 'ww': echo 'WW'; break;
+                  case 'pt': echo 'PT'; break;
+                  case 'qe': echo 'QE'; break;
+                  default: echo strtoupper($assignment['assignment_type']);
+                }
+                ?>
+              </span>
+            </div>
+            <p class="card-text small text-muted mb-2">
+              <?= htmlspecialchars($assignment['subject_name']) ?> - <?= htmlspecialchars($assignment['class_name']) ?>
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="small text-muted">
+                Due: <?= $assignment['due_date'] ? date('M j', strtotime($assignment['due_date'])) : 'No due date' ?>
               </div>
-              <div>
-                <div class="fw-semibold">John Doe</div>
-                <div class="text-muted small">LRN: 123456789012</div>
+              <div class="small text-muted">
+                <?= $assignment['grades_count'] ?>/<?= $assignment['total_students'] ?> graded
               </div>
             </div>
-          </td>
-          <td><span class="badge bg-primary">Grade 10-A</span></td>
-          <td>Mathematics</td>
-          <td>Algebra Quiz #3</td>
-          <td><span class="badge bg-info">WW</span></td>
-          <td>
-            <div class="d-flex align-items-center">
-              <span class="fw-semibold text-success me-2">85</span>
-              <div class="progress" style="width: 60px; height: 6px;">
-                <div class="progress-bar bg-success" style="width: 85%"></div>
-              </div>
+            <div class="progress mt-2" style="height: 4px;">
+              <div class="progress-bar bg-primary" style="width: <?= $assignment['total_students'] > 0 ? ($assignment['grades_count'] / $assignment['total_students']) * 100 : 0 ?>%"></div>
             </div>
-          </td>
-          <td><span class="badge bg-success">Graded</span></td>
-          <td>
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                <svg class="icon" width="16" height="16" fill="currentColor">
-                  <use href="#icon-more"></use>
-                </svg>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#" onclick="editGrade(1)">Edit Grade</a></li>
-                <li><a class="dropdown-item" href="#" onclick="viewGradeDetails(1)">View Details</a></li>
-                <li><a class="dropdown-item" href="#" onclick="deleteGrade(1)">Delete Grade</a></li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-        
-        <tr>
-          <td>
-            <input type="checkbox" class="form-check-input" value="2">
-          </td>
-          <td>
-            <div class="d-flex align-items-center">
-              <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
-                <svg class="icon text-success" width="16" height="16" fill="currentColor">
-                  <use href="#icon-user"></use>
-                </svg>
-              </div>
-              <div>
-                <div class="fw-semibold">Jane Smith</div>
-                <div class="text-muted small">LRN: 123456789013</div>
-              </div>
-            </div>
-          </td>
-          <td><span class="badge bg-primary">Grade 10-A</span></td>
-          <td>Mathematics</td>
-          <td>Algebra Quiz #3</td>
-          <td><span class="badge bg-info">WW</span></td>
-          <td>
-            <div class="d-flex align-items-center">
-              <span class="fw-semibold text-success me-2">92</span>
-              <div class="progress" style="width: 60px; height: 6px;">
-                <div class="progress-bar bg-success" style="width: 92%"></div>
-              </div>
-            </div>
-          </td>
-          <td><span class="badge bg-success">Graded</span></td>
-          <td>
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                <svg class="icon" width="16" height="16" fill="currentColor">
-                  <use href="#icon-more"></use>
-                </svg>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#" onclick="editGrade(2)">Edit Grade</a></li>
-                <li><a class="dropdown-item" href="#" onclick="viewGradeDetails(2)">View Details</a></li>
-                <li><a class="dropdown-item" href="#" onclick="deleteGrade(2)">Delete Grade</a></li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-        
-        <tr>
-          <td>
-            <input type="checkbox" class="form-check-input" value="3">
-          </td>
-          <td>
-            <div class="d-flex align-items-center">
-              <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
-                <svg class="icon text-warning" width="16" height="16" fill="currentColor">
-                  <use href="#icon-user"></use>
-                </svg>
-              </div>
-              <div>
-                <div class="fw-semibold">Mike Johnson</div>
-                <div class="text-muted small">LRN: 123456789014</div>
-              </div>
-            </div>
-          </td>
-          <td><span class="badge bg-primary">Grade 10-A</span></td>
-          <td>Mathematics</td>
-          <td>Algebra Quiz #3</td>
-          <td><span class="badge bg-info">WW</span></td>
-          <td>
-            <div class="d-flex align-items-center">
-              <span class="fw-semibold text-warning me-2">-</span>
-              <div class="progress" style="width: 60px; height: 6px;">
-                <div class="progress-bar bg-warning" style="width: 0%"></div>
-              </div>
-            </div>
-          </td>
-          <td><span class="badge bg-warning">Pending</span></td>
-          <td>
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                <svg class="icon" width="16" height="16" fill="currentColor">
-                  <use href="#icon-more"></use>
-                </svg>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#" onclick="enterGrade(3)">Enter Grade</a></li>
-                <li><a class="dropdown-item" href="#" onclick="viewGradeDetails(3)">View Details</a></li>
-                <li><a class="dropdown-item" href="#" onclick="sendReminder(3)">Send Reminder</a></li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </div>
+        </div>
+      </div>
+    <?php endforeach; ?>
   </div>
 </div>
+<?php endif; ?>
 
 <!-- Bulk Grade Entry Modal -->
 <div class="modal fade" id="bulkGradeModal" tabindex="-1">
@@ -404,25 +412,29 @@ $title = 'Grade Management';
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Section</label>
-              <select class="form-select" required>
+              <select class="form-select" name="section_id" required>
                 <option value="">Select Section</option>
-                <option value="grade-10-a">Grade 10-A</option>
-                <option value="grade-10-b">Grade 10-B</option>
-                <option value="grade-9-a">Grade 9-A</option>
+                <?php foreach ($sections as $section): ?>
+                  <option value="<?= $section['section_id'] ?>">
+                    <?= htmlspecialchars($section['class_name']) ?> - <?= htmlspecialchars($section['subject_name']) ?>
+                  </option>
+                <?php endforeach; ?>
               </select>
             </div>
             <div class="col-md-6">
               <label class="form-label">Subject</label>
-              <select class="form-select" required>
+              <select class="form-select" name="subject_id" required>
                 <option value="">Select Subject</option>
-                <option value="mathematics">Mathematics</option>
-                <option value="science">Science</option>
-                <option value="english">English</option>
+                <?php foreach ($subjects as $subject): ?>
+                  <option value="<?= $subject['id'] ?>">
+                    <?= htmlspecialchars($subject['name']) ?> (Grade <?= $subject['grade_level'] ?>)
+                  </option>
+                <?php endforeach; ?>
               </select>
             </div>
             <div class="col-md-6">
               <label class="form-label">Grade Type</label>
-              <select class="form-select" required>
+              <select class="form-select" name="grade_type" required>
                 <option value="">Select Type</option>
                 <option value="ww">Written Work</option>
                 <option value="pt">Performance Task</option>
@@ -431,11 +443,11 @@ $title = 'Grade Management';
             </div>
             <div class="col-md-6">
               <label class="form-label">Assignment</label>
-              <input type="text" class="form-control" placeholder="e.g., Quiz #1" required>
+              <input type="text" class="form-control" name="description" placeholder="e.g., Quiz #1" required>
             </div>
             <div class="col-12">
               <label class="form-label">Max Points</label>
-              <input type="number" class="form-control" placeholder="100" required>
+              <input type="number" class="form-control" name="max_score" placeholder="100" required>
             </div>
           </div>
         </form>
@@ -461,20 +473,22 @@ $title = 'Grade Management';
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Assignment Title</label>
-              <input type="text" class="form-control" placeholder="e.g., Algebra Quiz #3" required>
+              <input type="text" class="form-control" name="title" placeholder="e.g., Algebra Quiz #3" required>
             </div>
             <div class="col-md-6">
               <label class="form-label">Subject</label>
-              <select class="form-select" required>
+              <select class="form-select" name="subject_id" required>
                 <option value="">Select Subject</option>
-                <option value="mathematics">Mathematics</option>
-                <option value="science">Science</option>
-                <option value="english">English</option>
+                <?php foreach ($subjects as $subject): ?>
+                  <option value="<?= $subject['id'] ?>">
+                    <?= htmlspecialchars($subject['name']) ?> (Grade <?= $subject['grade_level'] ?>)
+                  </option>
+                <?php endforeach; ?>
               </select>
             </div>
             <div class="col-md-6">
               <label class="form-label">Grade Type</label>
-              <select class="form-select" required>
+              <select class="form-select" name="assignment_type" required>
                 <option value="">Select Type</option>
                 <option value="ww">Written Work</option>
                 <option value="pt">Performance Task</option>
@@ -483,23 +497,26 @@ $title = 'Grade Management';
             </div>
             <div class="col-md-6">
               <label class="form-label">Max Points</label>
-              <input type="number" class="form-control" placeholder="100" required>
+              <input type="number" class="form-control" name="max_score" placeholder="100" required>
             </div>
             <div class="col-md-6">
               <label class="form-label">Due Date</label>
-              <input type="date" class="form-control" required>
+              <input type="date" class="form-control" name="due_date" required>
             </div>
             <div class="col-md-6">
-              <label class="form-label">Sections</label>
-              <select class="form-select" multiple required>
-                <option value="grade-10-a">Grade 10-A</option>
-                <option value="grade-10-b">Grade 10-B</option>
-                <option value="grade-9-a">Grade 9-A</option>
+              <label class="form-label">Section</label>
+              <select class="form-select" name="section_id" required>
+                <option value="">Select Section</option>
+                <?php foreach ($sections as $section): ?>
+                  <option value="<?= $section['section_id'] ?>">
+                    <?= htmlspecialchars($section['class_name']) ?> - <?= htmlspecialchars($section['subject_name']) ?>
+                  </option>
+                <?php endforeach; ?>
               </select>
             </div>
             <div class="col-12">
               <label class="form-label">Description</label>
-              <textarea class="form-control" rows="3" placeholder="Assignment description and instructions..."></textarea>
+              <textarea class="form-control" name="description" rows="3" placeholder="Assignment description and instructions..."></textarea>
             </div>
           </div>
         </form>

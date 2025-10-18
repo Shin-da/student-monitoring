@@ -4,7 +4,14 @@ A comprehensive, enterprise-grade Student Monitoring System (SSMS) with modern U
 
 > **📖 For complete system documentation, see [docs/README.md](docs/README.md)**
 
-## 🎯 Latest Updates (October 9, 2025)
+## 🎯 Latest Updates (October 16, 2025)
+
+### ✅ Error Handling & XAMPP Routing Improvements
+- Unified error pages: 401, 403, 404, 500, 503 with consistent UI
+- Controllers now use `Helpers\\ErrorHandler` (replaces `Response::forbidden()`)
+- Router friendly 404 integration via `ErrorController`
+- XAMPP: root `.htaccess` redirects all requests to `public/index.php`
+- Docs updated: see `docs/ERROR_PAGES_USAGE.md`
 
 ### ✅ Phase 6 Complete: Feature Enhancements & Enterprise Features
 - **Enhanced Security Framework** - Rate limiting, input validation, security headers
@@ -56,13 +63,11 @@ A comprehensive, enterprise-grade Student Monitoring System (SSMS) with modern U
 ### Quick Setup (5 minutes)
 1. **Clone/Download** - Place in `C:\xampp\htdocs\student-monitoring`
 2. **Install Dependencies** - Run `composer install`
-3. **Database Setup** - Create `student_monitoring` database
-4. **Import Schema** - Run `database/schema.sql` in phpMyAdmin
-5. **Update Schema** - Run `php database/update_schema.php`
-6. **Create Admin** - Run `php database/init_admin.php`
-7. **Demo Features** - Run `php demo_features.php` to see all enhancements
-8. **Access System** - Visit `http://localhost/student-monitoring/public/`
-9. **Login** - Use admin@example.com / admin123
+3. **Create Database** - In phpMyAdmin, create a database named `student_monitoring`
+4. **Minimal Auth Schema** - Run `php database/update_schema.php` (drops old tables, creates `users`, seeds admin)
+5. **Admin Credentials** - Email: `admin@school.edu` Password: `Admin!is-me04`
+6. **Access System** - Visit `http://localhost/student-monitoring/public/`
+7. (Optional later) Registration and role-based user creation via Admin panel
 
 ### Testing
 ```bash
@@ -176,11 +181,10 @@ composer test
 For complete setup instructions, see [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)
 
 ### Quick Start
-1. **Database Setup**: Import `database/schema.sql`
-2. **Update Schema**: Run `php database/update_schema.php`
-3. **Create Admin**: Run `php database/init_admin.php`
-4. **Access**: Visit `http://localhost/student-monitoring/public/`
-5. **Login**: Use admin@example.com / password
+1. **Database Setup**: Use minimal setup `php database/update_schema.php`
+2. **Create Admin**: Already created (see credentials above). To re-seed, rerun the command.
+3. **Access**: Visit `http://localhost/student-monitoring/public/`
+4. **Login**: Use `admin@school.edu` / `Admin!is-me04`
 
 ### PWA and subfolder deployment
 
@@ -197,6 +201,7 @@ Tip: After pulling updates, hard reload twice to activate the new Service Worker
 - **[Frontend UI Guide](docs/FRONTEND_UI.md)** - Views, components, and API contracts
 - **[Setup Guide](docs/SETUP_GUIDE.md)** - Quick setup instructions
 - **[User Management](docs/USER_MANAGEMENT.md)** - User management system
+- **[Error Pages Usage](docs/ERROR_PAGES_USAGE.md)** - Error pages and helper usage
 - **[AI IDE Guide](docs/AI_IDE.md)** - Quick reference for AI assistants
 - **[Database Design](docs/ERD_NOTES.md)** - Database relationships
 

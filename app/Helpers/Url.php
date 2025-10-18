@@ -26,11 +26,15 @@ class Url
         $rel = ltrim($relativePath, '/');
         $scriptFilename = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME'] ?? '');
         $servedFromPublic = str_ends_with($scriptFilename, '/public/index.php');
+        
+        // Check if we're running PHP built-in server with document root at public/
+        $isBuiltInServer = isset($_SERVER['SERVER_SOFTWARE']) && 
+                          str_starts_with($_SERVER['SERVER_SOFTWARE'], 'PHP');
 
         // If caller already provided a path under assets/, don't prepend another assets/
         $isUnderAssets = str_starts_with($rel, 'assets/');
 
-        if ($servedFromPublic) {
+        if ($servedFromPublic || $isBuiltInServer) {
             // Docroot is public/, assets are at /assets
             return self::basePath() . ($isUnderAssets ? '/' . $rel : '/assets/' . $rel);
         }

@@ -24,7 +24,7 @@ try {
     
     // Create initial admin user
     $adminEmail = 'admin@school.edu';
-    $adminPassword = 'admin123'; // Change this in production!
+    $adminPassword = 'Admin!is-me04'; // Change this in production!
     $adminName = 'System Administrator';
     
     $passwordHash = password_hash($adminPassword, PASSWORD_DEFAULT);

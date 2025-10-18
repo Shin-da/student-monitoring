@@ -5,6 +5,24 @@ This document outlines the comprehensive feature enhancements implemented in the
 
 ## New Features Implemented
 
+### 0. Error Handling & Routing (October 16, 2025)
+**Purpose**: Provide consistent, branded error pages and safe routing under XAMPP.
+
+**Components**:
+- `app/Controllers/ErrorController.php` – Renders 401/403/404/500/503 pages
+- `app/Helpers/ErrorHandler.php` – Simple helpers for controllers (e.g., `ErrorHandler::forbidden()`)
+- Routes in `routes/web.php`: `/error/404`, `/error/403`, `/error/500`, `/error/401`, `/error/503`, `/error/{code}`
+- Router update to redirect unknown routes to the 404 page
+- Error views: `resources/views/errors/{401,403,404,500,503}.php` + `error-template.php`
+- Root `.htaccess` for XAMPP to route to `public/index.php`
+
+**Controller Updates**:
+- Replaced all `Helpers\\Response::forbidden()` with `Helpers\\ErrorHandler::forbidden('message')`
+- Applied to: Admin, Teacher, Adviser, Student, Parent controllers
+
+**Docs**:
+- Added `docs/ERROR_PAGES_USAGE.md` with examples and guidance
+
 ### 1. Enhanced Security Framework
 **Purpose**: Provide enterprise-level security features beyond basic authentication.
 

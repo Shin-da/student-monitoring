@@ -1,3 +1,6 @@
+<!-- Static Data Indicator -->
+<?= $staticDataIndicator ?? '' ?>
+
 <!-- Enhanced Dashboard Header with Gradient Background -->
 <div class="dashboard-header mb-4 position-relative overflow-hidden">
   <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); opacity: 0.1;"></div>
@@ -11,13 +14,13 @@
             <svg width="14" height="14" fill="currentColor" class="me-1">
               <use href="#icon-user"></use>
             </svg>
-            Grade 10-A
+            <?= $student_info['class_name'] ?? 'Grade 10-A' ?> <?= \Helpers\StaticData::getStaticDataBadge() ?>
           </span>
           <span class="badge bg-success-subtle text-success">
             <svg width="14" height="14" fill="currentColor" class="me-1">
               <use href="#icon-star"></use>
             </svg>
-            LRN: 123456789012
+            LRN: <?= $student_info['lrn'] ?? 'LRN000005' ?> <?= \Helpers\StaticData::getStaticDataBadge() ?>
           </span>
         </div>
       </div>
@@ -53,8 +56,8 @@
           </div>
           <span class="badge bg-primary-subtle text-primary">Current</span>
         </div>
-        <h3 class="h4 fw-bold mb-1 text-primary" data-count-to="85.2" data-count-decimals="1">0.0</h3>
-        <p class="text-muted small mb-0">Overall Average</p>
+        <h3 class="h4 fw-bold mb-1 text-primary" data-count-to="<?= $academic_stats['overall_average'] ?? 85.2 ?>" data-count-decimals="1">0.0</h3>
+        <p class="text-muted small mb-0">Overall Average <?= \Helpers\StaticData::getStaticDataBadge() ?></p>
         <div class="progress mt-2" style="height: 4px;">
           <div class="progress-bar bg-primary" style="width: 85.2%" data-progress-to="85.2"></div>
         </div>

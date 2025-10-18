@@ -522,6 +522,71 @@
   background-color: var(--bs-dark);
 }
 
+/* Enhanced Dark Mode Table Support for Component Library */
+[data-theme="dark"] .table {
+  background-color: var(--color-surface-200) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+  background-color: transparent !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .table thead th {
+  background-color: var(--color-surface-300) !important;
+  color: var(--color-text) !important;
+  border-bottom-color: var(--color-border) !important;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .table tbody tr {
+  background-color: var(--color-surface-200) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .table tbody tr:nth-child(even) {
+  background-color: var(--color-surface-300) !important;
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+  background-color: var(--color-surface-400) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .table-light {
+  background-color: var(--color-surface-300) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .table-light th {
+  background-color: var(--color-surface-300) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .table-container {
+  background-color: var(--color-surface-200) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .table-search .form-control {
+  background-color: var(--color-surface-300) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .table th[data-sortable="true"]:hover {
+  background-color: var(--color-surface-400) !important;
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+  background-color: var(--color-surface-400) !important;
+}
+
 /* High Contrast Mode */
 @media (prefers-contrast: high) {
   .card,

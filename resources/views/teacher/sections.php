@@ -1,222 +1,187 @@
 <?php /** @var array $user */ ?>
+<?php /** @var array $sections */ ?>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
     <h1 class="h4 fw-bold mb-1">My Sections</h1>
-    <p class="text-muted mb-0">Create and manage your sections</p>
+    <p class="text-muted mb-0">Manage your assigned sections and students</p>
   </div>
-  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createSectionModal">
-    <svg width="16" height="16" fill="currentColor"><use href="#icon-plus"></use></svg>
-    <span class="d-none d-md-inline ms-1">Create Section</span>
-  </button>
-  </div>
-
-<div class="surface p-3">
-  <div id="sectionsContainer" class="row g-3">
-    <!-- Sections will be loaded here -->
-  </div>
-</div>
-
-<!-- Create Section Modal -->
-<div class="modal fade" id="createSectionModal" tabindex="-1" aria-labelledby="createSectionModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="createSectionModalLabel">Create Section</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form id="createSectionForm">
-        <div class="modal-body">
-          <input type="hidden" id="teacherUserId" value="<?= (int)($user['id'] ?? 0) ?>">
-          <div class="mb-3">
-            <label for="section_name" class="form-label">Section Name <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="section_name" required>
-          </div>
-          <div class="mb-3">
-            <label for="grade_level" class="form-label">Grade Level <span class="text-danger">*</span></label>
-            <select class="form-select" id="grade_level" required>
-              <option value="">Select grade</option>
-              <?php for($i=1; $i<=12; $i++): ?>
-                <option value="<?= $i ?>">Grade <?= $i ?></option>
-              <?php endfor; ?>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" rows="3" placeholder="Optional"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save Section</button>
-        </div>
-      </form>
-    </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-primary btn-sm" onclick="location.href='/teacher/grades'">
+      <svg width="16" height="16" fill="currentColor"><use href="#icon-chart"></use></svg>
+      <span class="d-none d-md-inline ms-1">Manage Grades</span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm" onclick="location.href='/teacher/attendance'">
+      <svg width="16" height="16" fill="currentColor"><use href="#icon-user"></use></svg>
+      <span class="d-none d-md-inline ms-1">Attendance</span>
+    </button>
   </div>
 </div>
 
-<!-- Add Student Modal -->
-<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addStudentModalLabel">Add Student by LRN</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="activeSectionId">
-        <div class="mb-3">
-          <label for="lrnInput" class="form-label">Learner Reference Number</label>
-          <input type="text" class="form-control" id="lrnInput" placeholder="Type LRN...">
-        </div>
-        <div id="lrnResult" class="border rounded p-2 d-none"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" id="confirmAddBtn" class="btn btn-primary" disabled>Add to Section</button>
-      </div>
-    </div>
+<?php if (empty($sections)): ?>
+  <!-- Empty state -->
+  <div class="surface p-5 text-center">
+    <svg class="icon text-muted mb-3" width="64" height="64" fill="currentColor">
+      <use href="#icon-sections"></use>
+    </svg>
+    <h4 class="text-muted mb-3">No Sections Assigned</h4>
+    <p class="text-muted mb-4">You haven't been assigned to any sections yet. Contact your administrator to get assigned to sections.</p>
+    <button class="btn btn-primary" onclick="location.href='/teacher/dashboard'">
+      <svg width="16" height="16" fill="currentColor" class="me-2">
+        <use href="#icon-arrow-left"></use>
+      </svg>
+      Back to Dashboard
+    </button>
   </div>
-</div>
-
-<script>
-(function(){
-  'use strict';
-
-  const teacherUserId = parseInt(document.getElementById('teacherUserId').value, 10) || 0;
-  const sectionsContainer = document.getElementById('sectionsContainer');
-  const createSectionForm = document.getElementById('createSectionForm');
-  const addStudentModal = document.getElementById('addStudentModal');
-  const lrnInput = document.getElementById('lrnInput');
-  const lrnResult = document.getElementById('lrnResult');
-  const confirmAddBtn = document.getElementById('confirmAddBtn');
-  let selectedStudent = null;
-  let activeSectionId = null;
-
-  function api(path, options){
-    const base = (window.__BASE_PATH__ || '').replace(/\/$/, '');
-    return fetch(base + path, options || {});
-  }
-
-  function sectionCard(section){
-    return `
-      <div class="col-md-4">
-        <div class="card h-100">
-          <div class="card-body d-flex flex-column">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <h5 class="card-title mb-0">${section.section_name}</h5>
-              <span class="badge bg-primary-subtle text-primary">Grade ${section.grade_level}</span>
-            </div>
-            <p class="card-text flex-grow-1">${section.description || ''}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <small class="text-muted">Created ${new Date(section.created_at).toLocaleDateString()}</small>
-              <button class="btn btn-outline-primary btn-sm" data-section-id="${section.id}" data-action="add-student">Add Student</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function loadSections(){
-    api('/api/teacher/list_sections.php')
-      .then(r => r.json())
-      .then(json => {
-        if (!json.success) throw new Error(json.message || 'Failed to load sections');
-        sectionsContainer.innerHTML = (json.data || []).map(sectionCard).join('');
-      })
-      .catch(() => { sectionsContainer.innerHTML = '<div class="text-muted">No sections yet</div>'; });
-  }
-
-  createSectionForm.addEventListener('submit', function(e){
-    e.preventDefault();
-    const payload = {
-      teacher_user_id: teacherUserId,
-      section_name: document.getElementById('section_name').value.trim(),
-      grade_level: parseInt(document.getElementById('grade_level').value, 10),
-      description: document.getElementById('description').value.trim() || null
-    };
-    api('/api/teacher/create_section.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload),
-      credentials: 'same-origin'
-    })
-    .then(r => r.json())
-    .then(json => {
-      if (!json.success) throw new Error(json.message || 'Failed');
-      bootstrap.Modal.getInstance(document.getElementById('createSectionModal')).hide();
-      createSectionForm.reset();
-      loadSections();
-      if (window.Notification) new Notification('Section created', { type: 'success' });
-    })
-    .catch(err => { alert(err.message || 'Error creating section'); });
-  });
-
-  sectionsContainer.addEventListener('click', function(e){
-    const btn = e.target.closest('button[data-action="add-student"]');
-    if (!btn) return;
-    activeSectionId = parseInt(btn.getAttribute('data-section-id'), 10);
-    document.getElementById('activeSectionId').value = activeSectionId;
-    selectedStudent = null;
-    lrnInput.value = '';
-    lrnResult.classList.add('d-none');
-    confirmAddBtn.disabled = true;
-    new bootstrap.Modal(addStudentModal).show();
-  });
-
-  let debounce;
-  lrnInput.addEventListener('input', function(){
-    const q = this.value.trim();
-    selectedStudent = null;
-    confirmAddBtn.disabled = true;
-    if (debounce) clearTimeout(debounce);
-    if (!q) { lrnResult.classList.add('d-none'); return; }
-    debounce = setTimeout(() => {
-      api('/api/teacher/search_student_by_lrn.php?q=' + encodeURIComponent(q))
-        .then(r => r.json())
-        .then(json => {
-          if (!json.success || !json.data) { lrnResult.classList.remove('d-none'); lrnResult.innerHTML = '<div class="text-muted">No match</div>'; return; }
-          const s = json.data;
-          selectedStudent = s;
-          lrnResult.classList.remove('d-none');
-          lrnResult.innerHTML = `
-            <div class="d-flex align-items-center justify-content-between">
-              <div>
-                <div class="fw-semibold">${s.name} (${s.lrn || 'N/A'})</div>
-                <div class="text-muted small">Grade ${s.grade_level || 'N/A'}</div>
+<?php else: ?>
+  <!-- Sections Grid -->
+  <div class="row g-4">
+    <?php foreach ($sections as $section): ?>
+      <div class="col-lg-6">
+        <div class="surface p-4 h-100">
+          <!-- Section Header -->
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h5 class="fw-bold mb-1"><?= htmlspecialchars($section['class_name']) ?></h5>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="badge bg-primary-subtle text-primary">
+                  Grade <?= htmlspecialchars($section['grade_level']) ?> - <?= htmlspecialchars($section['section']) ?>
+                </span>
+                <span class="badge bg-info-subtle text-info">
+                  <?= htmlspecialchars($section['subject_name']) ?>
+                </span>
+                <?php if ($section['is_adviser']): ?>
+                  <span class="badge bg-success-subtle text-success">Adviser</span>
+                <?php endif; ?>
               </div>
-              <span class="badge bg-primary-subtle text-primary">Student</span>
-            </div>`;
-          confirmAddBtn.disabled = false;
-        })
-        .catch(() => { lrnResult.classList.remove('d-none'); lrnResult.innerHTML = '<div class="text-muted">No match</div>'; });
-    }, 250);
-  });
+              <p class="text-muted small mb-0">
+                <svg width="14" height="14" fill="currentColor" class="me-1">
+                  <use href="#icon-map-pin"></use>
+                </svg>
+                Room: <?= htmlspecialchars($section['room']) ?>
+              </p>
+            </div>
+            <div class="text-end">
+              <div class="h4 fw-bold text-primary mb-0"><?= $section['student_count'] ?></div>
+              <div class="text-muted small">Students</div>
+            </div>
+          </div>
 
-  confirmAddBtn.addEventListener('click', function(){
-    if (!selectedStudent || !activeSectionId) return;
-    const payload = {
-      section_id: activeSectionId,
-      student_user_id: selectedStudent.user_id,
-      added_by_user_id: teacherUserId
-    };
-    api('/api/teacher/add_student_to_section.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload),
-      credentials: 'same-origin'
-    })
-    .then(r => r.json())
-    .then(json => {
-      if (!json.success) throw new Error(json.message || 'Failed to add');
-      bootstrap.Modal.getInstance(addStudentModal).hide();
-      if (window.Notification) new Notification('Student added to section', { type: 'success' });
-    })
-    .catch(err => alert(err.message || 'Error'));
-  });
+          <!-- Attendance Rate -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small text-muted">Attendance Rate</span>
+              <span class="small fw-semibold"><?= round($section['attendance_rate']) ?>%</span>
+            </div>
+            <div class="progress" style="height: 6px;">
+              <div class="progress-bar bg-success" style="width: <?= round($section['attendance_rate']) ?>%"></div>
+            </div>
+          </div>
 
-  loadSections();
-})();
-</script>
+          <!-- Students List -->
+          <div class="mb-3">
+            <h6 class="fw-semibold mb-2">Students (<?= count($section['students']) ?>)</h6>
+            <?php if (empty($section['students'])): ?>
+              <div class="text-center py-3 text-muted">
+                <svg width="24" height="24" fill="currentColor" class="mb-2">
+                  <use href="#icon-user"></use>
+                </svg>
+                <div class="small">No students assigned</div>
+              </div>
+            <?php else: ?>
+              <div class="students-list" style="max-height: 200px; overflow-y: auto;">
+                <?php foreach ($section['students'] as $student): ?>
+                  <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="avatar-sm bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center">
+                        <svg width="14" height="14" fill="currentColor">
+                          <use href="#icon-user"></use>
+                        </svg>
+                      </div>
+                      <div>
+                        <div class="fw-semibold small"><?= htmlspecialchars($student['student_name']) ?></div>
+                        <div class="text-muted small">LRN: <?= htmlspecialchars($student['lrn']) ?></div>
+                      </div>
+                    </div>
+                    <div class="text-end">
+                      <div class="small fw-semibold">
+                        <?php if ($student['avg_grade'] > 0): ?>
+                          <span class="text-success"><?= round($student['avg_grade'], 1) ?></span>
+                        <?php else: ?>
+                          <span class="text-muted">No grades</span>
+                        <?php endif; ?>
+                      </div>
+                      <div class="text-muted small">
+                        <?php if ($student['total_attendance'] > 0): ?>
+                          <?= $student['present_count'] ?>/<?= $student['total_attendance'] ?> present
+                        <?php else: ?>
+                          No attendance
+                        <?php endif; ?>
+                      </div>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            <?php endif; ?>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="d-grid gap-2">
+            <div class="row g-2">
+              <div class="col-6">
+                <button class="btn btn-outline-primary btn-sm w-100" onclick="location.href='/teacher/grades?section=<?= $section['section_id'] ?>&subject=<?= $section['subject_id'] ?>'">
+                  <svg width="14" height="14" fill="currentColor" class="me-1">
+                    <use href="#icon-chart"></use>
+                  </svg>
+                  Grades
+                </button>
+              </div>
+              <div class="col-6">
+                <button class="btn btn-outline-secondary btn-sm w-100" onclick="location.href='/teacher/attendance?section=<?= $section['section_id'] ?>&subject=<?= $section['subject_id'] ?>'">
+                  <svg width="14" height="14" fill="currentColor" class="me-1">
+                    <use href="#icon-user"></use>
+                  </svg>
+                  Attendance
+                </button>
+              </div>
+            </div>
+            <button class="btn btn-outline-info btn-sm" onclick="location.href='/teacher/assignments?section=<?= $section['section_id'] ?>&subject=<?= $section['subject_id'] ?>'">
+              <svg width="14" height="14" fill="currentColor" class="me-1">
+                <use href="#icon-plus"></use>
+              </svg>
+              Assignments
+            </button>
+          </div>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+
+  <!-- Section Statistics -->
+  <div class="row g-4 mt-4">
+    <div class="col-md-4">
+      <div class="surface p-3 text-center">
+        <div class="h3 fw-bold text-primary mb-1"><?= count($sections) ?></div>
+        <div class="text-muted small">Total Sections</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="surface p-3 text-center">
+        <div class="h3 fw-bold text-success mb-1">
+          <?= array_sum(array_column($sections, 'student_count')) ?>
+        </div>
+        <div class="text-muted small">Total Students</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="surface p-3 text-center">
+        <div class="h3 fw-bold text-info mb-1">
+          <?= round(array_sum(array_column($sections, 'attendance_rate')) / count($sections), 1) ?>%
+        </div>
+        <div class="text-muted small">Avg Attendance</div>
+      </div>
+    </div>
+  </div>
+<?php endif; ?>
 
 

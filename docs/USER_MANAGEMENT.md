@@ -77,6 +77,7 @@ relationship ENUM('father','mother','guardian') DEFAULT 'guardian'
 - **Status Check**: Login blocked for non-active accounts
 - **Clear Messages**: Users informed why they cannot log in
 - **Admin Contact**: Guidance to contact administrator
+- **403 Handling**: Unauthorized access to role areas now uses a branded 403 page via `Helpers\\ErrorHandler::forbidden('message')`
 
 ### 3. CSRF Protection
 - **All Forms**: CSRF tokens on all user management forms

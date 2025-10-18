@@ -44,9 +44,9 @@ class Router
 
         $handler = $this->routes[$method][$normalized] ?? null;
         if ($handler === null) {
-            http_response_code(404);
-            echo '404 Not Found';
-            return;
+            // Redirect to 404 error page instead of showing plain text
+            header('Location: ' . \Helpers\Url::to('/error/404'));
+            exit;
         }
 
         if (is_array($handler)) {

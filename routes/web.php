@@ -7,6 +7,7 @@ use Controllers\TeacherController;
 use Controllers\AdviserController;
 use Controllers\StudentController;
 use Controllers\ParentController;
+use Controllers\ErrorController;
 
 /** @var Router $router */
 
@@ -61,6 +62,13 @@ $router->get('/teacher/student-progress', [TeacherController::class, 'studentPro
 $router->get('/teacher/communication', [TeacherController::class, 'communication']);
 $router->get('/teacher/materials', [TeacherController::class, 'materials']);
 
+// Teacher API endpoints
+$router->get('/teacher/api/section-details', [TeacherController::class, 'getSectionDetails']);
+$router->post('/teacher/api/log-activity', [TeacherController::class, 'logActivity']);
+// Attendance APIs
+$router->get('/teacher/api/attendance/list', [TeacherController::class, 'getAttendanceList']);
+$router->post('/teacher/api/attendance/save', [TeacherController::class, 'saveAttendance']);
+
 // Adviser pages
 $router->get('/adviser/students', [AdviserController::class, 'students']);
 $router->get('/adviser/performance', [AdviserController::class, 'performance']);
@@ -68,6 +76,8 @@ $router->get('/adviser/communication', [AdviserController::class, 'communication
 
 // Demo pages
 $router->get('/demo/component-library', [HomeController::class, 'componentLibrary']);
+$router->get('/demo/component-system', [HomeController::class, 'componentSystemDemo']);
+$router->get('/demo/component-showcase', [HomeController::class, 'componentShowcase']);
 $router->get('/demo/pwa-features', [HomeController::class, 'pwaFeatures']);
 $router->get('/demo/realtime-features', [HomeController::class, 'realtimeFeatures']);
 
@@ -83,4 +93,16 @@ $router->get('/offline', function () {
 	echo 'Offline page not found';
 });
 
+// Error Pages
+$router->get('/error/404', [ErrorController::class, 'notFound']);
+$router->get('/error/403', [ErrorController::class, 'forbidden']);
+$router->get('/error/500', [ErrorController::class, 'internalServerError']);
+$router->get('/error/401', [ErrorController::class, 'unauthorized']);
+$router->get('/error/503', [ErrorController::class, 'serviceUnavailable']);
+
+// Generic error handler
+$router->get('/error/{code}', function($code) {
+	$errorController = new ErrorController();
+	$errorController->error((int)$code);
+});
 

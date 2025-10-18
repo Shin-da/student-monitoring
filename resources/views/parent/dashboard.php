@@ -1,3 +1,6 @@
+<!-- Static Data Indicator -->
+<?= $staticDataIndicator ?? '' ?>
+
 <!-- Enhanced Parent Dashboard Header -->
 <div class="dashboard-header mb-4 position-relative overflow-hidden">
   <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); opacity: 0.1;"></div>
@@ -17,7 +20,7 @@
             <svg width="14" height="14" fill="currentColor" class="me-1">
               <use href="#icon-user"></use>
             </svg>
-            Linked to 1 Student
+            Child: <?= $child_info['name'] ?? 'John Carlbe' ?> <?= \Helpers\StaticData::getStaticDataBadge() ?>
           </span>
         </div>
       </div>
