@@ -795,6 +795,454 @@ class AdminController extends Controller
             'activeNav' => 'logs',
         ], 'layouts/dashboard');
     }
+
+    public function createStudent(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'admin') {
+            \Helpers\ErrorHandler::forbidden('You need administrator privileges to access this page.');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+            $pdo = Database::connection($config['database']);
+
+            // Get available sections for dropdown
+            $stmt = $pdo->prepare('SELECT id, name, grade_level, room FROM sections WHERE school_year = "2025-2026" ORDER BY grade_level, name');
+            $stmt->execute();
+            $sections = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->view->render('admin/create-student', [
+                'title' => 'Register New Student',
+                'user' => $user,
+                'activeNav' => 'users',
+                'sections' => $sections,
+                'csrf_token' => \Helpers\Csrf::token(),
+            ], 'layouts/dashboard');
+            return;
+        }
+
+        if (!Csrf::check($_POST['csrf_token'] ?? null)) {
+            http_response_code(419);
+            header('Location: ' . \Helpers\Url::to('/admin/create-student'));
+            return;
+        }
+
+        // Validate required fields
+        $requiredFields = [
+            'first_name', 'last_name', 'email', 'password', 'grade_level', 'section_id'
+        ];
+        
+        foreach ($requiredFields as $field) {
+            if (empty($_POST[$field])) {
+                $this->view->render('admin/create-student', [
+                    'title' => 'Register New Student',
+                    'user' => $user,
+                    'activeNav' => 'users',
+                    'error' => "Please fill in all required fields. Missing: {$field}"
+                ], 'layouts/dashboard');
+                return;
+            }
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        try {
+            $pdo->beginTransaction();
+
+            // Check if email already exists
+            $stmt = $pdo->prepare('SELECT id FROM users WHERE email = :email LIMIT 1');
+            $stmt->execute(['email' => $_POST['email']]);
+            if ($stmt->fetch()) {
+                throw new \Exception('Email already exists in the system.');
+            }
+
+
+            // Check if LRN already exists (if provided)
+            if (!empty($_POST['lrn'])) {
+                $stmt = $pdo->prepare('SELECT id FROM students WHERE lrn = :lrn LIMIT 1');
+                $stmt->execute(['lrn' => $_POST['lrn']]);
+                if ($stmt->fetch()) {
+                    throw new \Exception('LRN already exists in the system.');
+                }
+            }
+
+            // Create user account
+            $passwordHash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $fullName = trim($_POST['first_name'] . ' ' . ($_POST['middle_name'] ?? '') . ' ' . $_POST['last_name']);
+            
+            $stmt = $pdo->prepare('
+                INSERT INTO users (role, email, password_hash, name, status, approved_by, approved_at) 
+                VALUES ("student", :email, :password_hash, :name, "active", :approved_by, NOW())
+            ');
+            $stmt->execute([
+                'email' => $_POST['email'],
+                'password_hash' => $passwordHash,
+                'name' => $fullName,
+                'approved_by' => $user['id']
+            ]);
+
+            $userId = $pdo->lastInsertId();
+
+            // Generate LRN if not provided
+            $lrn = $_POST['lrn'] ?? 'LRN' . str_pad((string)$userId, 6, '0', STR_PAD_LEFT);
+
+
+            // Create student profile
+            $stmt = $pdo->prepare('
+                INSERT INTO students (
+                    user_id, lrn, first_name, last_name, middle_name,
+                    birth_date, gender, contact_number, address, grade_level, section_id,
+                    guardian_name, guardian_contact, guardian_relationship, school_year,
+                    enrollment_status, previous_school, medical_conditions, allergies,
+                    emergency_contact_name, emergency_contact_number, emergency_contact_relationship,
+                    notes
+                ) VALUES (
+                    :user_id, :lrn, :first_name, :last_name, :middle_name,
+                    :birth_date, :gender, :contact_number, :address, :grade_level, :section_id,
+                    :guardian_name, :guardian_contact, :guardian_relationship, :school_year,
+                    :enrollment_status, :previous_school, :medical_conditions, :allergies,
+                    :emergency_contact_name, :emergency_contact_number, :emergency_contact_relationship,
+                    :notes
+                )
+            ');
+
+            $stmt->execute([
+                'user_id' => $userId,
+                'lrn' => $lrn,
+                'first_name' => $_POST['first_name'],
+                'last_name' => $_POST['last_name'],
+                'middle_name' => $_POST['middle_name'] ?? null,
+                'birth_date' => $_POST['birth_date'] ?? null,
+                'gender' => $_POST['gender'] ?? null,
+                'contact_number' => $_POST['contact_number'] ?? null,
+                'address' => $_POST['address'] ?? null,
+                'grade_level' => (int)$_POST['grade_level'],
+                'section_id' => (int)$_POST['section_id'],
+                'guardian_name' => $_POST['guardian_name'] ?? null,
+                'guardian_contact' => $_POST['guardian_contact'] ?? null,
+                'guardian_relationship' => $_POST['guardian_relationship'] ?? null,
+                'school_year' => $_POST['school_year'] ?? '2025-2026',
+                'enrollment_status' => $_POST['enrollment_status'] ?? 'enrolled',
+                'previous_school' => $_POST['previous_school'] ?? null,
+                'medical_conditions' => $_POST['medical_conditions'] ?? null,
+                'allergies' => $_POST['allergies'] ?? null,
+                'emergency_contact_name' => $_POST['emergency_contact_name'] ?? null,
+                'emergency_contact_number' => $_POST['emergency_contact_number'] ?? null,
+                'emergency_contact_relationship' => $_POST['emergency_contact_relationship'] ?? null,
+                'notes' => $_POST['notes'] ?? null
+            ]);
+
+            // Log the student creation
+            $stmt = $pdo->prepare('
+                INSERT INTO audit_logs (user_id, action, target_type, target_id, details, ip_address, user_agent) 
+                VALUES (:admin_id, "student_created", "student", :student_id, :details, :ip, :user_agent)
+            ');
+            $stmt->execute([
+                'admin_id' => $user['id'],
+                'student_id' => $userId,
+                'details' => json_encode([
+                    'student_name' => $fullName,
+                    'student_email' => $_POST['email'],
+                    'student_number' => $studentNumber,
+                    'lrn' => $lrn,
+                    'grade_level' => $_POST['grade_level'],
+                    'section_id' => $_POST['section_id']
+                ]),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
+            ]);
+
+            $pdo->commit();
+
+            // Redirect to success page or users list
+            header('Location: ' . \Helpers\Url::to('/admin/users?success=student_created&student_id=' . $userId));
+            return;
+
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            
+            // Get sections again for form re-render
+            $stmt = $pdo->prepare('SELECT id, name, grade_level, room FROM sections WHERE school_year = "2025-2026" ORDER BY grade_level, name');
+            $stmt->execute();
+            $sections = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->view->render('admin/create-student', [
+                'title' => 'Register New Student',
+                'user' => $user,
+                'activeNav' => 'users',
+                'sections' => $sections,
+                'error' => $e->getMessage(),
+                'form_data' => $_POST // Preserve form data for user convenience
+            ], 'layouts/dashboard');
+        }
+    }
+
+    /**
+     * Display adviser assignment page
+     */
+    public function assignAdvisers(): void
+    {
+        $user = Session::get('user');
+        if (!$user || $user['role'] !== 'admin') {
+            header('Location: ' . \Helpers\Url::to('/login'));
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        try {
+            // Get all sections with their current advisers
+            $stmt = $pdo->prepare('
+                SELECT s.id, s.name, s.grade_level, s.room, s.adviser_id,
+                       u.name as adviser_name, u.email as adviser_email
+                FROM sections s
+                LEFT JOIN users u ON s.adviser_id = u.id
+                WHERE s.is_active = 1 AND s.school_year = "2025-2026"
+                ORDER BY s.grade_level, s.name
+            ');
+            $stmt->execute();
+            $sections = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Get all available advisers (users with adviser role)
+            $stmt = $pdo->prepare('
+                SELECT u.id, u.name, u.email, t.is_adviser
+                FROM users u
+                LEFT JOIN teachers t ON u.id = t.user_id
+                WHERE u.role = "adviser" AND u.status = "active"
+                ORDER BY u.name
+            ');
+            $stmt->execute();
+            $advisers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Get teachers who can be assigned as advisers
+            $stmt = $pdo->prepare('
+                SELECT u.id, u.name, u.email, t.is_adviser
+                FROM users u
+                LEFT JOIN teachers t ON u.id = t.user_id
+                WHERE u.role = "teacher" AND u.status = "active"
+                ORDER BY u.name
+            ');
+            $stmt->execute();
+            $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->view->render('admin/assign-advisers', [
+                'title' => 'Assign Advisers to Sections',
+                'user' => $user,
+                'activeNav' => 'sections',
+                'sections' => $sections,
+                'advisers' => $advisers,
+                'teachers' => $teachers
+            ], 'layouts/dashboard');
+
+        } catch (\Exception $e) {
+            $this->view->render('admin/assign-advisers', [
+                'title' => 'Assign Advisers to Sections',
+                'user' => $user,
+                'activeNav' => 'sections',
+                'sections' => [],
+                'advisers' => [],
+                'teachers' => [],
+                'error' => $e->getMessage()
+            ], 'layouts/dashboard');
+        }
+    }
+
+    /**
+     * Handle adviser assignment (POST)
+     */
+    public function assignAdviser(): void
+    {
+        $user = Session::get('user');
+        if (!$user || $user['role'] !== 'admin') {
+            header('Location: ' . \Helpers\Url::to('/login'));
+            return;
+        }
+
+        if (!Csrf::check($_POST['csrf_token'] ?? null)) {
+            header('Location: ' . \Helpers\Url::to('/admin/assign-advisers?error=csrf_invalid'));
+            return;
+        }
+
+        $sectionId = (int)($_POST['section_id'] ?? 0);
+        $adviserId = (int)($_POST['adviser_id'] ?? 0);
+
+        if (!$sectionId || !$adviserId) {
+            header('Location: ' . \Helpers\Url::to('/admin/assign-advisers?error=missing_data'));
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        try {
+            $pdo->beginTransaction();
+
+            // Check if section exists
+            $stmt = $pdo->prepare('SELECT id, name FROM sections WHERE id = ? AND is_active = 1');
+            $stmt->execute([$sectionId]);
+            $section = $stmt->fetch();
+            if (!$section) {
+                throw new \Exception('Section not found.');
+            }
+
+            // Check if adviser exists and is active
+            $stmt = $pdo->prepare('SELECT id, name, role FROM users WHERE id = ? AND status = "active"');
+            $stmt->execute([$adviserId]);
+            $adviser = $stmt->fetch();
+            if (!$adviser) {
+                throw new \Exception('Adviser not found or inactive.');
+            }
+
+            // Ensure user has adviser role
+            if ($adviser['role'] !== 'adviser') {
+                // Update user role to adviser if they're a teacher
+                if ($adviser['role'] === 'teacher') {
+                    $stmt = $pdo->prepare('UPDATE users SET role = "adviser" WHERE id = ?');
+                    $stmt->execute([$adviserId]);
+                } else {
+                    throw new \Exception('User must be a teacher or adviser to be assigned as section adviser.');
+                }
+            }
+
+            // Check if adviser is already assigned to another section
+            $stmt = $pdo->prepare('SELECT id, name FROM sections WHERE adviser_id = ? AND id != ? AND is_active = 1');
+            $stmt->execute([$adviserId, $sectionId]);
+            $existingAssignment = $stmt->fetch();
+            if ($existingAssignment) {
+                throw new \Exception('This adviser is already assigned to section: ' . $existingAssignment['name']);
+            }
+
+            // Remove current adviser from this section (if any)
+            $stmt = $pdo->prepare('UPDATE sections SET adviser_id = NULL WHERE id = ?');
+            $stmt->execute([$sectionId]);
+
+            // Assign new adviser to section
+            $stmt = $pdo->prepare('UPDATE sections SET adviser_id = ? WHERE id = ?');
+            $stmt->execute([$adviserId, $sectionId]);
+
+            // Update teacher record to mark as adviser
+            $stmt = $pdo->prepare('UPDATE teachers SET is_adviser = 1 WHERE user_id = ?');
+            $stmt->execute([$adviserId]);
+
+            // Log the assignment
+            $stmt = $pdo->prepare('
+                INSERT INTO audit_logs (user_id, action, target_type, target_id, details, ip_address, user_agent) 
+                VALUES (:admin_id, "adviser_assigned", "section", :section_id, :details, :ip, :user_agent)
+            ');
+            $stmt->execute([
+                'admin_id' => $user['id'],
+                'section_id' => $sectionId,
+                'details' => json_encode([
+                    'section_name' => $section['name'],
+                    'adviser_name' => $adviser['name'],
+                    'adviser_id' => $adviserId
+                ]),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
+            ]);
+
+            $pdo->commit();
+
+            header('Location: ' . \Helpers\Url::to('/admin/assign-advisers?success=adviser_assigned&section=' . urlencode($section['name']) . '&adviser=' . urlencode($adviser['name'])));
+
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            header('Location: ' . \Helpers\Url::to('/admin/assign-advisers?error=' . urlencode($e->getMessage())));
+        }
+    }
+
+    /**
+     * Remove adviser from section
+     */
+    public function removeAdviser(): void
+    {
+        $user = Session::get('user');
+        if (!$user || $user['role'] !== 'admin') {
+            header('Location: ' . \Helpers\Url::to('/login'));
+            return;
+        }
+
+        if (!Csrf::check($_POST['csrf_token'] ?? null)) {
+            header('Location: ' . \Helpers\Url::to('/admin/assign-advisers?error=csrf_invalid'));
+            return;
+        }
+
+        $sectionId = (int)($_POST['section_id'] ?? 0);
+
+        if (!$sectionId) {
+            header('Location: ' . \Helpers\Url::to('/admin/assign-advisers?error=missing_section'));
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        try {
+            $pdo->beginTransaction();
+
+            // Get section and current adviser info
+            $stmt = $pdo->prepare('
+                SELECT s.id, s.name, s.adviser_id, u.name as adviser_name
+                FROM sections s
+                LEFT JOIN users u ON s.adviser_id = u.id
+                WHERE s.id = ? AND s.is_active = 1
+            ');
+            $stmt->execute([$sectionId]);
+            $section = $stmt->fetch();
+            
+            if (!$section) {
+                throw new \Exception('Section not found.');
+            }
+
+            if (!$section['adviser_id']) {
+                throw new \Exception('No adviser assigned to this section.');
+            }
+
+            // Remove adviser from section
+            $stmt = $pdo->prepare('UPDATE sections SET adviser_id = NULL WHERE id = ?');
+            $stmt->execute([$sectionId]);
+
+            // Check if this adviser is assigned to any other sections
+            $stmt = $pdo->prepare('SELECT COUNT(*) as count FROM sections WHERE adviser_id = ? AND is_active = 1');
+            $stmt->execute([$section['adviser_id']]);
+            $otherAssignments = $stmt->fetch();
+
+            // If no other assignments, remove adviser flag from teacher record
+            if ($otherAssignments['count'] == 0) {
+                $stmt = $pdo->prepare('UPDATE teachers SET is_adviser = 0 WHERE user_id = ?');
+                $stmt->execute([$section['adviser_id']]);
+            }
+
+            // Log the removal
+            $stmt = $pdo->prepare('
+                INSERT INTO audit_logs (user_id, action, target_type, target_id, details, ip_address, user_agent) 
+                VALUES (:admin_id, "adviser_removed", "section", :section_id, :details, :ip, :user_agent)
+            ');
+            $stmt->execute([
+                'admin_id' => $user['id'],
+                'section_id' => $sectionId,
+                'details' => json_encode([
+                    'section_name' => $section['name'],
+                    'adviser_name' => $section['adviser_name'],
+                    'adviser_id' => $section['adviser_id']
+                ]),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
+            ]);
+
+            $pdo->commit();
+
+            header('Location: ' . \Helpers\Url::to('/admin/assign-advisers?success=adviser_removed&section=' . urlencode($section['name']) . '&adviser=' . urlencode($section['adviser_name'])));
+
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            header('Location: ' . \Helpers\Url::to('/admin/assign-advisers?error=' . urlencode($e->getMessage())));
+        }
+    }
 }
 
 

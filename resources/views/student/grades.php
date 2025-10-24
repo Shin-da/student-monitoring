@@ -29,7 +29,7 @@ $title = 'My Grades';
 <!-- Grade Summary Cards -->
 <div class="row g-4 mb-4">
   <div class="col-md-3">
-    <div class="surface stat-card">
+    <div class="surface p-3 stat-card">
       <div class="d-flex align-items-center">
         <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
           <svg class="icon text-primary" width="24" height="24" fill="currentColor">
@@ -45,7 +45,7 @@ $title = 'My Grades';
   </div>
   
   <div class="col-md-3">
-    <div class="surface stat-card">
+    <div class="surface p-3 stat-card">
       <div class="d-flex align-items-center">
         <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
           <svg class="icon text-success" width="24" height="24" fill="currentColor">
@@ -61,7 +61,7 @@ $title = 'My Grades';
   </div>
   
   <div class="col-md-3">
-    <div class="surface stat-card">
+    <div class="surface p-3 stat-card">
       <div class="d-flex align-items-center">
         <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
           <svg class="icon text-warning" width="24" height="24" fill="currentColor">
@@ -77,7 +77,7 @@ $title = 'My Grades';
   </div>
   
   <div class="col-md-3">
-    <div class="surface stat-card">
+    <div class="surface p-3 stat-card">
       <div class="d-flex align-items-center">
         <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
           <svg class="icon text-info" width="24" height="24" fill="currentColor">
@@ -94,7 +94,7 @@ $title = 'My Grades';
 </div>
 
 <!-- Grade Filters and Controls -->
-<div class="surface mb-4">
+<div class="surface p-3 mb-4">
   <div class="row g-3 align-items-center">
     <div class="col-md-3">
       <label class="form-label">Academic Year</label>
@@ -144,7 +144,7 @@ $title = 'My Grades';
 <!-- Grade Charts -->
 <div class="row g-4 mb-4">
   <div class="col-lg-8">
-    <div class="surface">
+    <div class="surface p-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="mb-0">Subject Performance Trend</h5>
         <div class="btn-group btn-group-sm" role="group">
@@ -163,7 +163,7 @@ $title = 'My Grades';
   </div>
   
   <div class="col-lg-4">
-    <div class="surface">
+    <div class="surface p-4">
       <h5 class="mb-4">Grade Distribution</h5>
       <div class="chart-container" style="height: 250px;">
         <canvas id="gradeDistributionChart"></canvas>
@@ -173,7 +173,7 @@ $title = 'My Grades';
 </div>
 
 <!-- Detailed Grades Table -->
-<div class="surface">
+<div class="surface p-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h5 class="mb-0">Detailed Grades Breakdown</h5>
     <div class="d-flex gap-2">

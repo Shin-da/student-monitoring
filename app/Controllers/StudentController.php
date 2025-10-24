@@ -73,14 +73,10 @@ class StudentController extends Controller
             $config = require BASE_PATH . '/config/config.php';
             $db = \Core\Database::connection($config['database']);
             
-            // Fetch complete student data with enhanced structure
+            // Fetch complete student data with enhanced structure using the student_profiles view
             $userStmt = $db->prepare("
-                SELECT u.*, s.lrn, s.student_number, s.grade_level, s.section_id, s.school_year, 
-                       s.date_enrolled, s.date_graduated, s.status as student_status,
-                       s.created_at as student_created_at, s.updated_at as student_updated_at
-                FROM users u 
-                LEFT JOIN students s ON u.id = s.user_id 
-                WHERE u.id = ? AND u.role = 'student'
+                SELECT * FROM student_profiles 
+                WHERE user_id = ? AND user_status = 'active'
             ");
             $userStmt->execute([$user['id']]);
             $studentData = $userStmt->fetch();
@@ -144,8 +140,7 @@ class StudentController extends Controller
                 'date_enrolled' => $studentData['date_enrolled'],
                 'school_year' => $studentData['school_year'],
                 'status' => $studentData['student_status'],
-                'lrn' => $studentData['lrn'],
-                'student_number' => $studentData['student_number']
+                'lrn' => $studentData['lrn']
             ];
 
             $this->view->render('student/profile', [

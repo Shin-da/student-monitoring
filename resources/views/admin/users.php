@@ -9,26 +9,66 @@
     </div>
 </div>
 
+<?php if (isset($_GET['success']) && $_GET['success'] === 'student_created'): ?>
+<div class="alert alert-success alert-dismissible fade show mb-2" role="alert">
+    <div class="d-flex align-items-center">
+        <svg width="16" height="16" fill="currentColor" class="me-2">
+            <use href="#icon-check"></use>
+        </svg>
+        <strong>Success:</strong> Student has been registered successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="dashboard-header mb-4">
   <div class="d-flex justify-content-between align-items-center">
     <div>
       <h1 class="h3 fw-bold mb-1">User Management</h1>
       <p class="text-muted mb-0">Manage user accounts, approvals, and permissions</p>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bulkActionsModal" id="bulkActionsBtn" disabled>
-        <svg width="16" height="16" fill="currentColor">
-          <use href="#icon-settings"></use>
-        </svg>
-        <span class="d-none d-md-inline ms-1">Bulk Actions</span>
-        <span class="badge bg-primary ms-1" id="selectedCount">0</span>
-      </button>
-      <a href="<?= \Helpers\Url::to('/admin/create-user') ?>" class="btn btn-primary btn-sm">
-        <svg width="16" height="16" fill="currentColor">
-          <use href="#icon-plus"></use>
-        </svg>
-        <span class="d-none d-md-inline ms-1">Create User</span>
-      </a>
+      <div class="d-flex gap-2">
+        <a href="<?= \Helpers\Url::to('/admin/assign-advisers') ?>" class="btn btn-outline-info btn-sm">
+          <svg width="16" height="16" fill="currentColor">
+            <use href="#icon-user-check"></use>
+          </svg>
+          <span class="d-none d-md-inline ms-1">Assign Advisers</span>
+        </a>
+        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bulkActionsModal" id="bulkActionsBtn" disabled>
+          <svg width="16" height="16" fill="currentColor">
+            <use href="#icon-settings"></use>
+          </svg>
+          <span class="d-none d-md-inline ms-1">Bulk Actions</span>
+          <span class="badge bg-primary ms-1" id="selectedCount">0</span>
+        </button>
+      <div class="dropdown">
+        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <svg width="16" height="16" fill="currentColor">
+            <use href="#icon-plus"></use>
+          </svg>
+          <span class="d-none d-md-inline ms-1">Create User</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="<?= \Helpers\Url::to('/admin/create-user') ?>">
+            <svg width="16" height="16" fill="currentColor" class="me-2">
+              <use href="#icon-user"></use>
+            </svg>
+            General User
+          </a></li>
+          <li><a class="dropdown-item" href="<?= \Helpers\Url::to('/admin/create-student') ?>">
+            <svg width="16" height="16" fill="currentColor" class="me-2">
+              <use href="#icon-graduation-cap"></use>
+            </svg>
+            Student Registration
+          </a></li>
+          <li><a class="dropdown-item" href="<?= \Helpers\Url::to('/admin/create-parent') ?>">
+            <svg width="16" height="16" fill="currentColor" class="me-2">
+              <use href="#icon-users"></use>
+            </svg>
+            Parent Account
+          </a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

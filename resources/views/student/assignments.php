@@ -29,7 +29,7 @@ $title = 'My Assignments';
 <!-- Assignment Summary Cards -->
 <div class="row g-4 mb-4">
   <div class="col-md-3">
-    <div class="surface stat-card">
+    <div class="surface p-3 stat-card">
       <div class="d-flex align-items-center">
         <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
           <svg class="icon text-primary" width="24" height="24" fill="currentColor">
@@ -45,7 +45,7 @@ $title = 'My Assignments';
   </div>
   
   <div class="col-md-3">
-    <div class="surface stat-card">
+    <div class="surface p-3 stat-card">
       <div class="d-flex align-items-center">
         <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
           <svg class="icon text-success" width="24" height="24" fill="currentColor">
@@ -61,7 +61,7 @@ $title = 'My Assignments';
   </div>
   
   <div class="col-md-3">
-    <div class="surface stat-card">
+    <div class="surface p-3 stat-card">
       <div class="d-flex align-items-center">
         <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
           <svg class="icon text-warning" width="24" height="24" fill="currentColor">
@@ -77,7 +77,7 @@ $title = 'My Assignments';
   </div>
   
   <div class="col-md-3">
-    <div class="surface stat-card">
+    <div class="surface p-3 stat-card">
       <div class="d-flex align-items-center">
         <div class="bg-danger bg-opacity-10 rounded-circle p-3 me-3">
           <svg class="icon text-danger" width="24" height="24" fill="currentColor">
@@ -94,7 +94,7 @@ $title = 'My Assignments';
 </div>
 
 <!-- Assignment Filters -->
-<div class="surface mb-4">
+<div class="surface p-3 mb-4">
   <div class="row g-3 align-items-center">
     <div class="col-md-3">
       <label class="form-label">Subject</label>
@@ -143,7 +143,7 @@ $title = 'My Assignments';
 <!-- Assignment Timeline -->
 <div class="row g-4 mb-4">
   <div class="col-lg-8">
-    <div class="surface">
+    <div class="surface p-4 ">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="mb-0">Assignment Timeline</h5>
         <div class="btn-group btn-group-sm" role="group">
@@ -402,7 +402,7 @@ $title = 'My Assignments';
   
   <div class="col-lg-4">
     <!-- Assignment Calendar -->
-    <div class="surface mb-4">
+    <div class="surface p-3 mb-4">
       <h5 class="mb-4">Assignment Calendar</h5>
       <div id="assignmentCalendar">
         <!-- Calendar will be rendered here -->
@@ -416,7 +416,7 @@ $title = 'My Assignments';
     </div>
     
     <!-- Quick Actions -->
-    <div class="surface">
+    <div class="surface p-3">
       <h5 class="mb-4">Quick Actions</h5>
       <div class="d-grid gap-2">
         <button class="btn btn-outline-primary" onclick="viewAllAssignments()">

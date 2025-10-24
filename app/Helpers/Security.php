@@ -224,4 +224,18 @@ class Security
         // In production, log to a secure file or database
         error_log('[SECURITY] ' . json_encode($logEntry), 3, __DIR__ . '/../../logs/security.log');
     }
+    
+    public static function generateCsrfToken(): string
+    {
+        if (!Session::get('csrf_token')) {
+            Session::set('csrf_token', self::generateSecureToken());
+        }
+        return Session::get('csrf_token');
+    }
+    
+    public static function validateCsrfToken(string $token): bool
+    {
+        $sessionToken = Session::get('csrf_token');
+        return $sessionToken && self::constantTimeCompare($sessionToken, $token);
+    }
 }

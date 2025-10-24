@@ -1,3 +1,26 @@
+<script>
+// Simple notification function
+function showNotification(message, options = {}) {
+  const type = options.type || 'info';
+  let bgColor = '#0d6efd';
+  if (type === 'success') bgColor = '#198754';
+  if (type === 'danger') bgColor = '#dc3545';
+  if (type === 'warning') bgColor = '#ffc107';
+  const notif = document.createElement('div');
+  notif.textContent = message;
+  notif.style.position = 'fixed';
+  notif.style.top = '20px';
+  notif.style.right = '20px';
+  notif.style.zIndex = '9999';
+  notif.style.background = bgColor;
+  notif.style.color = '#fff';
+  notif.style.padding = '12px 24px';
+  notif.style.borderRadius = '6px';
+  notif.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 3000);
+}
+</script>
 <?php
 $title = 'My Profile';
 ?>
@@ -29,37 +52,52 @@ $title = 'My Profile';
 <!-- Profile Overview -->
 <div class="row g-4 mb-4">
   <div class="col-lg-4">
-    <div class="surface">
+    <div class="surface p-4">
       <div class="text-center">
         <div class="position-relative d-inline-block mb-3">
-          <div class="bg-primary bg-opacity-10 rounded-circle p-4" style="width: 120px; height: 120px;">
-            <svg class="icon text-primary" width="48" height="48" fill="currentColor">
-              <use href="#icon-user"></use>
-            </svg>
-          </div>
+          <?php if ($student_data['profile_picture']): ?>
+            <img src="<?= \Helpers\Url::basePath() . $student_data['profile_picture'] ?>" alt="Profile Picture" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+          <?php else: ?>
+            <div class="bg-primary bg-opacity-10 rounded-circle p-4" style="width: 120px; height: 120px;">
+              <svg class="icon text-primary" width="48" height="48" fill="currentColor">
+                <use href="#icon-user"></use>
+              </svg>
+            </div>
+          <?php endif; ?>
           <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle" style="width: 32px; height: 32px;" onclick="changeProfilePicture()">
             <svg class="icon" width="16" height="16" fill="currentColor">
               <use href="#icon-camera"></use>
             </svg>
           </button>
         </div>
-        <h5 class="mb-1"><?= htmlspecialchars($student_data['name'] ?? 'Student Name') ?></h5>
+        <h5 class="mb-1"><?= htmlspecialchars($student_data['full_name'] ?? $student_data['name'] ?? 'Student Name') ?></h5>
         <p class="text-muted mb-2">
-          <?php if ($student_data['grade_level']): ?>
-            Grade <?= htmlspecialchars($student_data['grade_level']) ?>
-          <?php endif; ?>
-          <?php if ($section_info): ?>
-            - <?= htmlspecialchars($section_info['name'] ?? 'Section') ?>
-          <?php endif; ?>
+          <?php
+            $grade = $student_data['grade_level'] ?? '';
+            $section = $student_data['section_name'] ?? '';
+            if ($grade && $section) {
+              if (stripos($section, 'Grade ' . $grade) === false) {
+                echo 'Grade ' . htmlspecialchars($grade) . ' - ' . htmlspecialchars($section);
+              } else {
+                echo htmlspecialchars($section);
+              }
+            } elseif ($grade) {
+              echo 'Grade ' . htmlspecialchars($grade);
+            } elseif ($section) {
+              echo htmlspecialchars($section);
+            }
+          ?>
         </p>
+        <?php if ($student_data['lrn']): ?>
+          <p class="text-muted small mb-2">
+            <strong>LRN:</strong> <?= htmlspecialchars($student_data['lrn']) ?>
+          </p>
+        <?php endif; ?>
         <div class="d-flex justify-content-center gap-2 mb-3">
           <span class="badge bg-primary">Student</span>
-          <span class="badge bg-<?= $student_data['status'] === 'active' ? 'success' : ($student_data['status'] === 'pending' ? 'warning' : 'danger') ?>">
-            <?= ucfirst($student_data['status'] ?? 'Unknown') ?>
-          </span>
-          <?php if (isset($enrollment_info['status'])): ?>
-            <span class="badge bg-<?= $enrollment_info['status'] === 'enrolled' ? 'success' : ($enrollment_info['status'] === 'graduated' ? 'info' : 'warning') ?>">
-              <?= ucfirst($enrollment_info['status']) ?>
+          <?php if ($student_data['enrollment_status']): ?>
+            <span class="badge bg-<?= $student_data['enrollment_status'] === 'enrolled' ? 'success' : ($student_data['enrollment_status'] === 'graduated' ? 'info' : 'warning') ?>">
+              <?= ucfirst($student_data['enrollment_status']) ?>
             </span>
           <?php endif; ?>
         </div>
@@ -82,43 +120,49 @@ $title = 'My Profile';
   </div>
   
   <div class="col-lg-8">
-    <div class="surface">
+    <div class="surface p-4">
       <h5 class="mb-4">Personal Information</h5>
       <form id="profileForm">
         <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['first_name'] ?? '') ?>" readonly>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Middle Name</label>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['middle_name'] ?? '') ?>" readonly>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['last_name'] ?? '') ?>" readonly>
+          </div>
           <div class="col-md-6">
-            <label class="form-label">Full Name</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['name'] ?? '') ?>" readonly>
+            <label class="form-label">Birth Date</label>
+            <input type="text" class="form-control" value="<?= $student_data['birth_date'] ? date('F j, Y', strtotime($student_data['birth_date'])) : 'Not provided' ?>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Gender</label>
+            <input type="text" class="form-control" value="<?= $student_data['gender'] ? ucfirst($student_data['gender']) : 'Not provided' ?>" readonly>
           </div>
           <div class="col-md-6">
             <label class="form-label">Email Address</label>
             <input type="email" class="form-control" value="<?= htmlspecialchars($student_data['email'] ?? '') ?>" readonly>
           </div>
           <div class="col-md-6">
+            <label class="form-label">Contact Number</label>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['contact_number'] ?? 'Not provided') ?>" readonly>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" rows="2" readonly><?= htmlspecialchars($student_data['address'] ?? 'Not provided') ?></textarea>
+          </div>
+          <div class="col-md-6">
             <label class="form-label">Account Status</label>
-            <input type="text" class="form-control" value="<?= ucfirst($student_data['status'] ?? 'Unknown') ?>" readonly>
+            <input type="text" class="form-control" value="<?= ucfirst($student_data['user_status'] ?? 'Unknown') ?>" readonly>
           </div>
           <div class="col-md-6">
             <label class="form-label">Member Since</label>
             <input type="text" class="form-control" value="<?= date('F j, Y', strtotime($student_data['created_at'] ?? '')) ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Last Updated</label>
-            <input type="text" class="form-control" value="<?= date('F j, Y g:i A', strtotime($student_data['updated_at'] ?? '')) ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Approved By</label>
-            <input type="text" class="form-control" value="<?= $student_data['approved_at'] ? 'Admin' : 'Pending' ?>" readonly>
-          </div>
-          <div class="col-12">
-            <label class="form-label">Account Information</label>
-            <div class="alert alert-info">
-              <small>
-                <strong>Role:</strong> <?= ucfirst($student_data['role'] ?? 'Student') ?><br>
-                <strong>Requested Role:</strong> <?= $student_data['requested_role'] ? ucfirst($student_data['requested_role']) : 'N/A' ?><br>
-                <strong>Approved Date:</strong> <?= $student_data['approved_at'] ? date('F j, Y g:i A', strtotime($student_data['approved_at'])) : 'Not approved yet' ?>
-              </small>
-            </div>
           </div>
         </div>
       </form>
@@ -129,16 +173,12 @@ $title = 'My Profile';
 <!-- Academic Information -->
 <div class="row g-4 mb-4">
   <div class="col-lg-6">
-    <div class="surface">
+    <div class="surface p-4">
       <h5 class="mb-4">Academic Information</h5>
       <div class="row g-3">
         <div class="col-md-6">
-          <label class="form-label">Student ID (LRN)</label>
+          <label class="form-label">LRN (Learner Reference Number)</label>
           <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['lrn'] ?? 'Not assigned') ?>" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Student Number</label>
-          <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['student_number'] ?? 'Not assigned') ?>" readonly>
         </div>
         <div class="col-md-6">
           <label class="form-label">Grade Level</label>
@@ -150,62 +190,58 @@ $title = 'My Profile';
         </div>
         <div class="col-md-6">
           <label class="form-label">Section</label>
-          <input type="text" class="form-control" value="<?= $section_info ? htmlspecialchars($section_info['name']) : 'Not assigned' ?>" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Room</label>
-          <input type="text" class="form-control" value="<?= $section_info ? htmlspecialchars($section_info['room'] ?? 'Not assigned') : 'Not assigned' ?>" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Date Enrolled</label>
-          <input type="text" class="form-control" value="<?= $student_data['date_enrolled'] ? date('F j, Y', strtotime($student_data['date_enrolled'])) : 'Not available' ?>" readonly>
+          <input type="text" class="form-control" value="<?= $student_data['section_name'] ? htmlspecialchars($student_data['section_name']) : 'Not assigned' ?>" readonly>
         </div>
         <div class="col-md-6">
           <label class="form-label">Enrollment Status</label>
-          <input type="text" class="form-control" value="<?= ucfirst($student_data['student_status'] ?? 'Unknown') ?>" readonly>
+          <input type="text" class="form-control" value="<?= ucfirst($student_data['enrollment_status'] ?? 'Unknown') ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Previous School</label>
+          <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['previous_school'] ?? 'Not provided') ?>" readonly>
         </div>
         <div class="col-md-6">
           <label class="form-label">Student Record Created</label>
-          <input type="text" class="form-control" value="<?= $student_data['student_created_at'] ? date('F j, Y g:i A', strtotime($student_data['student_created_at'])) : 'Not created' ?>" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">User ID</label>
-          <input type="text" class="form-control" value="<?= $student_data['id'] ?? 'N/A' ?>" readonly>
+          <input type="text" class="form-control" value="<?= $student_data['created_at'] ? date('F j, Y g:i A', strtotime($student_data['created_at'])) : 'Not created' ?>" readonly>
         </div>
       </div>
     </div>
   </div>
   
   <div class="col-lg-6">
-    <div class="surface">
-      <h5 class="mb-4">Section & Adviser Information</h5>
-      <?php if ($section_info): ?>
+    <div class="surface p-4">
+      <h5 class="mb-4">
+        <svg width="20" height="20" fill="currentColor" class="me-2">
+          <use href="#icon-book"></use>
+        </svg>
+        Section Information
+      </h5>
+      <?php if ($student_data['section_name']): ?>
         <div class="row g-3">
           <div class="col-12">
             <label class="form-label">Section Name</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($section_info['name']) ?>" readonly>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['section_name']) ?>" readonly>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Room</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($section_info['room'] ?? 'Not assigned') ?>" readonly>
+            <label class="form-label">Grade Level</label>
+            <input type="text" class="form-control" value="Grade <?= htmlspecialchars($student_data['grade_level']) ?>" readonly>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Max Students</label>
-            <input type="text" class="form-control" value="<?= $section_info['max_students'] ?? 'Not set' ?>" readonly>
+            <label class="form-label">School Year</label>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['school_year']) ?>" readonly>
           </div>
-          <?php if ($section_info['adviser_name']): ?>
-            <div class="col-md-6">
-              <label class="form-label">Class Adviser</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($section_info['adviser_name']) ?>" readonly>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Adviser Email</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($section_info['adviser_email'] ?? 'Not available') ?>" readonly>
-            </div>
-          <?php endif; ?>
+          <div class="col-md-6">
+            <label class="form-label">LRN (Learner Reference Number)</label>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['lrn']) ?>" readonly>
+          </div>
           <div class="col-12">
-            <label class="form-label">Description</label>
-            <textarea class="form-control" rows="2" readonly><?= htmlspecialchars($section_info['description'] ?? 'No description available') ?></textarea>
+            <div class="alert alert-info">
+              <small>
+                <strong>Enrollment Status:</strong> <?= ucfirst($student_data['enrollment_status']) ?><br>
+                <strong>Profile Created:</strong> <?= date('F j, Y', strtotime($student_data['created_at'])) ?><br>
+                <strong>Last Updated:</strong> <?= date('F j, Y g:i A', strtotime($student_data['updated_at'])) ?>
+              </small>
+            </div>
           </div>
         </div>
       <?php else: ?>
@@ -218,10 +254,93 @@ $title = 'My Profile';
   </div>
 </div>
 
+<!-- Guardian & Emergency Information -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <div class="surface p-4">
+      <h5 class="mb-4">
+        <svg width="20" height="20" fill="currentColor" class="me-2">
+          <use href="#icon-users"></use>
+        </svg>
+        Guardian Information
+      </h5>
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label">Guardian Name</label>
+          <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['guardian_name'] ?? 'Not provided') ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Guardian Contact</label>
+          <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['guardian_contact'] ?? 'Not provided') ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Relationship</label>
+          <input type="text" class="form-control" value="<?= $student_data['guardian_relationship'] ? ucfirst($student_data['guardian_relationship']) : 'Not provided' ?>" readonly>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-6">
+    <div class="surface p-4">
+      <h5 class="mb-4">
+        <svg width="20" height="20" fill="currentColor" class="me-2">
+          <use href="#icon-alert-triangle"></use>
+        </svg>
+        Emergency Contact
+      </h5>
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label">Emergency Contact Name</label>
+          <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['emergency_contact_name'] ?? 'Not provided') ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Emergency Contact Number</label>
+          <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['emergency_contact_number'] ?? 'Not provided') ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Relationship</label>
+          <input type="text" class="form-control" value="<?= $student_data['emergency_contact_relationship'] ? ucfirst($student_data['emergency_contact_relationship']) : 'Not provided' ?>" readonly>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Health Information -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-12">
+    <div class="surface p-4">
+      <h5 class="mb-4">
+        <svg width="20" height="20" fill="currentColor" class="me-2">
+          <use href="#icon-heart"></use>
+        </svg>
+        Health Information
+      </h5>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Medical Conditions</label>
+          <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($student_data['medical_conditions'] ?? 'No medical conditions reported') ?></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Allergies</label>
+          <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($student_data['allergies'] ?? 'No known allergies') ?></textarea>
+        </div>
+        <?php if ($student_data['notes']): ?>
+          <div class="col-12">
+            <label class="form-label">Additional Notes</label>
+            <textarea class="form-control" rows="2" readonly><?= htmlspecialchars($student_data['notes']) ?></textarea>
+          </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Academic Performance Summary -->
 <div class="row g-4 mb-4">
   <div class="col-lg-8">
-    <div class="surface">
+    <div class="surface p-4">
       <h5 class="mb-4">Academic Performance</h5>
       <div class="row g-3">
         <div class="col-md-4">
@@ -303,118 +422,6 @@ $title = 'My Profile';
       </div>
     </div>
   </div>
-  
-  <div class="col-lg-4">
-    <div class="surface">
-      <h5 class="mb-4">Quick Actions</h5>
-      <div class="d-grid gap-2">
-        <button class="btn btn-outline-primary" onclick="viewGrades()">
-          <svg class="icon me-2" width="16" height="16" fill="currentColor">
-            <use href="#icon-chart"></use>
-          </svg>
-          View Grades
-        </button>
-        <button class="btn btn-outline-success" onclick="viewAssignments()">
-          <svg class="icon me-2" width="16" height="16" fill="currentColor">
-            <use href="#icon-plus"></use>
-          </svg>
-          View Assignments
-        </button>
-        <button class="btn btn-outline-info" onclick="viewAttendance()">
-          <svg class="icon me-2" width="16" height="16" fill="currentColor">
-            <use href="#icon-calendar"></use>
-          </svg>
-          View Attendance
-        </button>
-        <button class="btn btn-outline-warning" onclick="viewAlerts()">
-          <svg class="icon me-2" width="16" height="16" fill="currentColor">
-            <use href="#icon-alerts"></use>
-          </svg>
-          View Alerts
-        </button>
-        <button class="btn btn-outline-secondary" onclick="changePassword()">
-          <svg class="icon me-2" width="16" height="16" fill="currentColor">
-            <use href="#icon-settings"></use>
-          </svg>
-          Change Password
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Account Settings -->
-<div class="surface">
-  <h5 class="mb-4">Account Settings</h5>
-  <div class="row g-4">
-    <div class="col-md-6">
-      <h6>Security Settings</h6>
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <div class="fw-semibold">Two-Factor Authentication</div>
-          <div class="text-muted small">Add an extra layer of security</div>
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="twoFactorAuth">
-          <label class="form-check-label" for="twoFactorAuth"></label>
-        </div>
-      </div>
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <div class="fw-semibold">Email Notifications</div>
-          <div class="text-muted small">Receive notifications via email</div>
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-          <label class="form-check-label" for="emailNotifications"></label>
-        </div>
-      </div>
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <div class="fw-semibold">SMS Notifications</div>
-          <div class="text-muted small">Receive notifications via SMS</div>
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="smsNotifications">
-          <label class="form-check-label" for="smsNotifications"></label>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-md-6">
-      <h6>Privacy Settings</h6>
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <div class="fw-semibold">Profile Visibility</div>
-          <div class="text-muted small">Make profile visible to teachers</div>
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="profileVisibility" checked>
-          <label class="form-check-label" for="profileVisibility"></label>
-        </div>
-      </div>
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <div class="fw-semibold">Grade Sharing</div>
-          <div class="text-muted small">Allow parents to view grades</div>
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="gradeSharing" checked>
-          <label class="form-check-label" for="gradeSharing"></label>
-        </div>
-      </div>
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <div class="fw-semibold">Activity Tracking</div>
-          <div class="text-muted small">Track login and activity</div>
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="activityTracking" checked>
-          <label class="form-check-label" for="activityTracking"></label>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- Change Password Modal -->
@@ -461,7 +468,7 @@ $title = 'My Profile';
       <div class="modal-body">
         <form id="changeProfilePictureForm">
           <div class="text-center mb-3">
-            <div class="bg-primary bg-opacity-10 rounded-circle p-4 d-inline-block">
+            <div id="imagePreview" class="bg-primary bg-opacity-10 rounded-circle p-4 d-inline-block" style="width: 120px; height: 120px;">
               <svg class="icon text-primary" width="48" height="48" fill="currentColor">
                 <use href="#icon-user"></use>
               </svg>
@@ -469,8 +476,15 @@ $title = 'My Profile';
           </div>
           <div class="mb-3">
             <label class="form-label">Upload New Picture</label>
-            <input type="file" class="form-control" accept="image/*" required>
-            <div class="form-text">Supported formats: JPG, PNG, GIF (Max 2MB)</div>
+            <input type="file" id="profilePictureInput" class="form-control" accept="image/*" required>
+            <div class="form-text">
+              <strong>Supported formats:</strong> JPG, PNG, GIF, WebP<br>
+              <strong>Maximum size:</strong> 2MB<br>
+              <strong>Recommended:</strong> Square image (1:1 ratio) for best results
+            </div>
+          </div>
+          <div id="fileInfo" class="alert alert-info d-none">
+            <small id="fileDetails"></small>
           </div>
         </form>
       </div>
@@ -556,9 +570,81 @@ function changeProfilePicture() {
 }
 
 function updateProfilePicture() {
-  showNotification('Profile picture updated successfully!', { type: 'success' });
-  const modal = bootstrap.Modal.getInstance(document.getElementById('changeProfilePictureModal'));
-  modal.hide();
+  const form = document.getElementById('changeProfilePictureForm');
+  const fileInput = form.querySelector('input[type="file"]');
+  const file = fileInput.files[0];
+  
+  if (!file) {
+    showNotification('Please select an image to upload.', { type: 'warning' });
+    return;
+  }
+  
+  // Validate file size (2MB limit)
+  const maxSize = 2 * 1024 * 1024; // 2MB
+  if (file.size > maxSize) {
+    showNotification('File size must be less than 2MB.', { type: 'warning' });
+    return;
+  }
+  
+  // Validate file type
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    showNotification('Please select a valid image file (JPG, PNG, GIF, or WebP).', { type: 'warning' });
+    return;
+  }
+  
+  // Show loading state
+  const submitBtn = document.querySelector('button[onclick="updateProfilePicture()"]');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Uploading...';
+  submitBtn.disabled = true;
+  
+  const formData = new FormData();
+  formData.append('profile_picture', file);
+  
+  // Add CSRF token if available
+  const csrfToken = document.querySelector('meta[name="csrf-token"]');
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken.getAttribute('content'));
+  }
+  
+  fetch('<?= \Helpers\Url::to('/api/student/upload_profile_picture.php') ?>', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success && data.image_url) {
+        // Update profile picture in the UI
+        const profileImg = document.querySelector('img[alt="Profile Picture"]');
+        if (profileImg) {
+          profileImg.src = '<?= \Helpers\Url::basePath() ?>' + data.image_url + '?t=' + Date.now(); // Add timestamp to prevent caching
+        }
+        
+        showNotification(data.message || 'Profile picture updated successfully!', { type: 'success' });
+        
+        // Close modal and reset form
+        const modal = bootstrap.Modal.getInstance(document.getElementById('changeProfilePictureModal'));
+        modal.hide();
+        form.reset();
+      } else {
+        showNotification(data.message || 'Failed to update profile picture.', { type: 'danger' });
+      }
+    })
+    .catch(error => {
+      console.error('Upload error:', error);
+      showNotification('Error uploading profile picture. Please try again.', { type: 'danger' });
+    })
+    .finally(() => {
+      // Restore button state
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+    });
 }
 
 function changePassword() {
@@ -599,6 +685,50 @@ function viewAcademicRecord() {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   window.studentProfileInstance = new StudentProfile();
+  
+  // Add file preview functionality
+  const fileInput = document.getElementById('profilePictureInput');
+  const imagePreview = document.getElementById('imagePreview');
+  const fileInfo = document.getElementById('fileInfo');
+  const fileDetails = document.getElementById('fileDetails');
+  
+  if (fileInput && imagePreview) {
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      
+      if (file) {
+        // Show file information
+        const fileSizeKB = Math.round(file.size / 1024);
+        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        const sizeText = fileSizeKB < 1024 ? `${fileSizeKB} KB` : `${fileSizeMB} MB`;
+        
+        fileDetails.innerHTML = `
+          <strong>Selected file:</strong> ${file.name}<br>
+          <strong>Size:</strong> ${sizeText}<br>
+          <strong>Type:</strong> ${file.type}
+        `;
+        fileInfo.classList.remove('d-none');
+        
+        // Preview image
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imagePreview.innerHTML = `
+            <img src="${e.target.result}" alt="Preview" 
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          `;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Reset preview
+        imagePreview.innerHTML = `
+          <svg class="icon text-primary" width="48" height="48" fill="currentColor">
+            <use href="#icon-user"></use>
+          </svg>
+        `;
+        fileInfo.classList.add('d-none');
+      }
+    });
+  }
 });
 </script>
 
@@ -606,15 +736,27 @@ document.addEventListener('DOMContentLoaded', () => {
 /* Student Profile Specific Styles */
 .surface {
   transition: all 0.3s ease;
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .surface:hover {
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
 }
 
 .form-control:read-only {
-  background-color: var(--bs-gray-100);
+  background-color: var(--bs-gray-50);
+  border-color: var(--bs-gray-200);
+  color: var(--bs-gray-700);
+}
+
+.form-control:read-only:focus {
+  background-color: var(--bs-gray-50);
   border-color: var(--bs-gray-300);
+  box-shadow: none;
 }
 
 .form-check-input:checked {
@@ -634,5 +776,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
 .badge {
   font-size: 0.75em;
+  font-weight: 500;
+}
+
+/* Profile picture styling */
+.profile-picture {
+  border: 3px solid var(--bs-primary);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Section headers with icons */
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--bs-primary);
+}
+
+.section-header svg {
+  margin-right: 0.5rem;
+  color: var(--bs-primary);
+}
+
+/* Enhanced form styling */
+.form-label {
+  font-weight: 600;
+  color: var(--bs-gray-700);
+  margin-bottom: 0.5rem;
+}
+
+/* Alert styling */
+.alert {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .surface {
+    padding: 1rem !important;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .profile-picture {
+    width: 80px !important;
+    height: 80px !important;
+  }
 }
 </style>

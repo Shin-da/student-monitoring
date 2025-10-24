@@ -137,7 +137,8 @@
               $navigation = [
                 ['url' => '/admin', 'label' => 'Dashboard', 'icon' => 'icon-dashboard'],
                 ['url' => '/admin/users', 'label' => 'Users', 'icon' => 'icon-user'],
-                ['url' => '/admin/sections', 'label' => 'Sections', 'icon' => 'icon-sections'],
+                ['url' => '/admin/create-student', 'label' => 'Student Registration', 'icon' => 'icon-graduation-cap'],
+                ['url' => '/admin/assign-advisers', 'label' => 'Assign Advisers', 'icon' => 'icon-user-check'],
                 ['url' => '/admin/reports', 'label' => 'Reports', 'icon' => 'icon-report'],
                 ['url' => '/admin/settings', 'label' => 'Settings', 'icon' => 'icon-settings']
               ];

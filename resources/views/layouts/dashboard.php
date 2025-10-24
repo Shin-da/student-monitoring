@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="<?= \Helpers\Csrf::generateToken() ?>">
   <title><?= htmlspecialchars($title ?? 'Dashboard') ?></title>
 
   <!-- Skip to content link for accessibility -->
@@ -425,6 +426,18 @@
                   </svg>
                   <span>Create Parent</span>
                 </a>
+                <a class="nav-link" href="<?= \Helpers\Url::to('/admin/create-student') ?>">
+                  <svg class="nav-icon" width="16" height="16" fill="currentColor">
+                    <use href="#icon-graduation-cap"></use>
+                  </svg>
+                  <span>Student Registration</span>
+                </a>
+                <a class="nav-link <?= ($activeNav ?? '') === 'sections' ? 'active' : '' ?>" href="<?= \Helpers\Url::to('/admin/assign-advisers') ?>">
+                  <svg class="nav-icon" width="16" height="16" fill="currentColor">
+                    <use href="#icon-user-check"></use>
+                  </svg>
+                  <span>Assign Advisers</span>
+                </a>
                 <a class="nav-link" href="#">
                   <svg class="nav-icon" width="16" height="16" fill="currentColor">
                     <use href="#icon-students"></use>
@@ -460,7 +473,7 @@
                   </svg>
                   <span>Grade Management</span>
                 </a>
-                <a class="nav-link" href="#">
+                <a class="nav-link <?= ($activeNav ?? '') === 'sections' ? 'active' : '' ?>" href="<?= \Helpers\Url::to('/admin/assign-advisers') ?>">
                   <svg class="nav-icon" width="16" height="16" fill="currentColor">
                     <use href="#icon-sections-admin"></use>
                   </svg>

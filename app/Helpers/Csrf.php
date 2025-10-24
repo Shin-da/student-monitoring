@@ -7,20 +7,32 @@ use Core\Session;
 
 class Csrf
 {
-    public static function token(): string
+    public static function generateToken(): string
     {
-        $token = bin2hex(random_bytes(16));
-        Session::set('_csrf', $token);
-        return $token;
+        if (!Session::get('csrf_token')) {
+            Session::set('csrf_token', Security::generateSecureToken());
+        }
+        return Session::get('csrf_token');
     }
-
+    
+    public static function validateToken(string $token): bool
+    {
+        $sessionToken = Session::get('csrf_token');
+        return $sessionToken && Security::constantTimeCompare($sessionToken, $token);
+    }
+    
     public static function check(?string $token): bool
     {
-        $stored = Session::get('_csrf');
-        $valid = is_string($token) && is_string($stored) && hash_equals($stored, $token);
-        // Don't delete token after use - allow multiple submissions with same token
-        return $valid;
+        return $token && self::validateToken($token);
+    }
+    
+    public static function getTokenField(): string
+    {
+        return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(self::generateToken()) . '">';
+    }
+    
+    public static function getMetaTag(): string
+    {
+        return '<meta name="csrf-token" content="' . htmlspecialchars(self::generateToken()) . '">';
     }
 }
-
-
