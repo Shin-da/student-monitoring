@@ -19,7 +19,7 @@
   <?php endif; ?>
   
   <form method="post" action="<?= \Helpers\Url::to('/login') ?>" class="auth-form" id="loginForm" novalidate>
-    <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
+    <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::generateToken() ?>">
     
     <div class="form-group">
       <label for="email" class="form-label">Email Address</label>

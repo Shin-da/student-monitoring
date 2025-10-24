@@ -33,7 +33,7 @@
 
       <form method="post" action="<?= \Helpers\Url::to('/admin/create-user') ?>">
 
-        <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
+        <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::generateToken() ?>">
         
         <div class="row g-3">
           <div class="col-md-6">

@@ -61,6 +61,9 @@ $router->get('/student/resources', [StudentController::class, 'resources']);
 $router->get('/teacher/grades', [TeacherController::class, 'grades']);
 $router->get('/teacher/classes', [TeacherController::class, 'classes']);
 $router->get('/teacher/sections', [TeacherController::class, 'sections']);
+$router->get('/teacher/students', [TeacherController::class, 'students']);
+$router->get('/teacher/advised-sections', [TeacherController::class, 'advisedSections']);
+$router->get('/teacher/add-students', [TeacherController::class, 'addStudentsToSection']);
 $router->get('/teacher/assignments', [TeacherController::class, 'assignments']);
 $router->get('/teacher/attendance', [TeacherController::class, 'attendance']);
 $router->get('/teacher/student-progress', [TeacherController::class, 'studentProgress']);
@@ -70,6 +73,8 @@ $router->get('/teacher/materials', [TeacherController::class, 'materials']);
 // Teacher API endpoints
 $router->get('/teacher/api/section-details', [TeacherController::class, 'getSectionDetails']);
 $router->post('/teacher/api/log-activity', [TeacherController::class, 'logActivity']);
+$router->get('/teacher/api/search-student', [TeacherController::class, 'searchStudentByLRN']);
+$router->post('/teacher/api/add-student', [TeacherController::class, 'addStudentToSection']);
 // Attendance APIs
 $router->get('/teacher/api/attendance/list', [TeacherController::class, 'getAttendanceList']);
 $router->post('/teacher/api/attendance/save', [TeacherController::class, 'saveAttendance']);

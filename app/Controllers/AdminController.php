@@ -63,7 +63,7 @@ class AdminController extends Controller
             'user' => $user,
             'activeNav' => 'users',
             'users' => $users,
-            'csrf_token' => \Helpers\Csrf::token(),
+            'csrf_token' => \Helpers\Csrf::generateToken(),
             'staticDataIndicator' => StaticData::getStaticDataIndicator('user management interface - data is dynamic'),
         ], 'layouts/dashboard');
     }
@@ -818,7 +818,7 @@ class AdminController extends Controller
                 'user' => $user,
                 'activeNav' => 'users',
                 'sections' => $sections,
-                'csrf_token' => \Helpers\Csrf::token(),
+                'csrf_token' => \Helpers\Csrf::generateToken(),
             ], 'layouts/dashboard');
             return;
         }

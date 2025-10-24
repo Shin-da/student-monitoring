@@ -253,7 +253,7 @@ $error = $error ?? null;
                           <?php if ($section['adviser_id']): ?>
                             <!-- Remove Adviser -->
                             <form method="POST" action="<?= \Helpers\Url::to('/admin/remove-adviser') ?>" class="d-inline" onsubmit="return confirm('Are you sure you want to remove this adviser from the section?')">
-                              <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
+                              <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::generateToken() ?>">
                               <input type="hidden" name="section_id" value="<?= $section['id'] ?>">
                               <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove Adviser">
                                 <svg width="16" height="16" fill="currentColor">
@@ -294,7 +294,7 @@ $error = $error ?? null;
       </div>
       <form method="POST" action="<?= \Helpers\Url::to('/admin/assign-adviser') ?>" id="assignForm">
         <div class="modal-body">
-          <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
+          <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::generateToken() ?>">
           <input type="hidden" name="section_id" id="modalSectionId">
           
           <div class="mb-4">

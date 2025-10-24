@@ -29,7 +29,7 @@
   
   <?php if (!isset($success)): ?>
   <form method="post" action="<?= \Helpers\Url::to('/register') ?>" class="auth-form" id="registerForm" novalidate>
-    <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
+    <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::generateToken() ?>">
     <input type="hidden" name="role" value="student">
     
     <div class="form-group">

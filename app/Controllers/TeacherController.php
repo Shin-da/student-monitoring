@@ -5,7 +5,10 @@ namespace Controllers;
 
 use Core\Controller;
 use Core\Session;
+use Core\Database;
 use Helpers\StaticData;
+use Helpers\Csrf;
+use PDO;
 
 class TeacherController extends Controller
 {
@@ -947,6 +950,441 @@ class TeacherController extends Controller
         } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Display list of students handled by the teacher
+     */
+    public function students(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'teacher') {
+            \Helpers\ErrorHandler::forbidden('You need teacher privileges to access this page.');
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        try {
+            // Get teacher ID
+            $stmt = $pdo->prepare('SELECT id FROM teachers WHERE user_id = ?');
+            $stmt->execute([$user['id']]);
+            $teacher = $stmt->fetch();
+            
+            if (!$teacher) {
+                throw new \Exception('Teacher profile not found.');
+            }
+
+            // Get all students handled by this teacher through their classes
+            $stmt = $pdo->prepare('
+                SELECT DISTINCT 
+                    s.id as student_id,
+                    s.lrn,
+                    s.first_name,
+                    s.last_name,
+                    s.middle_name,
+                    CONCAT(
+                        COALESCE(s.first_name, ""), 
+                        CASE WHEN s.middle_name IS NOT NULL AND s.middle_name != "" THEN CONCAT(" ", s.middle_name) ELSE "" END,
+                        CASE WHEN s.last_name IS NOT NULL AND s.last_name != "" THEN CONCAT(" ", s.last_name) ELSE "" END
+                    ) as full_name,
+                    s.grade_level,
+                    sec.name as section_name,
+                    sec.id as section_id,
+                    GROUP_CONCAT(DISTINCT sub.name ORDER BY sub.name SEPARATOR ", ") as subjects,
+                    GROUP_CONCAT(DISTINCT c.schedule ORDER BY c.schedule SEPARATOR ", ") as schedules,
+                    COUNT(DISTINCT c.id) as total_classes
+                FROM students s
+                JOIN student_classes sc ON s.id = sc.student_id
+                JOIN classes c ON sc.class_id = c.id
+                JOIN sections sec ON c.section_id = sec.id
+                JOIN subjects sub ON c.subject_id = sub.id
+                WHERE c.teacher_id = ? AND c.is_active = 1 AND sc.status = "enrolled"
+                GROUP BY s.id, s.lrn, s.first_name, s.last_name, s.middle_name, s.grade_level, sec.name, sec.id
+                ORDER BY s.grade_level, s.last_name, s.first_name
+            ');
+            $stmt->execute([$teacher['id']]);
+            $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Get statistics
+            $totalStudents = count($students);
+            $gradeLevels = array_unique(array_column($students, 'grade_level'));
+            $sections = array_unique(array_column($students, 'section_name'));
+
+            $this->view->render('teacher/students', [
+                'title' => 'My Students',
+                'user' => $user,
+                'activeNav' => 'students',
+                'students' => $students,
+                'statistics' => [
+                    'total_students' => $totalStudents,
+                    'grade_levels' => count($gradeLevels),
+                    'sections' => count($sections),
+                    'grade_levels_list' => $gradeLevels,
+                    'sections_list' => $sections
+                ]
+            ], 'layouts/dashboard');
+
+        } catch (\Exception $e) {
+            $this->view->render('teacher/students', [
+                'title' => 'My Students',
+                'user' => $user,
+                'activeNav' => 'students',
+                'students' => [],
+                'statistics' => [
+                    'total_students' => 0,
+                    'grade_levels' => 0,
+                    'sections' => 0,
+                    'grade_levels_list' => [],
+                    'sections_list' => []
+                ],
+                'error' => $e->getMessage()
+            ], 'layouts/dashboard');
+        }
+    }
+
+    /**
+     * Display advised sections for the teacher
+     */
+    public function advisedSections(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'teacher') {
+            \Helpers\ErrorHandler::forbidden('You need teacher privileges to access this page.');
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        try {
+            // Get teacher ID
+            $stmt = $pdo->prepare('SELECT id FROM teachers WHERE user_id = ?');
+            $stmt->execute([$user['id']]);
+            $teacher = $stmt->fetch();
+            
+            if (!$teacher) {
+                throw new \Exception('Teacher profile not found.');
+            }
+
+            // Get all sections and subjects handled by this teacher
+            $stmt = $pdo->prepare('
+                SELECT 
+                    c.id as class_id,
+                    sec.id as section_id,
+                    sec.name as section_name,
+                    sec.grade_level,
+                    sec.room as section_room,
+                    sub.id as subject_id,
+                    sub.name as subject_name,
+                    c.schedule,
+                    c.room as class_room,
+                    COUNT(DISTINCT sc.student_id) as enrolled_students,
+                    sec.max_students
+                FROM classes c
+                JOIN sections sec ON c.section_id = sec.id
+                JOIN subjects sub ON c.subject_id = sub.id
+                LEFT JOIN student_classes sc ON c.id = sc.class_id AND sc.status = "enrolled"
+                WHERE c.teacher_id = ? AND c.is_active = 1 AND sec.is_active = 1
+                GROUP BY c.id, sec.id, sec.name, sec.grade_level, sec.room, sub.id, sub.name, c.schedule, c.room, sec.max_students
+                ORDER BY sec.grade_level, sec.name, sub.name
+            ');
+            $stmt->execute([$teacher['id']]);
+            $sections = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Get statistics
+            $totalClasses = count($sections);
+            $totalStudents = array_sum(array_column($sections, 'enrolled_students'));
+            $gradeLevels = array_unique(array_column($sections, 'grade_level'));
+
+            $this->view->render('teacher/advised-sections', [
+                'title' => 'My Advised Sections',
+                'user' => $user,
+                'activeNav' => 'sections',
+                'sections' => $sections,
+                'statistics' => [
+                    'total_classes' => $totalClasses,
+                    'total_students' => $totalStudents,
+                    'grade_levels' => count($gradeLevels),
+                    'grade_levels_list' => $gradeLevels
+                ]
+            ], 'layouts/dashboard');
+
+        } catch (\Exception $e) {
+            $this->view->render('teacher/advised-sections', [
+                'title' => 'My Advised Sections',
+                'user' => $user,
+                'activeNav' => 'sections',
+                'sections' => [],
+                'statistics' => [
+                    'total_classes' => 0,
+                    'total_students' => 0,
+                    'grade_levels' => 0,
+                    'grade_levels_list' => []
+                ],
+                'error' => $e->getMessage()
+            ], 'layouts/dashboard');
+        }
+    }
+
+    /**
+     * Display add students to section page
+     */
+    public function addStudentsToSection(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'teacher') {
+            \Helpers\ErrorHandler::forbidden('You need teacher privileges to access this page.');
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        try {
+            // Get teacher ID
+            $stmt = $pdo->prepare('SELECT id FROM teachers WHERE user_id = ?');
+            $stmt->execute([$user['id']]);
+            $teacher = $stmt->fetch();
+            
+            if (!$teacher) {
+                throw new \Exception('Teacher profile not found.');
+            }
+
+            // Get sections handled by this teacher
+            $stmt = $pdo->prepare('
+                SELECT DISTINCT 
+                    sec.id,
+                    sec.name,
+                    sec.grade_level,
+                    sec.room,
+                    COUNT(DISTINCT c.id) as total_classes,
+                    COUNT(DISTINCT sc.student_id) as enrolled_students
+                FROM sections sec
+                JOIN classes c ON sec.id = c.section_id
+                LEFT JOIN student_classes sc ON c.id = sc.class_id AND sc.status = "enrolled"
+                WHERE c.teacher_id = ? AND c.is_active = 1 AND sec.is_active = 1
+                GROUP BY sec.id, sec.name, sec.grade_level, sec.room
+                ORDER BY sec.grade_level, sec.name
+            ');
+            $stmt->execute([$teacher['id']]);
+            $sections = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->view->render('teacher/add-students', [
+                'title' => 'Add Students to Sections',
+                'user' => $user,
+                'activeNav' => 'students',
+                'sections' => $sections
+            ], 'layouts/dashboard');
+
+        } catch (\Exception $e) {
+            $this->view->render('teacher/add-students', [
+                'title' => 'Add Students to Sections',
+                'user' => $user,
+                'activeNav' => 'students',
+                'sections' => [],
+                'error' => $e->getMessage()
+            ], 'layouts/dashboard');
+        }
+    }
+
+    /**
+     * Search student by LRN (AJAX)
+     */
+    public function searchStudentByLRN(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'teacher') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Unauthorized']);
+            return;
+        }
+
+        $lrn = $_GET['lrn'] ?? '';
+        if (empty($lrn)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'LRN is required']);
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        try {
+            // Search for student by LRN
+            $stmt = $pdo->prepare('
+                SELECT 
+                    s.id,
+                    s.lrn,
+                    s.first_name,
+                    s.last_name,
+                    s.middle_name,
+                    CONCAT(
+                        COALESCE(s.first_name, ""), 
+                        CASE WHEN s.middle_name IS NOT NULL AND s.middle_name != "" THEN CONCAT(" ", s.middle_name) ELSE "" END,
+                        CASE WHEN s.last_name IS NOT NULL AND s.last_name != "" THEN CONCAT(" ", s.last_name) ELSE "" END
+                    ) as full_name,
+                    s.grade_level,
+                    s.contact_number,
+                    s.address,
+                    sec.name as current_section,
+                    sec.id as current_section_id,
+                    u.email,
+                    u.status as user_status
+                FROM students s
+                LEFT JOIN sections sec ON s.section_id = sec.id
+                LEFT JOIN users u ON s.user_id = u.id
+                WHERE s.lrn = ? AND u.status = "active"
+            ');
+            $stmt->execute([$lrn]);
+            $student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$student) {
+                http_response_code(404);
+                echo json_encode(['error' => 'Student not found']);
+                return;
+            }
+
+            // Get teacher's sections for this student's grade level
+            $stmt = $pdo->prepare('
+                SELECT DISTINCT 
+                    sec.id,
+                    sec.name,
+                    sec.grade_level,
+                    sec.room,
+                    COUNT(DISTINCT c.id) as total_classes
+                FROM sections sec
+                JOIN classes c ON sec.id = c.section_id
+                JOIN teachers t ON c.teacher_id = t.id
+                WHERE t.user_id = ? AND sec.grade_level = ? AND c.is_active = 1 AND sec.is_active = 1
+                GROUP BY sec.id, sec.name, sec.grade_level, sec.room
+                ORDER BY sec.name
+            ');
+            $stmt->execute([$user['id'], $student['grade_level']]);
+            $availableSections = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'student' => $student,
+                'available_sections' => $availableSections
+            ]);
+
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Add student to section (AJAX)
+     */
+    public function addStudentToSection(): void
+    {
+        $user = Session::get('user');
+        if (!$user || ($user['role'] ?? '') !== 'teacher') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Unauthorized']);
+            return;
+        }
+
+        if (!Csrf::check($_POST['csrf_token'] ?? null)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid CSRF token']);
+            return;
+        }
+
+        $studentId = (int)($_POST['student_id'] ?? 0);
+        $sectionId = (int)($_POST['section_id'] ?? 0);
+
+        if (!$studentId || !$sectionId) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Student ID and Section ID are required']);
+            return;
+        }
+
+        $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $pdo = Database::connection($config['database']);
+
+        try {
+            $pdo->beginTransaction();
+
+            // Verify teacher has access to this section
+            $stmt = $pdo->prepare('
+                SELECT c.id FROM classes c
+                JOIN teachers t ON c.teacher_id = t.id
+                WHERE t.user_id = ? AND c.section_id = ? AND c.is_active = 1
+                LIMIT 1
+            ');
+            $stmt->execute([$user['id'], $sectionId]);
+            $class = $stmt->fetch();
+
+            if (!$class) {
+                throw new \Exception('You do not have access to this section.');
+            }
+
+            // Get student info
+            $stmt = $pdo->prepare('SELECT lrn, first_name, last_name FROM students WHERE id = ?');
+            $stmt->execute([$studentId]);
+            $student = $stmt->fetch();
+
+            if (!$student) {
+                throw new \Exception('Student not found.');
+            }
+
+            // Get section info
+            $stmt = $pdo->prepare('SELECT name FROM sections WHERE id = ?');
+            $stmt->execute([$sectionId]);
+            $section = $stmt->fetch();
+
+            if (!$section) {
+                throw new \Exception('Section not found.');
+            }
+
+            // Get all classes for this section that the teacher handles
+            $stmt = $pdo->prepare('
+                SELECT c.id FROM classes c
+                JOIN teachers t ON c.teacher_id = t.id
+                WHERE t.user_id = ? AND c.section_id = ? AND c.is_active = 1
+            ');
+            $stmt->execute([$user['id'], $sectionId]);
+            $classes = $stmt->fetchAll();
+
+            // Enroll student in all classes
+            foreach ($classes as $class) {
+                $stmt = $pdo->prepare('
+                    INSERT INTO student_classes (student_id, class_id, status) 
+                    VALUES (?, ?, "enrolled")
+                    ON DUPLICATE KEY UPDATE status = "enrolled"
+                ');
+                $stmt->execute([$studentId, $class['id']]);
+            }
+
+            // Update student's section if not already set
+            $stmt = $pdo->prepare('UPDATE students SET section_id = ? WHERE id = ? AND section_id IS NULL');
+            $stmt->execute([$sectionId, $studentId]);
+
+            $pdo->commit();
+
+            echo json_encode([
+                'success' => true,
+                'message' => "Student {$student['first_name']} {$student['last_name']} (LRN: {$student['lrn']}) has been successfully added to section {$section['name']}.",
+                'student' => [
+                    'id' => $studentId,
+                    'name' => $student['first_name'] . ' ' . $student['last_name'],
+                    'lrn' => $student['lrn']
+                ],
+                'section' => [
+                    'id' => $sectionId,
+                    'name' => $section['name']
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
         }
     }
 }

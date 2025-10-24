@@ -25,7 +25,7 @@
       <?php endif; ?>
 
       <form method="post" action="/admin/create-parent">
-        <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
+        <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::generateToken() ?>">
         
         <div class="row g-3">
           <div class="col-md-6">

@@ -156,7 +156,7 @@
                 </li>
                 <li>
                   <form method="post" action="<?= \Helpers\Url::to('/logout') ?>" class="d-inline">
-                    <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::token() ?>">
+                    <input type="hidden" name="csrf_token" value="<?= \Helpers\Csrf::generateToken() ?>">
                     <button class="dropdown-item text-danger" type="submit">Logout</button>
                   </form>
                 </li>
