@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2025 at 04:24 PM
+-- Generation Time: Oct 18, 2025 at 10:29 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -42,7 +42,8 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`id`, `user_id`, `lrn`, `grade_level`, `section_id`, `created_at`, `updated_at`) VALUES
-(4, 5, 'LRN000005', 7, 1, '2025-10-17 13:52:30', '2025-10-17 13:52:30');
+(4, 5, 'LRN000005', 7, 1, '2025-10-17 13:52:30', '2025-10-17 13:52:30'),
+(5, 7, 'LRN000007', 7, 1, '2025-10-18 08:19:49', '2025-10-18 08:19:49');
 
 -- --------------------------------------------------------
 
@@ -70,8 +71,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `role`, `email`, `password_hash`, `name`, `created_at`, `updated_at`, `status`, `requested_role`, `approved_by`, `approved_at`) VALUES
 (1, 'admin', 'admin@school.edu', '$2y$10$kcVb2JJm.eD.91F2YFtiu.xJKCD.bZJV5n5CUB5ukf1yHcFeRBlZ6', 'System Administrator', '2025-10-16 19:37:51', '2025-10-16 14:21:19', 'active', NULL, NULL, NULL),
-(2, 'teacher', 'teacher@gmail.com', '$2y$10$2X.vGcyfr7drEFSj5P5BZOQwF7bQfFF.CFLHKohz5GvYh7v7WAkhe', 'Shin Da', '2025-10-16 19:56:17', '2025-10-17 04:26:29', 'active', NULL, NULL, NULL),
-(5, 'student', 'johncarlbeg@gmail.com', '$2y$10$vmW37iXVMm5MnGu6HQuUo.f1kzOnD37/F.oA6UdRyRMARkFKPEgs2', 'John Carlbe', '2025-10-17 13:52:24', '2025-10-17 13:52:29', 'active', 'student', 1, '2025-10-17 13:52:29');
+(2, 'teacher', 'teacher@gmail.com', '$2y$10$2X.vGcyfr7drEFSj5P5BZOQwF7bQfFF.CFLHKohz5GvYh7v7WAkhe', 'Shin Da', '2025-10-16 19:56:17', '2025-10-18 07:16:23', 'suspended', NULL, NULL, NULL),
+(5, 'student', 'johncarlbeg@gmail.com', '$2y$10$vmW37iXVMm5MnGu6HQuUo.f1kzOnD37/F.oA6UdRyRMARkFKPEgs2', 'John Carlbe', '2025-10-17 13:52:24', '2025-10-17 13:52:29', 'active', 'student', 1, '2025-10-17 13:52:29'),
+(7, 'student', 'jeffstudent04@gmail.com', '$2y$10$bOjUg3Fuw/aY/yXhfVnnTuJ120T2F2PTrVhCzuBEvPEdAYIH0Adie', 'Jeff Garcia', '2025-10-18 08:19:41', '2025-10-18 08:19:49', 'active', 'student', 1, '2025-10-18 08:19:49');
 
 --
 -- Indexes for dumped tables
@@ -103,13 +105,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables

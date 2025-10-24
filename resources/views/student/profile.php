@@ -43,11 +43,25 @@ $title = 'My Profile';
             </svg>
           </button>
         </div>
-        <h5 class="mb-1"><?= htmlspecialchars($user['name'] ?? 'Student Name') ?></h5>
-        <p class="text-muted mb-2">Grade 10 - Section A</p>
+        <h5 class="mb-1"><?= htmlspecialchars($student_data['name'] ?? 'Student Name') ?></h5>
+        <p class="text-muted mb-2">
+          <?php if ($student_data['grade_level']): ?>
+            Grade <?= htmlspecialchars($student_data['grade_level']) ?>
+          <?php endif; ?>
+          <?php if ($section_info): ?>
+            - <?= htmlspecialchars($section_info['name'] ?? 'Section') ?>
+          <?php endif; ?>
+        </p>
         <div class="d-flex justify-content-center gap-2 mb-3">
           <span class="badge bg-primary">Student</span>
-          <span class="badge bg-success">Active</span>
+          <span class="badge bg-<?= $student_data['status'] === 'active' ? 'success' : ($student_data['status'] === 'pending' ? 'warning' : 'danger') ?>">
+            <?= ucfirst($student_data['status'] ?? 'Unknown') ?>
+          </span>
+          <?php if (isset($enrollment_info['status'])): ?>
+            <span class="badge bg-<?= $enrollment_info['status'] === 'enrolled' ? 'success' : ($enrollment_info['status'] === 'graduated' ? 'info' : 'warning') ?>">
+              <?= ucfirst($enrollment_info['status']) ?>
+            </span>
+          <?php endif; ?>
         </div>
         <div class="d-grid gap-2">
           <button class="btn btn-outline-primary btn-sm" onclick="viewAcademicRecord()">
@@ -73,36 +87,38 @@ $title = 'My Profile';
       <form id="profileForm">
         <div class="row g-3">
           <div class="col-md-6">
-            <label class="form-label">First Name</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($user['name'] ?? '') ?>" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Last Name</label>
-            <input type="text" class="form-control" value="Doe" readonly>
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['name'] ?? '') ?>" readonly>
           </div>
           <div class="col-md-6">
             <label class="form-label">Email Address</label>
-            <input type="email" class="form-control" value="<?= htmlspecialchars($user['email'] ?? '') ?>" readonly>
+            <input type="email" class="form-control" value="<?= htmlspecialchars($student_data['email'] ?? '') ?>" readonly>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" value="+1 (555) 123-4567" readonly>
+            <label class="form-label">Account Status</label>
+            <input type="text" class="form-control" value="<?= ucfirst($student_data['status'] ?? 'Unknown') ?>" readonly>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Date of Birth</label>
-            <input type="date" class="form-control" value="2008-05-15" readonly>
+            <label class="form-label">Member Since</label>
+            <input type="text" class="form-control" value="<?= date('F j, Y', strtotime($student_data['created_at'] ?? '')) ?>" readonly>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Gender</label>
-            <select class="form-select" readonly>
-              <option value="male" selected>Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
+            <label class="form-label">Last Updated</label>
+            <input type="text" class="form-control" value="<?= date('F j, Y g:i A', strtotime($student_data['updated_at'] ?? '')) ?>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Approved By</label>
+            <input type="text" class="form-control" value="<?= $student_data['approved_at'] ? 'Admin' : 'Pending' ?>" readonly>
           </div>
           <div class="col-12">
-            <label class="form-label">Address</label>
-            <textarea class="form-control" rows="2" readonly>123 Main Street, City, State 12345</textarea>
+            <label class="form-label">Account Information</label>
+            <div class="alert alert-info">
+              <small>
+                <strong>Role:</strong> <?= ucfirst($student_data['role'] ?? 'Student') ?><br>
+                <strong>Requested Role:</strong> <?= $student_data['requested_role'] ? ucfirst($student_data['requested_role']) : 'N/A' ?><br>
+                <strong>Approved Date:</strong> <?= $student_data['approved_at'] ? date('F j, Y g:i A', strtotime($student_data['approved_at'])) : 'Not approved yet' ?>
+              </small>
+            </div>
           </div>
         </div>
       </form>
@@ -118,27 +134,43 @@ $title = 'My Profile';
       <div class="row g-3">
         <div class="col-md-6">
           <label class="form-label">Student ID (LRN)</label>
-          <input type="text" class="form-control" value="123456789012" readonly>
+          <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['lrn'] ?? 'Not assigned') ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Student Number</label>
+          <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['student_number'] ?? 'Not assigned') ?>" readonly>
         </div>
         <div class="col-md-6">
           <label class="form-label">Grade Level</label>
-          <input type="text" class="form-control" value="Grade 10" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Section</label>
-          <input type="text" class="form-control" value="Section A" readonly>
+          <input type="text" class="form-control" value="<?= $student_data['grade_level'] ? 'Grade ' . $student_data['grade_level'] : 'Not assigned' ?>" readonly>
         </div>
         <div class="col-md-6">
           <label class="form-label">School Year</label>
-          <input type="text" class="form-control" value="2024-2025" readonly>
+          <input type="text" class="form-control" value="<?= htmlspecialchars($student_data['school_year'] ?? 'Not assigned') ?>" readonly>
         </div>
         <div class="col-md-6">
-          <label class="form-label">Adviser</label>
-          <input type="text" class="form-control" value="Ms. Johnson" readonly>
+          <label class="form-label">Section</label>
+          <input type="text" class="form-control" value="<?= $section_info ? htmlspecialchars($section_info['name']) : 'Not assigned' ?>" readonly>
         </div>
         <div class="col-md-6">
-          <label class="form-label">Enrollment Date</label>
-          <input type="date" class="form-control" value="2024-06-15" readonly>
+          <label class="form-label">Room</label>
+          <input type="text" class="form-control" value="<?= $section_info ? htmlspecialchars($section_info['room'] ?? 'Not assigned') : 'Not assigned' ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Date Enrolled</label>
+          <input type="text" class="form-control" value="<?= $student_data['date_enrolled'] ? date('F j, Y', strtotime($student_data['date_enrolled'])) : 'Not available' ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Enrollment Status</label>
+          <input type="text" class="form-control" value="<?= ucfirst($student_data['student_status'] ?? 'Unknown') ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Student Record Created</label>
+          <input type="text" class="form-control" value="<?= $student_data['student_created_at'] ? date('F j, Y g:i A', strtotime($student_data['student_created_at'])) : 'Not created' ?>" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">User ID</label>
+          <input type="text" class="form-control" value="<?= $student_data['id'] ?? 'N/A' ?>" readonly>
         </div>
       </div>
     </div>
@@ -146,29 +178,42 @@ $title = 'My Profile';
   
   <div class="col-lg-6">
     <div class="surface">
-      <h5 class="mb-4">Emergency Contact</h5>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label">Contact Name</label>
-          <input type="text" class="form-control" value="John Doe" readonly>
+      <h5 class="mb-4">Section & Adviser Information</h5>
+      <?php if ($section_info): ?>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Section Name</label>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($section_info['name']) ?>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Room</label>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($section_info['room'] ?? 'Not assigned') ?>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Max Students</label>
+            <input type="text" class="form-control" value="<?= $section_info['max_students'] ?? 'Not set' ?>" readonly>
+          </div>
+          <?php if ($section_info['adviser_name']): ?>
+            <div class="col-md-6">
+              <label class="form-label">Class Adviser</label>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($section_info['adviser_name']) ?>" readonly>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Adviser Email</label>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($section_info['adviser_email'] ?? 'Not available') ?>" readonly>
+            </div>
+          <?php endif; ?>
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="2" readonly><?= htmlspecialchars($section_info['description'] ?? 'No description available') ?></textarea>
+          </div>
         </div>
-        <div class="col-md-6">
-          <label class="form-label">Relationship</label>
-          <input type="text" class="form-control" value="Father" readonly>
+      <?php else: ?>
+        <div class="alert alert-warning">
+          <h6 class="alert-heading">No Section Assigned</h6>
+          <p class="mb-0">You are not currently assigned to any section. Please contact the administration for assistance.</p>
         </div>
-        <div class="col-md-6">
-          <label class="form-label">Phone Number</label>
-          <input type="tel" class="form-control" value="+1 (555) 987-6543" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-control" value="john.doe@email.com" readonly>
-        </div>
-        <div class="col-12">
-          <label class="form-label">Address</label>
-          <textarea class="form-control" rows="2" readonly>123 Main Street, City, State 12345</textarea>
-        </div>
-      </div>
+      <?php endif; ?>
     </div>
   </div>
 </div>
@@ -181,81 +226,80 @@ $title = 'My Profile';
       <div class="row g-3">
         <div class="col-md-4">
           <div class="text-center p-3 border rounded-3">
-            <div class="h4 fw-bold text-primary mb-1" data-count-to="87.5" data-count-decimals="1">0</div>
+            <div class="h4 fw-bold text-primary mb-1">
+              <?= $academic_stats['overall_average'] > 0 ? number_format($academic_stats['overall_average'], 1) : 'N/A' ?>
+            </div>
             <div class="text-muted small">Overall Average</div>
             <div class="progress mt-2" style="height: 4px;">
-              <div class="progress-bar bg-primary" data-progress-to="87.5" style="width: 0%"></div>
+              <div class="progress-bar bg-primary" style="width: <?= $academic_stats['overall_average'] > 0 ? $academic_stats['overall_average'] : 0 ?>%"></div>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="text-center p-3 border rounded-3">
-            <div class="h4 fw-bold text-success mb-1" data-count-to="8">0</div>
+            <div class="h4 fw-bold text-success mb-1">
+              <?= $academic_stats['passing_subjects'] > 0 ? $academic_stats['passing_subjects'] : 'N/A' ?>
+            </div>
             <div class="text-muted small">Passing Subjects</div>
             <div class="progress mt-2" style="height: 4px;">
-              <div class="progress-bar bg-success" data-progress-to="80" style="width: 0%"></div>
+              <div class="progress-bar bg-success" style="width: <?= $academic_stats['total_subjects'] > 0 ? ($academic_stats['passing_subjects'] / $academic_stats['total_subjects'] * 100) : 0 ?>%"></div>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="text-center p-3 border rounded-3">
-            <div class="h4 fw-bold text-info mb-1">+<span data-count-to="3.2" data-count-decimals="1">0</span>%</div>
+            <div class="h4 fw-bold text-info mb-1">
+              <?= $academic_stats['improvement'] > 0 ? '+' . number_format($academic_stats['improvement'], 1) . '%' : 'N/A' ?>
+            </div>
             <div class="text-muted small">Improvement</div>
             <div class="progress mt-2" style="height: 4px;">
-              <div class="progress-bar bg-info" data-progress-to="60" style="width: 0%"></div>
+              <div class="progress-bar bg-info" style="width: <?= $academic_stats['improvement'] > 0 ? min($academic_stats['improvement'] * 10, 100) : 0 ?>%"></div>
             </div>
           </div>
         </div>
       </div>
       
       <div class="mt-4">
-        <h6>Subject Performance</h6>
-        <div class="row g-2">
-          <div class="col-md-6">
-            <div class="d-flex justify-content-between align-items-center p-2 border rounded">
-              <span>Mathematics</span>
-              <div class="d-flex align-items-center">
-                <span class="fw-semibold text-success me-2">87.5</span>
-                <div class="progress" style="width: 60px; height: 6px;">
-                  <div class="progress-bar bg-success" style="width: 87.5%"></div>
+        <h6>Subjects for Grade <?= $student_data['grade_level'] ?? 'N/A' ?></h6>
+        <?php if (!empty($subjects)): ?>
+          <div class="row g-2">
+            <?php foreach ($subjects as $subject): ?>
+              <div class="col-md-6">
+                <div class="border rounded-3 p-3">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 class="mb-1"><?= htmlspecialchars($subject['name']) ?></h6>
+                      <small class="text-muted"><?= htmlspecialchars($subject['code']) ?></small>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary"><?= $subject['grade_level'] ?></span>
+                  </div>
+                  <?php if ($subject['description']): ?>
+                    <p class="small text-muted mt-2 mb-0"><?= htmlspecialchars($subject['description']) ?></p>
+                  <?php endif; ?>
+                  <div class="mt-2">
+                    <small class="text-muted">
+                      WW: <?= $subject['ww_percent'] ?>% | 
+                      PT: <?= $subject['pt_percent'] ?>% | 
+                      QE: <?= $subject['qe_percent'] ?>%
+                    </small>
+                  </div>
                 </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        <?php else: ?>
+          <div class="alert alert-info">
+            <div class="d-flex align-items-center">
+              <svg class="icon me-2" width="20" height="20" fill="currentColor">
+                <use href="#icon-info"></use>
+              </svg>
+              <div>
+                <strong>No subjects assigned yet</strong><br>
+                <small>Subjects for your grade level will be displayed here once they are configured by the administration.</small>
               </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="d-flex justify-content-between align-items-center p-2 border rounded">
-              <span>Science</span>
-              <div class="d-flex align-items-center">
-                <span class="fw-semibold text-success me-2">92.3</span>
-                <div class="progress" style="width: 60px; height: 6px;">
-                  <div class="progress-bar bg-success" style="width: 92.3%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="d-flex justify-content-between align-items-center p-2 border rounded">
-              <span>English</span>
-              <div class="d-flex align-items-center">
-                <span class="fw-semibold text-warning me-2">75.8</span>
-                <div class="progress" style="width: 60px; height: 6px;">
-                  <div class="progress-bar bg-warning" style="width: 75.8%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="d-flex justify-content-between align-items-center p-2 border rounded">
-              <span>Filipino</span>
-              <div class="d-flex align-items-center">
-                <span class="fw-semibold text-success me-2">88.2</span>
-                <div class="progress" style="width: 60px; height: 6px;">
-                  <div class="progress-bar bg-success" style="width: 88.2%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <?php endif; ?>
       </div>
     </div>
   </div>
